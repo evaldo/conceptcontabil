@@ -118,12 +118,15 @@ Sub processa_recebimento_caixa()
     
     frmBarraProgressao.Hide
     
-    MsgBox "Processamento Realizado com sucesso.", vbInformation, "Processamento de Receita com Produto"
+    MsgBox "Processamento Realizado com sucesso.", vbInformation, "Processamento de Recebimentos"
     
 End Sub
 
 Sub processar_recebimento_com_barra()
-    frmBarraProgressao.Show
+    
+    resposta = MsgBox("Deseja realmente processar recebimentos?", vbYesNo + vbExclamation, "Processamento de Recebimentos")
+ 
+    If resposta = vbYes Then frmBarraProgressao.Show
+    
 End Sub
-
 
