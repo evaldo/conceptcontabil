@@ -15,8 +15,11 @@ Sub processa_recebimento_caixa()
     Dim flag_mes_processamento As Integer
     Dim linha_planilha_mes_processmento As Integer
     Dim linha_planilha_recebimento As Integer
+    Dim contador As Integer
     
     Dim bol_processar_classificacao As Boolean
+    
+    Dim percentual As Single
                         
     mes(1) = "Jan"
     mes(2) = "Fev"
@@ -44,7 +47,7 @@ Sub processa_recebimento_caixa()
     Next conta_mes
     
     Do While Range("E" + CStr(linha_planilha_mes_processmento)).Value <> ""
-       
+    
         doc_ref = Range("F" + CStr(linha_planilha_mes_processmento)).Value
         instituicao_finaceira = Range("H" + CStr(linha_planilha_mes_processmento)).Value
         classificacao = Range("E" + CStr(linha_planilha_mes_processmento)).Value
@@ -59,7 +62,7 @@ Sub processa_recebimento_caixa()
            
            Do While Range("D" + CStr(linha_planilha_recebimento)).Value <> ""
            
-            If Range("D" + CStr(linha_planilha_recebimento)).Value = plano_contas And Not IsEmpty(Range("E" + CStr(linha_planilha_recebimento)).Value) Then
+            If Range("D" + CStr(linha_planilha_recebimento)).Value = plano_contas And (Not IsEmpty(Range("E" + CStr(linha_planilha_recebimento)).Value) Or Range("E" + CStr(linha_planilha_recebimento)).Value = "-") Then
                 bol_processar_classificacao = True
                 Exit Do
             End If
@@ -77,7 +80,9 @@ Sub processa_recebimento_caixa()
                 If conta_mes > flag_mes_processamento Then Exit For
                         
                 Sheets(mes(conta_mes)).Select
-               
+                percentual = conta_mes / flag_mes_processamento
+                frmBarraProgressao.AtualizaBarra percentual, mes(conta_mes)
+                               
                 Do While Range("E" + CStr(linha_planilha)).Value <> ""
                             
                     If Range("E" + CStr(linha_planilha)).Value = classificacao _
@@ -90,7 +95,7 @@ Sub processa_recebimento_caixa()
                             Sheets(mes(flag_mes_processamento)).Select
                             Range("I" + CStr(linha_planilha_mes_processmento)).Value = 0
                             Range("L" + CStr(linha_planilha_mes_processmento)).Value = "Sim"
-                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "REALIZADO"
+                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Realizado"
                             
                             Exit Do
                         
@@ -111,8 +116,14 @@ Sub processa_recebimento_caixa()
         
     Loop
     
+    frmBarraProgressao.Hide
+    
     MsgBox "Processamento Realizado com sucesso.", vbInformation, "Processamento de Receita com Produto"
     
+End Sub
+
+Sub processar_recebimento_com_barra()
+    frmBarraProgressao.Show
 End Sub
 
 
