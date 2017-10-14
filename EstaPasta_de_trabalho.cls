@@ -7,19 +7,18 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-Private Sub Workbook_Open()
-
-End Sub
+Option Explicit
 
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
-
+    
     Application.EnableEvents = False
     
-    If ConverteParaLetra(Target.Column) = "C" And Target.Row >= 5 Then
+    If Target.Column = 3 And Target.Row >= 5 Then
         If Not IsDate(Range("D" + CStr(Target.Row)).Value) And Range("C" + CStr(Target.Row)).Value <> "" Then
            MsgBox "Data inválida. Favor repetir a digitação do dia de lançamento.", vbInformation, "Processamento de Recebimentos"
            Range("C" + CStr(Target.Row)).Activate
         End If
+        
     End If
     
     Application.EnableEvents = True
@@ -38,7 +37,8 @@ Function ConverteParaLetra(iCol As Integer) As String
    End If
    
    If iRemainder > 0 Then
-      ConverteParaLetra = ConvertToLetter & Chr(iRemainder + 64)
+      ConverteParaLetra = ConverteParaLetra & Chr(iRemainder + 64)
    End If
    
 End Function
+

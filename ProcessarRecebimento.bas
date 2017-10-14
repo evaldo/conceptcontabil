@@ -55,6 +55,7 @@ Sub processa_recebimento_caixa()
     Dim plano_contas_anterior As String
     
     Dim valor_recebimento_anterior As Double
+    Dim valor_recebimento As Double
             
     Dim linha_planilha As Integer
     Dim linha_planilha_posterior As Integer
@@ -142,6 +143,7 @@ Sub processa_recebimento_caixa()
                     mes_processamento_anterior = ""
                     plano_contas_anterior = ""
                     valor_recebimento_anterior = 0
+                    valor_recebimento = 0
                     
                     If Range("E" + CStr(linha_planilha)).Value = classificacao _
                        And Range("H" + CStr(linha_planilha)).Value = instituicao_finaceira _
@@ -153,18 +155,19 @@ Sub processa_recebimento_caixa()
                             mes_processamento_anterior = mes(conta_mes)
                             plano_contas_anterior = Range("G" + CStr(linha_planilha)).Value
                             valor_recebimento_anterior = Range("I" + CStr(linha_planilha)).Value
+                            valor_recebimento = Range("I" + CStr(linha_planilha)).Value
                             
                             linha_planilha_posterior = 5
                             
-                            For conta_mes_posterior = conta_mes + 1 To flag_mes_processamento - 1
+                            For conta_mes_posterior = conta_mes + 1 To flag_mes_processamento
                                 
-                                If valor_recebimento_anterior < 0 Then Exit For
+                                If valor_recebimento_anterior <= 0 Then Exit For
                                 
                                 Sheets(mes(conta_mes_posterior)).Select
                             
                                 Do While Range("E" + CStr(linha_planilha_posterior)).Value <> ""
                                        
-                                    If valor_recebimento_anterior < 0 Then Exit Do
+                                    If valor_recebimento_anterior <= 0 Then Exit Do
                                        
                                     If Range("E" + CStr(linha_planilha_posterior)).Value = classificacao _
                                         And Range("H" + CStr(linha_planilha_posterior)).Value = instituicao_finaceira _
@@ -175,13 +178,27 @@ Sub processa_recebimento_caixa()
                                                
                                         If valor_recebimento_anterior = Range("I" + CStr(linha_planilha_posterior)).Value Then
                                             valor_recebimento_anterior = 0
+                                                                                       
+                                            Sheets(mes(flag_mes_processamento)).Select
+                           
+                                            Range("I" + CStr(linha_planilha_mes_processmento)).Value = valor_recebimento_anterior
+                                            Range("L" + CStr(linha_planilha_mes_processmento)).Value = "Sim"
+                                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Realizado"
+                                                                                                    
                                         Else
-                                            valor_recebimento_anterior = valor_recebimento_anterior - Range("I" + CStr(linha_planilha_posterior)).Value
-                                        End If
                                         
+                                            valor_recebimento_anterior = valor_recebimento_anterior - Range("I" + CStr(linha_planilha_posterior)).Value
+                                            
+                                            Sheets(mes(flag_mes_processamento)).Select
+                           
+                                            Range("I" + CStr(linha_planilha_mes_processmento)).Value = valor_recebimento_anterior
+                                            Range("L" + CStr(linha_planilha_mes_processmento)).Value = "Sim"
+                                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Realizado"
+                                        End If
+                                            
                                         If valor_recebimento_anterior < 0 Then
                                         
-                                            Sheets("Log de Processamento").Select
+                                            Sheets("Log de Proc Recebimentos").Select
                                             
                                             linha_log_processamento = 5
                                             
@@ -191,9 +208,11 @@ Sub processa_recebimento_caixa()
                                                 
                                                     Range("D" + CStr(linha_log_processamento)).Value = mes_processamento_anterior
                                                     Range("E" + CStr(linha_log_processamento)).Value = plano_contas_anterior
-                                                    Range("F" + CStr(linha_log_processamento)).Value = valor_recebimento_anterior
-                                                    Range("G" + CStr(linha_log_processamento)).Value = Date
-                                                    Range("H" + CStr(linha_log_processamento)).Value = "Processamento de valor a ser recebido em próximo processamento."
+                                                    Range("F" + CStr(linha_log_processamento)).Value = valor_recebimento
+                                                    Range("G" + CStr(linha_log_processamento)).Value = valor_recebimento_anterior
+                                                    Range("H" + CStr(linha_log_processamento)).Value = Date
+                                                    Range("I" + CStr(linha_log_processamento)).Value = Time
+                                                    Range("J" + CStr(linha_log_processamento)).Value = "Processamento de valor a ser recebido em próximo processamento."
                                                     
                                                     Exit Do
                                                     
@@ -202,23 +221,17 @@ Sub processa_recebimento_caixa()
                                                 linha_log_processamento = linha_log_processamento + 1
                                                 
                                             Loop
-                                            
+                                      
                                         End If
                                         
                                     End If
                                     
+                                    linha_planilha_posterior = linha_planilha_posterior + 1
+                                    
                                 Loop
                              
                             Next conta_mes_posterior
-
-                            Sheets(mes(flag_mes_processamento)).Select
-                           
-                            Range("I" + CStr(linha_planilha_mes_processmento)).Value = valor_recebimento_anterior
-                            Range("L" + CStr(linha_planilha_mes_processmento)).Value = "Sim"
-                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Realizado"
                             
-                            Exit Do
-                        
                     End If
                 
                     linha_planilha = linha_planilha + 1

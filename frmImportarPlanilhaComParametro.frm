@@ -107,6 +107,12 @@ Private Sub btnCarregaDados_Click()
     
 End Sub
 
+Private Sub btnFechar_Click()
+
+    Unload Me
+    
+End Sub
+
 Private Sub btnImportarDados_Click()
 
     Dim classificacao As String
@@ -152,7 +158,7 @@ Private Sub btnImportarDados_Click()
     Do While processamentoImportacao(contador, 1) <> ""
               
         Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 1)
-        Range(txtDiaDestino.Text + CStr(linha)).Value = CInt(processamentoImportacao(contador, 2))
+        Range(txtDiaDestino.Text + CStr(linha)).Value = CInt(Mid(processamentoImportacao(contador, 2), 1, 2))
         Range(txtDocRefDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 3)
         Range(txtInstFinDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 4)
         Range(txtValorDestino.Text + CStr(linha)).Value = CDbl(processamentoImportacao(contador, 5))
@@ -169,6 +175,8 @@ Private Sub btnImportarDados_Click()
     MsgBox "Importação realizada com sucesso!", vbInformation, "Processamento de Recebimentos"
     
 End Sub
+
+
 
 
 Private Sub lstClassificacao_Click()

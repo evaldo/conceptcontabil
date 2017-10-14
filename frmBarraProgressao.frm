@@ -4,7 +4,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmBarraProgressao
    ClientHeight    =   1785
    ClientLeft      =   45
    ClientTop       =   390
-   ClientWidth     =   4710
+   ClientWidth     =   4785
    OleObjectBlob   =   "frmBarraProgressao.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
