@@ -24,11 +24,16 @@ Private Sub btnAtualizaClassificacao_Click()
 End Sub
 
 Private Sub btnCarregaDados_Click()
- 
+
+On Error Resume Next
+
     Dim classificacao(1 To 1000, 1 To 2) As String
         
     Dim i As Integer, j As Integer
+    Dim i_armazenada As Integer
     Dim linha As Integer
+    
+    Dim bol_ja_existe_classificacao As Boolean
             
     If txtCaminhoPlanilha.Text <> "" Then
         
@@ -52,13 +57,28 @@ Private Sub btnCarregaDados_Click()
                 i = 2
                 
                 Do While Range(txtColunaClassificacao.Text + CStr(linha)).Value <> ""
-                
-                   classificacao(i, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text
-                   classificacao(i, 2) = ""
-                   
-                   linha = linha + 1
-                   i = i + 1
-                   
+                    
+                    bol_ja_existe_classificacao = False
+                    
+                    For i_armazenada = 2 To i
+                        
+                        If classificacao(i_armazenada, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
+                            bol_ja_existe_classificacao = True
+                        End If
+                        
+                    Next i_armazenada
+                    
+                    If bol_ja_existe_classificacao = False Then
+                    
+                        classificacao(i, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text
+                        classificacao(i, 2) = ""
+                        
+                        i = i + 1
+                        
+                    End If
+                    
+                    linha = linha + 1
+                    
                 Loop
                 
                 lstClassificacao.List = classificacao
