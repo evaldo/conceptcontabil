@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmImportarPlanilhaComParametro 
    Caption         =   "Importar Dados de Planilhas"
-   ClientHeight    =   9870
+   ClientHeight    =   10200
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   9420
@@ -61,8 +61,18 @@ Private Sub btnCarregaDados_Click()
     Dim i As Integer, j As Integer
     Dim i_armazenada As Integer
     Dim linha As Integer
+    Dim contadorPalavra As Integer
         
     Dim bol_ja_existe_classificacao As Boolean
+    Dim bol_encontrou_palavra As Boolean
+    
+    For i = 1 To 20
+        
+        classificacao(i, 1) = ""
+        classificacao(i, 2) = ""
+        classificacao(i, 3) = ""
+        
+    Next i
             
     If txtCaminhoPlanilha.Text <> "" Then
         
@@ -84,25 +94,47 @@ Private Sub btnCarregaDados_Click()
                 linha = CInt(txtLinhaInicial.Text)
                 i = 2
                 
+                bol_encontrou_palavra = False
+                contadorPalavra = 0
+                
                 Do While Range(txtColunaClassificacao.Text + CStr(linha)).Value <> ""
-                    
-                    bol_ja_existe_classificacao = False
-                    
-                    For i_armazenada = 2 To i
+                
+                    bol_encontrou_palavra = False
+                
+                    Do While contadorPalavra <= lstPalavraExistente.ListCount - 1
+            
+                        If Range(txtColunaContemPalavra + CStr(linha)).Value = lstPalavraExistente.List(contadorPalavra) Then
                         
-                        If classificacao(i_armazenada, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
-                            bol_ja_existe_classificacao = True
+                            bol_encontrou_palavra = True
+                            Exit Do
+                        
                         End If
                         
-                    Next i_armazenada
-                    
-                    If bol_ja_existe_classificacao = False Then
-                    
-                        classificacao(i, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text
-                        classificacao(i, 2) = ""
-                        classificacao(i, 3) = ""
+                        contadorPalavra = contadorPalavra + 1
                         
-                        i = i + 1
+                    Loop
+                    
+                    contadorPalavra = 0
+                    
+                    If bol_encontrou_palavra = False Then
+                        
+                        For i_armazenada = 2 To i
+                            
+                            If classificacao(i_armazenada, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
+                                bol_ja_existe_classificacao = True
+                            End If
+                            
+                        Next i_armazenada
+                        
+                        If bol_ja_existe_classificacao = False Then
+                        
+                            classificacao(i, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text
+                            classificacao(i, 2) = ""
+                            classificacao(i, 3) = ""
+                            
+                            i = i + 1
+                            
+                        End If
                         
                     End If
                     
@@ -222,8 +254,11 @@ Private Sub btnImportarDados_Click()
     Dim linha As Integer
     Dim contador As Integer
     Dim linha_classificacao As Integer
+    Dim contadorPalavra As Integer
         
     Dim processamentoImportacao(1 To 10000, 1 To 7) As String
+    
+    Dim bol_encontrou_palavra As Boolean
         
     mes_processamento = ActiveSheet.Name
      
@@ -232,34 +267,58 @@ Private Sub btnImportarDados_Click()
     linha = CInt(txtLinhaInicial.Text)
     contador = 1
                 
+    bol_encontrou_palavra = False
+    contadorPalavra = 0
+    
     Do While Range("A" + CStr(linha)).Value <> ""
               
         processamentoImportacao(contador, 2) = Range(txtDiaOrigem.Text + CStr(linha)).Value
         
-        linha_classificacao = 1
+        bol_encontrou_palavra = False
         
-        Do While linha_classificacao <= 10000
+        Do While contadorPalavra <= lstPalavraExistente.ListCount - 1
             
-            If classificacao(linha_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Value Then
-                processamentoImportacao(contador, 1) = classificacao(linha_classificacao - 1, 3)
-                processamentoImportacao(contador, 7) = classificacao(linha_classificacao - 1, 4)
-                
+            If Range(txtColunaContemPalavra + CStr(linha)).Value = lstPalavraExistente.List(contadorPalavra) Then
+            
+                bol_encontrou_palavra = True
                 Exit Do
-                
+            
             End If
             
-            linha_classificacao = linha_classificacao + 1
+            contadorPalavra = contadorPalavra + 1
             
         Loop
         
-        processamentoImportacao(contador, 3) = Range(txtDocRefOrigem.Text + CStr(linha)).Value
-        processamentoImportacao(contador, 4) = Range(txtInstFinOrigem.Text + CStr(linha)).Value
-        processamentoImportacao(contador, 5) = Range(txtValorOrigem.Text + CStr(linha)).Value
-        processamentoImportacao(contador, 6) = Range(txtStatusOrigem.Text + CStr(linha)).Value
+        contadorPalavra = 0
         
+        If bol_encontrou_palavra = False Then
+        
+            linha_classificacao = 1
+            
+            Do While linha_classificacao <= 10000
+                
+                If classificacao(linha_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Value Then
+                    processamentoImportacao(contador, 1) = classificacao(linha_classificacao - 1, 3)
+                    processamentoImportacao(contador, 7) = classificacao(linha_classificacao - 1, 4)
+                    
+                    Exit Do
+                    
+                End If
+                
+                linha_classificacao = linha_classificacao + 1
+                
+            Loop
+            
+            processamentoImportacao(contador, 3) = Range(txtDocRefOrigem.Text + CStr(linha)).Value
+            processamentoImportacao(contador, 4) = Range(txtInstFinOrigem.Text + CStr(linha)).Value
+            processamentoImportacao(contador, 5) = Range(txtValorOrigem.Text + CStr(linha)).Value
+            processamentoImportacao(contador, 6) = Range(txtStatusOrigem.Text + CStr(linha)).Value
+            
+            contador = contador + 1
+            
+        End If
         
         linha = linha + 1
-        contador = contador + 1
                    
     Loop
     
@@ -326,6 +385,26 @@ Private Sub cmbListaDescricaoClassificacao_Click()
     Loop
     
     Worksheets(mes_processamento).Activate
+
+End Sub
+
+Private Sub cmdOkInserePalavraExistente_Click()
+
+    lstPalavraExistente.AddItem txtPalavra.Text
+    txtPalavra.Text = ""
+
+End Sub
+
+Private Sub cmdRetiraPalavraExistente_Click()
+
+    Dim i As Long
+    
+    For i = 0 To lstPalavraExistente.ListCount - 1
+        If lstPalavraExistente.Selected(i) Then
+            txtPalavra.Text = lstPalavraExistente.Text
+            lstPalavraExistente.RemoveItem (lstPalavraExistente.ListIndex)
+        End If
+    Next i
 
 End Sub
 
