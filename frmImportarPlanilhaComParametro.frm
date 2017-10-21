@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmImportarPlanilhaComParametro 
-   Caption         =   "Importar Dados de Planilhas"
+   Caption         =   "Importação de Dados de Planilhas"
    ClientHeight    =   10200
    ClientLeft      =   45
    ClientTop       =   390
-   ClientWidth     =   9420
+   ClientWidth     =   11175
    OleObjectBlob   =   "frmImportarPlanilhaComParametro.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -16,7 +16,7 @@ Attribute VB_Exposed = False
 Dim itemListaClassificacao As Integer
 Dim mes_processamento  As String
 Dim WB1 As Workbook
-Dim classificacao(1 To 1000, 1 To 4) As String
+Dim classificacao(0 To 1000, 1 To 4) As String
 Dim descricaoClassificacao(1 To 20, 1 To 3) As String
 
 Private Sub btnAtualizaClassificacao_Click()
@@ -56,17 +56,17 @@ End Sub
 
 Private Sub btnCarregaDados_Click()
 
-'On Error Resume Next
+On Error GoTo Erro
 
     Dim i As Integer, j As Integer
     Dim i_armazenada As Integer
     Dim linha As Integer
     Dim contadorPalavra As Integer
-        
+            
     Dim bol_ja_existe_classificacao As Boolean
     Dim bol_encontrou_palavra As Boolean
     
-    For i = 1 To 20
+    For i = 0 To 1000
         
         classificacao(i, 1) = ""
         classificacao(i, 2) = ""
@@ -76,9 +76,9 @@ Private Sub btnCarregaDados_Click()
             
     If txtCaminhoPlanilha.Text <> "" Then
         
-        classificacao(1, 1) = "Classificação Importada"
-        classificacao(1, 2) = "Classificação Utilizada"
-        classificacao(1, 3) = "Descrição da Classificação"
+        classificacao(0, 1) = "Classificação Importada"
+        classificacao(0, 2) = "Classificação Utilizada"
+        classificacao(0, 3) = "Descrição da Classificação"
             
         Set WB1 = Workbooks.Open(txtCaminhoPlanilha.Text)
         
@@ -92,12 +92,12 @@ Private Sub btnCarregaDados_Click()
                 Range(txtColunaClassificacao.Text + Trim(txtLinhaInicial.Text)).Select
                 
                 linha = CInt(txtLinhaInicial.Text)
-                i = 2
+                i = 1
                 
                 bol_encontrou_palavra = False
                 contadorPalavra = 0
                 
-                Do While Range(txtColunaClassificacao.Text + CStr(linha)).Value <> ""
+                Do While (linha >= CInt(txtLinhaInicial.Text) And linha <= CInt(txtLinhaFinal.Text))
                 
                     bol_encontrou_palavra = False
                 
@@ -118,7 +118,7 @@ Private Sub btnCarregaDados_Click()
                     
                     If bol_encontrou_palavra = False Then
                         
-                        For i_armazenada = 2 To i
+                        For i_armazenada = 1 To 100
                             
                             If classificacao(i_armazenada, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
                                 bol_ja_existe_classificacao = True
@@ -135,6 +135,8 @@ Private Sub btnCarregaDados_Click()
                             i = i + 1
                             
                         End If
+                        
+                        bol_ja_existe_classificacao = False
                         
                     End If
                     
@@ -234,6 +236,13 @@ Private Sub btnCarregaDados_Click()
             
     End If
     
+Erro:
+
+    MsgBox "Não foi localizado um erro no processamento de dados. Favor observar os seguintes itens: " & Chr(13) & Chr(13) & _
+    "-> Verifique se o nome do arquivo está correto." & Chr(13) & _
+    "-> Verifique se a coluna de origem é a correta para transferir os dados." & Chr(13) & _
+    "-> Verifique se a coluna de destino é a correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+    
 End Sub
 
 Private Sub btnFechar_Click()
@@ -243,8 +252,8 @@ Private Sub btnFechar_Click()
 End Sub
 
 Private Sub btnImportarDados_Click()
+On Error GoTo Error
 
-    'Dim classificacao As String
     Dim dia As String
     Dim docref As String
     Dim instfin As String
@@ -256,12 +265,29 @@ Private Sub btnImportarDados_Click()
     Dim linha_classificacao As Integer
     Dim contadorPalavra As Integer
         
-    Dim processamentoImportacao(1 To 10000, 1 To 7) As String
+    Dim processamentoImportacao(1 To 1000, 1 To 7) As String
     
     Dim bol_encontrou_palavra As Boolean
         
     mes_processamento = ActiveSheet.Name
-     
+    
+    linha = 5
+    
+    Do While linha <= CInt(txtLinhaFinal.Text)
+        
+        Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = ""
+        Range(txtDiaDestino.Text + CStr(linha)).Value = ""
+        Range(txtDocRefDestino.Text + CStr(linha)).Value = ""
+        Range(txtInstFinDestino.Text + CStr(linha)).Value = ""
+        Range(txtValorDestino.Text + CStr(linha)).Value = 0
+        Range(txtValorDestino.Text + CStr(linha)).Value = CDbl(0)
+        Range(txtStatusDestino.Text + CStr(linha)).Value = ""
+        Range(txtColunaDescricaoClassificacaoDestino.Text + CStr(linha)).Value = ""
+        
+        linha = linha + 1
+        
+    Loop
+    
     Set WB1 = Workbooks.Open(txtCaminhoPlanilha.Text)
      
     linha = CInt(txtLinhaInicial.Text)
@@ -270,7 +296,7 @@ Private Sub btnImportarDados_Click()
     bol_encontrou_palavra = False
     contadorPalavra = 0
     
-    Do While Range("A" + CStr(linha)).Value <> ""
+    Do While (linha >= CInt(txtLinhaInicial.Text) And linha <= CInt(txtLinhaFinal.Text))
               
         processamentoImportacao(contador, 2) = Range(txtDiaOrigem.Text + CStr(linha)).Value
         
@@ -295,7 +321,7 @@ Private Sub btnImportarDados_Click()
         
             linha_classificacao = 1
             
-            Do While linha_classificacao <= 10000
+            Do While linha_classificacao <= 1000
                 
                 If classificacao(linha_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Value Then
                     processamentoImportacao(contador, 1) = classificacao(linha_classificacao - 1, 3)
@@ -326,13 +352,17 @@ Private Sub btnImportarDados_Click()
     
     Worksheets(mes_processamento).Activate
     
-    contador = 1
+    contador = 2
     linha = 5
     
-    Do While processamentoImportacao(contador, 2) <> ""
+    Do While contador <= CInt(txtLinhaFinal.Text)
               
         Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 1)
-        Range(txtDiaDestino.Text + CStr(linha)).Value = CInt(Mid(processamentoImportacao(contador, 2), 1, 2))
+        If processamentoImportacao(contador, 2) = "" Then
+            Range(txtDiaDestino.Text + CStr(linha)).Value = ""
+        Else
+            Range(txtDiaDestino.Text + CStr(linha)).Value = Mid(processamentoImportacao(contador, 2), 1, 2)
+        End If
         Range(txtDocRefDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 3)
         Range(txtInstFinDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 4)
         If processamentoImportacao(contador, 5) = "" Then
@@ -352,6 +382,13 @@ Private Sub btnImportarDados_Click()
     frmImportarPlanilhaComParametro.Hide
     
     MsgBox "Importação realizada com sucesso!", vbInformation, "Processamento de Recebimentos"
+    
+Erro:
+
+    MsgBox "Não foi localizado um erro no processamento de dados. Favor observar os seguintes itens: " & Chr(13) & Chr(13) & _
+    "-> Verifique se o nome do arquivo está correto." & Chr(13) & _
+    "-> Verifique se a coluna de origem é a correta para transferir os dados." & Chr(13) & _
+    "-> Verifique se a coluna de destino é a correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
     
 End Sub
 
@@ -408,10 +445,15 @@ Private Sub cmdRetiraPalavraExistente_Click()
 
 End Sub
 
+Private Sub lblLinhaInicial_Click()
+
+End Sub
+
 Private Sub lstClassificacao_Click()
 
     itemListaClassificacao = lstClassificacao.ListIndex
-    txtCodigoClassificacaoOrigem = lstClassificacao.List(itemListaClassificacao, 0)
+    txtCodigoClassificacaoOrigem.Text = lstClassificacao.List(itemListaClassificacao, 0)
+    txtPalavra.Text = lstClassificacao.List(itemListaClassificacao, 0)
     
 End Sub
 
@@ -510,3 +552,4 @@ Private Sub optClassificacaoReceita_Click()
     cmbListaDescricaoClassificacao.List = descricaoClassificacao
    
 End Sub
+

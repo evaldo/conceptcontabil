@@ -183,17 +183,20 @@ Sub processa_recebimento_caixa()
                            
                                             Range("I" + CStr(linha_planilha_mes_processmento)).Value = valor_recebimento_anterior
                                             Range("L" + CStr(linha_planilha_mes_processmento)).Value = "Sim"
-                                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Realizado"
+                                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Não Pago"
                                                                                                     
                                         Else
                                         
                                             valor_recebimento_anterior = valor_recebimento_anterior - Range("I" + CStr(linha_planilha_posterior)).Value
                                             
+                                            Range("L" + CStr(linha_planilha_posterior)).Value = "Sim"
+                                            Range("K" + CStr(linha_planilha_posterior)).Value = "Realizado"
+                                            
                                             Sheets(mes(flag_mes_processamento)).Select
                            
                                             Range("I" + CStr(linha_planilha_mes_processmento)).Value = valor_recebimento_anterior
                                             Range("L" + CStr(linha_planilha_mes_processmento)).Value = "Sim"
-                                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Realizado"
+                                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Não Pago"
                                         End If
                                             
                                         If valor_recebimento_anterior < 0 Then
