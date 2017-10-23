@@ -43,7 +43,7 @@ End Sub
 
 Sub processa_recebimento_caixa()
 
-'On Error GoTo Erro
+On Error GoTo Erro
 
     Dim plano_conta As String
     Dim mes(1 To 12) As String
@@ -203,9 +203,11 @@ Sub processa_recebimento_caixa()
     
     MsgBox "Processamento Realizado com sucesso.", vbInformation, "Processamento de Recebimentos"
     
-'Erro:
+    Exit Sub
+    
+Erro:
 
-'    MsgBox "Erro ao processar o recebimento.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+    MsgBox "Erro ao processar o recebimento.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
     
 End Sub
 

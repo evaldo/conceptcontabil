@@ -21,6 +21,8 @@ Dim descricaoClassificacao(1 To 20, 1 To 3) As String
 
 Private Sub btnAtualizaClassificacao_Click()
 
+On Error GoTo Erro
+
     lstClassificacao.List(itemListaClassificacao, 1) = cmbClassificacao.Text
     
     mes_processamento = ActiveSheet.Name
@@ -51,6 +53,12 @@ Private Sub btnAtualizaClassificacao_Click()
     Loop
     
     Worksheets(mes_processamento).Activate
+    
+    Exit Sub
+    
+Erro:
+
+    MsgBox "Erro ao atualizar os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
 
 End Sub
 
@@ -236,12 +244,14 @@ On Error GoTo Erro
             
     End If
     
+    Exit Sub
+    
 Erro:
 
-    MsgBox "Não foi localizado um erro no processamento de dados. Favor observar os seguintes itens: " & Chr(13) & Chr(13) & _
+    MsgBox "Foi localizado um erro no processamento de dados. Favor observar os seguintes itens: " & Chr(13) & Chr(13) & _
     "-> Verifique se o nome do arquivo está correto." & Chr(13) & _
-    "-> Verifique se a coluna de origem é a correta para transferir os dados." & Chr(13) & _
-    "-> Verifique se a coluna de destino é a correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+    "-> Verifique se a coluna de origem está correta para transferir os dados." & Chr(13) & _
+    "-> Verifique se a coluna de destino está correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
     
 End Sub
 
@@ -252,7 +262,7 @@ Private Sub btnFechar_Click()
 End Sub
 
 Private Sub btnImportarDados_Click()
-On Error GoTo Error
+On Error GoTo Erro
 
     Dim dia As String
     Dim docref As String
@@ -383,12 +393,14 @@ On Error GoTo Error
     
     MsgBox "Importação realizada com sucesso!", vbInformation, "Processamento de Recebimentos"
     
+    Exit Sub
+    
 Erro:
 
-    MsgBox "Não foi localizado um erro no processamento de dados. Favor observar os seguintes itens: " & Chr(13) & Chr(13) & _
+    MsgBox "Foi localizado um erro no processamento de dados. Favor observar os seguintes itens: " & Chr(13) & Chr(13) & _
     "-> Verifique se o nome do arquivo está correto." & Chr(13) & _
-    "-> Verifique se a coluna de origem é a correta para transferir os dados." & Chr(13) & _
-    "-> Verifique se a coluna de destino é a correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+    "-> Verifique se a coluna de origem está correta para transferir os dados." & Chr(13) & _
+    "-> Verifique se a coluna de destino está correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
     
 End Sub
 
