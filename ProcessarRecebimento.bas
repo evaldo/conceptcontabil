@@ -42,7 +42,9 @@ On Error Resume Next
 End Sub
 
 Sub processa_recebimento_caixa()
-    
+
+'On Error GoTo Erro
+
     Dim plano_conta As String
     Dim mes(1 To 12) As String
     Dim celula_planilha_atual As String
@@ -53,22 +55,18 @@ Sub processa_recebimento_caixa()
     Dim plano_contas As String
     Dim mes_processamento_anterior As String
     Dim plano_contas_anterior As String
+    Dim mes_baixa As String
     
-    Dim valor_recebimento_anterior As Double
     Dim valor_recebimento As Double
             
     Dim linha_planilha As Integer
-    Dim linha_planilha_posterior As Integer
     Dim conta_mes As Integer
     Dim flag_mes_processamento As Integer
     Dim linha_planilha_mes_processmento As Integer
-    Dim linha_planilha_recebimento As Integer
     Dim contador As Integer
     Dim linha_log_processamento As Integer
-    Dim conta_mes_posterior As Integer
-            
+                
     Dim bol_processar_classificacao As Boolean
-    Dim bol_valor_processado As Boolean
         
     Dim percentual As Single
                         
@@ -103,6 +101,8 @@ Sub processa_recebimento_caixa()
         instituicao_finaceira = Range("H" + CStr(linha_planilha_mes_processmento)).Value
         classificacao = Range("E" + CStr(linha_planilha_mes_processmento)).Value
         plano_contas = Range("G" + CStr(linha_planilha_mes_processmento)).Value
+        valor_recebimento = Range("J" + CStr(linha_planilha_mes_processmento)).Value
+        mes_baixa = Range("I" + CStr(linha_planilha_mes_processmento)).Value
         
         bol_processar_classificacao = False
                 
@@ -113,134 +113,80 @@ Sub processa_recebimento_caixa()
            
            Do While Range("D" + CStr(linha_planilha_recebimento)).Value <> ""
            
-            If Range("D" + CStr(linha_planilha_recebimento)).Value = plano_contas And _
-              (Not IsEmpty(Range("E" + CStr(linha_planilha_recebimento)).Value) _
-              Or Range("E" + CStr(linha_planilha_recebimento)).Value = "-") Then
-                bol_processar_classificacao = True
-                Exit Do
-            End If
-            
-            linha_planilha_recebimento = linha_planilha_recebimento + 1
+                If Range("D" + CStr(linha_planilha_recebimento)).Value = plano_contas And _
+                  (Not IsEmpty(Range("E" + CStr(linha_planilha_recebimento)).Value) _
+                  Or Range("E" + CStr(linha_planilha_recebimento)).Value = "-") Then
+                    bol_processar_classificacao = True
+                    Exit Do
+                End If
+                 
+                linha_planilha_recebimento = linha_planilha_recebimento + 1
             
            Loop
            
         End If
-       
-        bol_valor_processado = False
-               
+        
         If bol_processar_classificacao = True Then
         
-            For conta_mes = 1 To 12
-                
-                If conta_mes > flag_mes_processamento Then Exit For
+            For conta_mes = 1 To flag_mes_processamento - 1
+               
+                If mes(conta_mes) = mes_baixa Then
                         
-                Sheets(mes(conta_mes)).Select
-                percentual = conta_mes / flag_mes_processamento
-                frmBarraProgressao.AtualizaBarra percentual, mes(conta_mes)
-                               
-                Do While Range("E" + CStr(linha_planilha)).Value <> ""
+                    Sheets(mes(conta_mes)).Select
                     
-                    mes_processamento_anterior = ""
-                    plano_contas_anterior = ""
-                    valor_recebimento_anterior = 0
-                    valor_recebimento = 0
-                    
-                    If Range("E" + CStr(linha_planilha)).Value = classificacao _
-                       And Range("H" + CStr(linha_planilha)).Value = instituicao_finaceira _
-                       And Range("F" + CStr(linha_planilha)).Value = doc_ref _
-                       And Range("G" + CStr(linha_planilha)).Value = plano_contas _
-                       And Range("K" + CStr(linha_planilha)).Value = "Pago" _
-                       Then
-                                                   
-                            mes_processamento_anterior = mes(conta_mes)
-                            plano_contas_anterior = Range("G" + CStr(linha_planilha)).Value
-                            valor_recebimento_anterior = Range("I" + CStr(linha_planilha)).Value
-                            valor_recebimento = Range("I" + CStr(linha_planilha)).Value
-                            
-                            linha_planilha_posterior = 5
-                            
-                            For conta_mes_posterior = conta_mes + 1 To flag_mes_processamento
+                    percentual = conta_mes / flag_mes_processamento
+                    frmBarraProgressao.AtualizaBarra percentual, mes(conta_mes)
+                                   
+                    Do While Range("E" + CStr(linha_planilha)).Value <> ""
+                        
+                        If Range("E" + CStr(linha_planilha)).Value = classificacao _
+                           And Range("H" + CStr(linha_planilha)).Value = instituicao_finaceira _
+                           And Range("F" + CStr(linha_planilha)).Value = doc_ref _
+                           And Range("G" + CStr(linha_planilha)).Value = plano_contas _
+                           Then
                                 
-                                If valor_recebimento_anterior <= 0 Then Exit For
+                                Range("J" + CStr(linha_planilha)).Value = Range("J" + CStr(linha_planilha)).Value - valor_recebimento
+                                Range("L" + CStr(linha_planilha)).Value = "Realizado"
+                                Range("M" + CStr(linha_planilha)).Value = "Sim"
                                 
-                                Sheets(mes(conta_mes_posterior)).Select
-                            
-                                Do While Range("E" + CStr(linha_planilha_posterior)).Value <> ""
-                                       
-                                    If valor_recebimento_anterior <= 0 Then Exit Do
-                                       
-                                    If Range("E" + CStr(linha_planilha_posterior)).Value = classificacao _
-                                        And Range("H" + CStr(linha_planilha_posterior)).Value = instituicao_finaceira _
-                                        And Range("F" + CStr(linha_planilha_posterior)).Value = doc_ref _
-                                        And Range("G" + CStr(linha_planilha_posterior)).Value = plano_contas _
-                                        And Range("K" + CStr(linha_planilha_posterior)).Value = "Pago" _
-                                    Then
-                                               
-                                        If valor_recebimento_anterior = Range("I" + CStr(linha_planilha_posterior)).Value Then
-                                            valor_recebimento_anterior = 0
-                                                                                       
-                                            Sheets(mes(flag_mes_processamento)).Select
-                           
-                                            Range("I" + CStr(linha_planilha_mes_processmento)).Value = valor_recebimento_anterior
-                                            Range("L" + CStr(linha_planilha_mes_processmento)).Value = "Sim"
-                                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Não Pago"
-                                                                                                    
-                                        Else
-                                        
-                                            valor_recebimento_anterior = valor_recebimento_anterior - Range("I" + CStr(linha_planilha_posterior)).Value
-                                            
-                                            Range("L" + CStr(linha_planilha_posterior)).Value = "Sim"
-                                            Range("K" + CStr(linha_planilha_posterior)).Value = "Realizado"
-                                            
-                                            Sheets(mes(flag_mes_processamento)).Select
-                           
-                                            Range("I" + CStr(linha_planilha_mes_processmento)).Value = valor_recebimento_anterior
-                                            Range("L" + CStr(linha_planilha_mes_processmento)).Value = "Sim"
-                                            Range("K" + CStr(linha_planilha_mes_processmento)).Value = "Não Pago"
-                                        End If
-                                            
-                                        If valor_recebimento_anterior < 0 Then
-                                        
-                                            Sheets("Log de Proc Recebimentos").Select
-                                            
-                                            linha_log_processamento = 5
-                                            
-                                            Do While linha_log_processamento < 1000
-                                                
-                                                If Range("C" + CStr(linha_log_processamento)).Value = "" Then
-                                                
-                                                    Range("D" + CStr(linha_log_processamento)).Value = mes_processamento_anterior
-                                                    Range("E" + CStr(linha_log_processamento)).Value = plano_contas_anterior
-                                                    Range("F" + CStr(linha_log_processamento)).Value = valor_recebimento
-                                                    Range("G" + CStr(linha_log_processamento)).Value = valor_recebimento_anterior
-                                                    Range("H" + CStr(linha_log_processamento)).Value = Date
-                                                    Range("I" + CStr(linha_log_processamento)).Value = Time
-                                                    Range("J" + CStr(linha_log_processamento)).Value = "Processamento de valor a ser recebido em próximo processamento."
-                                                    
-                                                    Exit Do
-                                                    
-                                                End If
-                                                
-                                                linha_log_processamento = linha_log_processamento + 1
-                                                
-                                            Loop
-                                      
-                                        End If
-                                        
-                                    End If
+                                If Range("J" + CStr(linha_planilha)).Value < 0 Then
+                                
+                                    valor_recebimento = Range("J" + CStr(linha_planilha)).Value
                                     
-                                    linha_planilha_posterior = linha_planilha_posterior + 1
+                                    Sheets("Log de Proc Recebimentos").Select
                                     
-                                Loop
-                             
-                            Next conta_mes_posterior
-                            
-                    End If
-                
-                    linha_planilha = linha_planilha + 1
+                                    linha_log_processamento = 5
+                                    
+                                    Do While linha_log_processamento <= 1000
+                                    
+                                        If Range("D" + CStr(linha_log_processamento)).Value = "" Then
+                                        
+                                            Range("D" + CStr(linha_log_processamento)).Value = mes_baixa
+                                            Range("E" + CStr(linha_log_processamento)).Value = plano_contas
+                                            Range("F" + CStr(linha_log_processamento)).Value = mes_baixa
+                                            Range("G" + CStr(linha_log_processamento)).Value = valor_recebimento
+                                            Range("H" + CStr(linha_log_processamento)).Value = Date
+                                            Range("I" + CStr(linha_log_processamento)).Value = Time
+                                            Range("J" + CStr(linha_log_processamento)).Value = "Processamento realizado no mês " + mes_baixa + ". Com valor negativo: " + CStr(valor_recebimento)
+                                            
+                                            Exit Do
+                                            
+                                        End If
+                                                                            
+                                        linha_log_processamento = linha_log_processamento + 1
+                                    
+                                    Loop
+                                    
+                                End If
+                                
+                        End If
                     
-                Loop
-                
+                        linha_planilha = linha_planilha + 1
+                        
+                    Loop
+                    
+                End If
+                    
                 linha_planilha = 5
                 Range("E" + CStr(linha_planilha)).Select
                 
@@ -256,6 +202,10 @@ Sub processa_recebimento_caixa()
     frmBarraProgressao.Hide
     
     MsgBox "Processamento Realizado com sucesso.", vbInformation, "Processamento de Recebimentos"
+    
+'Erro:
+
+'    MsgBox "Erro ao processar o recebimento.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
     
 End Sub
 
