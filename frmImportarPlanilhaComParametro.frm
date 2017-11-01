@@ -405,6 +405,46 @@ Erro:
 End Sub
 
 
+Private Sub btnSalvaClassificacao_Click()
+
+    Dim linha As Integer
+    Dim contador As Integer
+    
+    mes_processamento = ActiveSheet.Name
+    
+    Worksheets("Configurações Básicas").Activate
+    
+    Range("G5").Select
+    linha = 5
+    contador = 2
+    
+    Do While contador <= lstClassificacao.ListCount - 1
+        
+        Range("G" + CStr(linha)).Value = ""
+        Range("H" + CStr(linha)).Value = ""
+        Range("I" + CStr(linha)).Value = ""
+        
+        linha = linha + 1
+        contador = contador + 1
+        
+    Loop
+    
+    Range("G5").Select
+    linha = 5
+    
+    Do While contador <= lstClassificacao.ListCount - 1
+        
+        Range("G" + CStr(linha)).Value = classificacao(contador, 1)
+        Range("H" + CStr(linha)).Value = classificacao(contador, 2)
+        Range("I" + CStr(linha)).Value = classificacao(contador, 3)
+        
+        linha = linha + 1
+        contador = contador + 1
+        
+    Loop
+
+End Sub
+
 Private Sub cmbListaDescricaoClassificacao_Click()
 
     Dim linha As Integer
@@ -457,9 +497,7 @@ Private Sub cmdRetiraPalavraExistente_Click()
 
 End Sub
 
-Private Sub lblLinhaInicial_Click()
 
-End Sub
 
 Private Sub lstClassificacao_Click()
 
