@@ -90,18 +90,23 @@ On Error GoTo Erro
     
     Dim mes_processamento As String
     
-    mes_processamento = ActiveSheet.Name
-    Worksheets("Configurações Básicas").Activate
+    If MsgBox("Deseja refazer os parâmetros de dados para importação?", vbYesNo, "Carga de Dados para Importação") = vbNo Then
     
-    If Range("E6").Value = "Sim" Then
-    
-        Worksheets(mes_processamento).Activate
-        Call fazLeituraDadosImportacao
-                
-        Exit Sub
+        mes_processamento = ActiveSheet.Name
+        Worksheets("Configurações Básicas").Activate
+        
+        If Range("E6").Value = "Sim" Then
+        
+            Worksheets(mes_processamento).Activate
+            Call fazLeituraDadosImportacao
+                    
+            Exit Sub
+            
+        End If
         
     End If
     
+    mes_processamento = ActiveSheet.Name
     Worksheets(mes_processamento).Activate
     
     For i = 0 To 1000
@@ -489,7 +494,7 @@ On Error GoTo Erro
     
         Range("G5").Select
         linha = 5
-        contador = 2
+        contador = 1
         
         Do While contador <= 1000
             
@@ -525,7 +530,7 @@ On Error GoTo Erro
         
         Range("G5").Select
         linha = 5
-        contador = 2
+        contador = 1
         contadorPalavra = 0
         
         bol_encontrou_palavra = False
@@ -576,9 +581,9 @@ On Error GoTo Erro
         Range("S5").Value = txtValorOrigem.Text
         
         linha = 5
-        contador = 1
+        contador = 0
         
-        Do While linha <= lstPalavraExistente.ListCount - 1
+        Do While contador <= lstPalavraExistente.ListCount - 1
             
             Range("O" + CStr(linha)).Value = lstPalavraExistente.List(contador, 0)
                         
@@ -656,6 +661,7 @@ Private Sub cmbListaDescricaoClassificacao_Click()
     Dim linha As Integer
     
     cmbClassificacao.Clear
+    txtDescricaoClassificacao.Text = ""
     
     mes_processamento = ActiveSheet.Name
     linha = 5
