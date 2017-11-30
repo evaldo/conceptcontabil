@@ -146,7 +146,7 @@ On Error GoTo Erro
                            Then
                                 
                                 Range("J" + CStr(linha_planilha)).Value = Range("J" + CStr(linha_planilha)).Value - valor_recebimento
-                                Range("L" + CStr(linha_planilha)).Value = "Realizado"
+                                Range("L" + CStr(linha_planilha)).Value = "Não Pago"
                                 Range("M" + CStr(linha_planilha)).Value = "Sim"
                                 
                                 If Range("J" + CStr(linha_planilha)).Value < 0 Then
