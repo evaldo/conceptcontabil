@@ -388,9 +388,9 @@ On Error GoTo Erro
                     processamentoImportacao(contador, 5) = Range(txtInstFinOrigem.Text + CStr(linha)).Value
                     
                     If Range(txtValorOrigem.Text + CStr(linha)).Value = "" Or Not IsNumeric(Range(txtValorOrigem.Text + CStr(linha)).Value) Then
-                        processamentoImportacao(contador, 6) = CDbl(0)
+                        processamentoImportacao(contador, 6) = 0
                     Else
-                        processamentoImportacao(contador, 6) = CDbl(Range(txtValorOrigem.Text + CStr(linha)).Value)
+                        processamentoImportacao(contador, 6) = Range(txtValorOrigem.Text + CStr(linha)).Value
                     End If
                     
                     processamentoImportacao(contador, 7) = classificacao(linha_classificacao, 5)
@@ -427,12 +427,12 @@ On Error GoTo Erro
         Range(txtInstFinDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 5)
         
         If processamentoImportacao(contador, 7) = "D" Then
-            Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = processamentoImportacao(contador, 6)
-            Range(txtValorDestinoReceita.Text + CStr(linha)).Value = ""
+            Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(Trim(processamentoImportacao(contador, 6)))
+            Range(txtValorDestinoReceita.Text + CStr(linha)).Value = 0
             Range("L" + CStr(linha)).Value = "Pago"
         Else
-            Range(txtValorDestinoReceita.Text + CStr(linha)).Value = processamentoImportacao(contador, 6)
-            Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = ""
+            Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(Trim(processamentoImportacao(contador, 6)))
+            Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = 0
             Range("L" + CStr(linha)).Value = "Realizado"
         End If
         
