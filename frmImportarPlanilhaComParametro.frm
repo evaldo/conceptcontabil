@@ -84,10 +84,14 @@ On Error GoTo Erro
     Dim i_armazenada As Integer
     Dim linha As Integer
     Dim contadorPalavra As Integer
+    Dim contador_classifcacao As Integer
+    Dim linha_classificacao As Integer
             
     Dim bol_ja_existe_classificacao As Boolean
     Dim bol_encontrou_palavra As Boolean
+    Dim encontrou_classificacao As Boolean
     
+    Dim classificacao_importada(1 To 10000) As String
     Dim mes_processamento As String
     
     If MsgBox("Deseja refazer os parâmetros de dados para importação?", vbYesNo, "Carga de Dados para Importação") = vbNo Then
@@ -99,6 +103,7 @@ On Error GoTo Erro
         
             Worksheets(mes_processamento).Activate
             Call fazLeituraDadosImportacao
+            Worksheets(mes_processamento).Activate
                     
             Exit Sub
             
@@ -427,11 +432,11 @@ On Error GoTo Erro
         Range(txtInstFinDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 5)
         
         If processamentoImportacao(contador, 7) = "D" Then
-            Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(Trim(processamentoImportacao(contador, 6)))
+            Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
             Range(txtValorDestinoReceita.Text + CStr(linha)).Value = 0
             Range("L" + CStr(linha)).Value = "Pago"
         Else
-            Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(Trim(processamentoImportacao(contador, 6)))
+            Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
             Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = 0
             Range("L" + CStr(linha)).Value = "Realizado"
         End If
@@ -463,10 +468,11 @@ On Error GoTo Erro
 
     Dim linha As Integer
     Dim contador As Integer
-    Dim bol_encontrou_palavra As Boolean
     Dim contadorPalavra As Integer
-    Dim salvarImportacao As Boolean
     
+    Dim bol_encontrou_palavra As Boolean
+    Dim salvarImportacao As Boolean
+        
     If MsgBox("Deseja salvar importação?", vbYesNo, "Salvar Importação") = vbYes Then
         salvarImportacao = True
     Else
@@ -515,7 +521,6 @@ On Error GoTo Erro
         Do While linha <= 1000
             
             Range("O" + CStr(linha)).Value = ""
-                        
             linha = linha + 1
             
         Loop
@@ -530,6 +535,7 @@ On Error GoTo Erro
         Range("S5").Value = ""
         
         Range("G5").Select
+        
         linha = 5
         contador = 1
         contadorPalavra = 0
@@ -557,7 +563,7 @@ On Error GoTo Erro
             Loop
             
             If bol_encontrou_palavra = False Then
-                    
+                           
                 Range("G" + CStr(linha)).Value = classificacao(contador, 1)
                 Range("H" + CStr(linha)).Value = classificacao(contador, 4)
                 Range("I" + CStr(linha)).Value = classificacao(contador, 2)
@@ -836,6 +842,12 @@ Sub fazLeituraDadosImportacao()
 
     Dim linha As Integer
     Dim contador As Integer
+    Dim contador_comparacao As Integer
+    Dim contador_classificacao As Integer
+    Dim contadorPalavra As Integer
+    
+    Dim encontrou_classificacao As Boolean
+    Dim bol_encontrou_palavra As Boolean
     
     mes_processamento = ActiveSheet.Name
     
@@ -856,7 +868,19 @@ Sub fazLeituraDadosImportacao()
 
     Worksheets("Configurações Básicas").Activate
     
-    txtCaminhoPlanilha.Text = Range("K5").Value
+    If txtCaminhoPlanilha.Text = "" Then
+        MsgBox "Favor selecionar o arquivo a ser importado!", vbOKOnly, "Carga de Dados para Importação"
+        Exit Sub
+    End If
+    
+    If Range("K5").Value <> txtCaminhoPlanilha.Text Then
+        If MsgBox("O arquivo de origem é diferente do cenário atual. Deseja aceitar os dados do arquivo selecionado?", vbYesNo, "Carga de Dados para Importação") = vbYes Then
+            txtCaminhoPlanilha.Text = txtCaminhoPlanilha.Text
+        Else
+            txtCaminhoPlanilha.Text = Range("K5").Value
+        End If
+    End If
+    
     txtLinhaInicial.Text = Range("L5").Value
     txtLinhaFinal.Text = Range("M5").Value
     txtColunaClassificacao.Text = Range("N5").Value
@@ -895,10 +919,78 @@ Sub fazLeituraDadosImportacao()
     
     Loop
     
+    Set WB1 = Workbooks.Open(txtCaminhoPlanilha.Text)
+    
+    linha = CInt(txtLinhaInicial.Text)
+    contador_classificacao = contador
+    contador = 1
+    contador_comparacao = 1
+        
+    encontrou_classificacao = True
+                            
+    Do While contador <= 1000
+        
+        Do While contador_comparacao <= 1000
+            
+            If classificacao(contador_comparacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
+                encontrou_classificacao = True
+                Exit Do
+            End If
+            
+            contador_comparacao = contador_comparacao + 1
+            
+        Loop
+        
+        contador_comparacao = 1
+        contadorPalavra = 0
+        
+        If encontrou_classificacao = False Then
+        
+            bol_encontrou_palavra = False
+                
+            Do While contadorPalavra <= lstPalavraExistente.ListCount - 1
+    
+                If Range(txtColunaClassificacao.Text + CStr(linha)).Text = lstPalavraExistente.List(contadorPalavra) Then
+                
+                    bol_encontrou_palavra = True
+                    Exit Do
+                
+                End If
+                
+                contadorPalavra = contadorPalavra + 1
+                
+            Loop
+            
+            contadorPalavra = 1
+            
+            If bol_encontrou_palavra = False Then
+            
+                classificacao(contador_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text
+                classificacao(contador_classificacao, 2) = ""
+                classificacao(contador_classificacao, 3) = ""
+                classificacao(contador_classificacao, 4) = ""
+                classificacao(contador_classificacao, 5) = ""
+                
+                contador_classificacao = contador_classificacao + 1
+                
+            End If
+                        
+        End If
+        
+        encontrou_classificacao = False
+        
+        contador = contador + 1
+        linha = linha + 1
+        
+    Loop
+    
+    WB1.Close
+    
     lstClassificacao.List = classificacao
     
-    Range("D5").Select
     Worksheets(mes_processamento).Activate
+    Range("D5").Select
+    
     
 End Sub
 
