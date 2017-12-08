@@ -424,24 +424,29 @@ On Error GoTo Erro
     linha = 5
     
     Do While contador <= CInt(txtLinhaFinal.Text)
-             
-        Range(txtDiaDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 1)
-        Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 4)
-        Range(txtDocRefDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 3)
-        Range(txtColunaDescricaoClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 2)
-        Range(txtInstFinDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 5)
-        
-        If processamentoImportacao(contador, 7) = "D" Then
-            Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
-            Range(txtValorDestinoReceita.Text + CStr(linha)).Value = 0
-            Range("L" + CStr(linha)).Value = "Pago"
-        Else
-            Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
-            Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = 0
-            Range("L" + CStr(linha)).Value = "Realizado"
+          
+        If processamentoImportacao(contador, 1) <> "" Then
+          
+            Range(txtDiaDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 1)
+            Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 4)
+            Range(txtDocRefDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 3)
+            Range(txtColunaDescricaoClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 2)
+            Range(txtInstFinDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 5)
+            
+            If processamentoImportacao(contador, 7) = "D" Then
+                Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
+                Range(txtValorDestinoReceita.Text + CStr(linha)).Value = 0
+                Range("L" + CStr(linha)).Value = "Pago"
+            Else
+                Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
+                Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = 0
+                Range("L" + CStr(linha)).Value = "Realizado"
+            End If
+            
+            linha = linha + 1
+            
         End If
-        
-        linha = linha + 1
+            
         contador = contador + 1
                    
     Loop
