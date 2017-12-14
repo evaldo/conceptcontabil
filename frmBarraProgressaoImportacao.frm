@@ -17,9 +17,15 @@ Attribute VB_Exposed = False
 Private Sub UserForm_Activate()
 
     lblProgresso.Width = 0
-    Call frmImportarPlanilhaComParametro.SalvarImportacao
-    lblProgresso.Width = 0
-    Call frmImportarPlanilhaComParametro.ProcessaImportacao
+    If frmImportarPlanilhaComParametro.bolSalvarImportacao = True Then
+        Call frmImportarPlanilhaComParametro.SalvarImportacao
+    Else
+        Call frmImportarPlanilhaComParametro.SalvarImportacao
+        lblProgresso.Width = 0
+        If frmImportarPlanilhaComParametro.erroAtualizaCenario = False Then
+            Call frmImportarPlanilhaComParametro.ProcessaImportacao
+        End If
+    End If
     
 End Sub
 

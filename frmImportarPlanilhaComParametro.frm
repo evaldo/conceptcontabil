@@ -18,6 +18,8 @@ Dim mes_processamento  As String
 Dim WB1 As Workbook
 Dim classificacao(0 To 1000, 1 To 5) As String
 Dim descricaoClassificacao(1 To 20, 1 To 3) As String
+Public erroAtualizaCenario As Boolean
+Public bolSalvarImportacao As Boolean
 
 Private Sub btnAtualizaClassificacao_Click()
 
@@ -311,11 +313,16 @@ Private Sub btnFechar_Click()
 End Sub
 
 Private Sub btnImportarDados_Click()
-
-    frmBarraProgressaoImportacao.Show
+    
+    erroAtualizaCenario = False
+    
+    If MsgBox("Os dados de cenário e da planilha serão carregados. Deseja atualizar os dados?", vbYesNo, "Atualização o Cenário Carga de Dados para Importação") = vbYes Then
+        frmBarraProgressaoImportacao.Show
+    Else
+        Exit Sub
+    End If
     
 End Sub
-
 
 Private Sub cmbClassificacao_Click()
         
@@ -427,6 +434,14 @@ Private Sub cmdRetiraPalavraExistente_Click()
             lstPalavraExistente.RemoveItem (lstPalavraExistente.ListIndex)
         End If
     Next i
+
+End Sub
+
+Private Sub cmdSalvarCenario_Click()
+    
+    bolSalvarImportacao = True
+    frmBarraProgressaoImportacao.Show
+    bolSalvarImportacao = False
 
 End Sub
 
@@ -866,7 +881,7 @@ Erro:
     "-> Verifique se a coluna de origem está correta para transferir os dados." & Chr(13) & _
     "-> Verifique se a coluna de destino está correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
     
-    frmImportarPlanilhaComParametro.Hide
+    frmBarraProgressaoImportacao.Hide
     
 End Sub
 Public Sub SalvarImportacao()
@@ -892,6 +907,10 @@ On Error GoTo Erro
         
         MsgBox "Os dados sobre o caminho do arquivo, valor de linha inicial, valor de linha final, coluna de origem da classificação, " & Chr(13) & _
                 "coluna de origem do documento de referência e coluna de origem de valor, devem estar preenchidos.", vbInformation, "Gravação dos Dados de Importação"
+        
+        frmBarraProgressaoImportacao.Hide
+        
+        erroAtualizaCenario = True
                 
         Exit Sub
         
@@ -1022,6 +1041,10 @@ On Error GoTo Erro
         
         Worksheets(mes_processamento).Activate
         
+        If frmImportarPlanilhaComParametro.bolSalvarImportacao = True Then
+            frmBarraProgressaoImportacao.Hide
+        End If
+        
         'MsgBox "Gravação dos dados realizada com sucesso!", vbInformation, "Importação de Dados"
         
     Else
@@ -1035,6 +1058,9 @@ On Error GoTo Erro
 Erro:
 
     MsgBox "Erro salvar os dados.", vbOKOnly + vbInformation, "Erro ao Salvar os Dados de Importação"
+    
+    frmImportarPlanilhaComParametro.erroAtualizaCenario = True
+    
     frmBarraProgressaoImportacao.Hide
     
 End Sub
