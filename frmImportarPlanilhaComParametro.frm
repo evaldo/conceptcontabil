@@ -198,6 +198,7 @@ On Error GoTo Erro
                 
                 lstClassificacao.List = classificacao
                 
+                WB1.Save
                 WB1.Close
                 
                 cmbListaDescricaoClassificacao.Clear
@@ -310,319 +311,11 @@ Private Sub btnFechar_Click()
 End Sub
 
 Private Sub btnImportarDados_Click()
-On Error GoTo Erro
 
-    Dim dia As String
-    Dim docref As String
-    Dim instfin As String
-    Dim valor As String
-    Dim status As String
-    
-    Dim linha As Integer
-    Dim contador As Integer
-    Dim linha_classificacao As Integer
-    Dim contadorPalavra As Integer
-        
-    Dim processamentoImportacao(1 To 1000, 1 To 8) As String
-    
-    Dim bol_encontrou_palavra As Boolean
-        
-    mes_processamento = ActiveSheet.Name
-    
-    linha = 5
-    
-    Do While linha <= CInt(txtLinhaFinal.Text)
-        
-        Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = ""
-        Range(txtDiaDestino.Text + CStr(linha)).Value = ""
-        Range(txtDocRefDestino.Text + CStr(linha)).Value = ""
-        Range(txtInstFinDestino.Text + CStr(linha)).Value = ""
-        Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(0)
-        Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(0)
-        Range("L" + CStr(linha)).Value = ""
-        Range(txtColunaDescricaoClassificacaoDestino.Text + CStr(linha)).Value = ""
-        
-        linha = linha + 1
-        
-    Loop
-    
-    Set WB1 = Workbooks.Open(txtCaminhoPlanilha.Text)
-     
-    linha = CInt(txtLinhaInicial.Text)
-    contador = 1
-                
-    bol_encontrou_palavra = False
-    contadorPalavra = 0
-    
-    Do While (linha >= CInt(txtLinhaInicial.Text) And linha <= CInt(txtLinhaFinal.Text))
-        
-        bol_encontrou_palavra = False
-        
-        Do While contadorPalavra <= lstPalavraExistente.ListCount - 1
-            
-            If Range(txtColunaContemPalavra + CStr(linha)).Value = lstPalavraExistente.List(contadorPalavra) Then
-            
-                bol_encontrou_palavra = True
-                Exit Do
-            
-            End If
-            
-            contadorPalavra = contadorPalavra + 1
-            
-        Loop
-        
-        contadorPalavra = 0
-        
-        If bol_encontrou_palavra = False Then
-        
-            linha_classificacao = 2
-            
-            Do While linha_classificacao <= 1000
-                
-                If classificacao(linha_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Value Then
-                
-                    If Range(txtDiaOrigem.Text + CStr(linha)).Value = "" Then
-                        processamentoImportacao(contador, 1) = "1"
-                    Else
-                        processamentoImportacao(contador, 1) = Mid(Range(txtDiaOrigem.Text + CStr(linha)).Value, 1, 2)
-                    End If
-                
-                    processamentoImportacao(contador, 2) = classificacao(linha_classificacao, 4)
-                    processamentoImportacao(contador, 3) = Range(txtDocRefOrigem.Text + CStr(linha)).Value
-                    processamentoImportacao(contador, 4) = classificacao(linha_classificacao, 3)
-                    processamentoImportacao(contador, 5) = Range(txtInstFinOrigem.Text + CStr(linha)).Value
-                    
-                    If Range(txtValorOrigem.Text + CStr(linha)).Value = "" Or Not IsNumeric(Range(txtValorOrigem.Text + CStr(linha)).Value) Then
-                        processamentoImportacao(contador, 6) = 0
-                    Else
-                        processamentoImportacao(contador, 6) = Range(txtValorOrigem.Text + CStr(linha)).Value
-                    End If
-                    
-                    processamentoImportacao(contador, 7) = classificacao(linha_classificacao, 5)
-                    
-                    contador = contador + 1
-            
-                    Exit Do
-                    
-                End If
-                
-                linha_classificacao = linha_classificacao + 1
-                
-            Loop
-            
-        End If
-        
-        linha = linha + 1
-                   
-    Loop
-    
-    WB1.Close
-    
-    Worksheets(mes_processamento).Activate
-    
-    contador = 1
-    linha = 5
-    
-    Do While contador <= CInt(txtLinhaFinal.Text)
-          
-        If processamentoImportacao(contador, 1) <> "" Then
-          
-            Range(txtDiaDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 1)
-            Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 4)
-            Range(txtDocRefDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 3)
-            Range(txtColunaDescricaoClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 2)
-            Range(txtInstFinDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 5)
-            
-            If processamentoImportacao(contador, 7) = "D" Then
-                Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
-                Range(txtValorDestinoReceita.Text + CStr(linha)).Value = 0
-                Range("L" + CStr(linha)).Value = "Pago"
-            Else
-                Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
-                Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = 0
-                Range("L" + CStr(linha)).Value = "Realizado"
-            End If
-            
-            linha = linha + 1
-            
-        End If
-            
-        contador = contador + 1
-                   
-    Loop
-        
-    Range("C5").Select
-    frmImportarPlanilhaComParametro.Hide
-    
-    MsgBox "Importação realizada com sucesso!", vbInformation, "Processamento de Recebimentos"
-    
-    Exit Sub
-    
-Erro:
-
-    MsgBox "Foi localizado um erro no processamento de dados. Favor observar os seguintes itens: " & Chr(13) & Chr(13) & _
-    "-> Verifique se o nome do arquivo está correto." & Chr(13) & _
-    "-> Verifique se a coluna de origem está correta para transferir os dados." & Chr(13) & _
-    "-> Verifique se a coluna de destino está correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+    frmBarraProgressaoImportacao.Show
     
 End Sub
 
-Private Sub btnSalvarImportacao_Click()
-
-On Error GoTo Erro
-
-    Dim linha As Integer
-    Dim contador As Integer
-    Dim contadorPalavra As Integer
-    
-    Dim bol_encontrou_palavra As Boolean
-    Dim salvarImportacao As Boolean
-        
-    If MsgBox("Deseja salvar importação?", vbYesNo, "Salvar Importação") = vbYes Then
-        salvarImportacao = True
-    Else
-        salvarImportacao = False
-    End If
-    
-    If txtCaminhoPlanilha.Text = "" Or txtLinhaInicial.Text = "" Or txtLinhaFinal.Text = "" Or txtColunaClassificacao.Text = "" _
-        Or txtDiaOrigem.Text = "" Or txtDocRefOrigem.Text = "" Or txtInstFinOrigem.Text = "" Or _
-        txtValorOrigem.Text = "" Then
-        
-        MsgBox "Os dados sobre o caminho do arquivo, valor de linha inicial, valor de linha final, coluna de origem da classificação, " & Chr(13) & _
-                "coluna de origem do documento de referência e coluna de origem de valor, devem estar preenchidos.", vbInformation, "Gravação dos Dados de Importação"
-        
-        Exit Sub
-        
-    End If
-    
-    mes_processamento = ActiveSheet.Name
-    
-    Worksheets("Configurações Básicas").Activate
-    
-    Range("E6").Select
-    Range("E6").Value = IIf(salvarImportacao = True, "Sim", "Não")
-    
-    If salvarImportacao = True Then
-    
-        Range("G5").Select
-        linha = 5
-        contador = 1
-        
-        Do While contador <= 1000
-            
-            Range("G" + CStr(linha)).Value = ""
-            Range("H" + CStr(linha)).Value = ""
-            Range("I" + CStr(linha)).Value = ""
-            Range("J" + CStr(linha)).Value = ""
-            Range("T" + CStr(linha)).Value = ""
-            
-            linha = linha + 1
-            contador = contador + 1
-            
-        Loop
-        
-        linha = 5
-        
-        Do While linha <= 1000
-            
-            Range("O" + CStr(linha)).Value = ""
-            linha = linha + 1
-            
-        Loop
-        
-        Range("K5").Value = ""
-        Range("L5").Value = ""
-        Range("M5").Value = ""
-        Range("N5").Value = ""
-        Range("P5").Value = ""
-        Range("Q5").Value = ""
-        Range("R5").Value = ""
-        Range("S5").Value = ""
-        
-        Range("G5").Select
-        
-        linha = 5
-        contador = 1
-        contadorPalavra = 0
-        
-        bol_encontrou_palavra = False
-        
-        Do While contador <= lstClassificacao.ListCount - 1
-            
-            If lstClassificacao.List(contador, 0) = "" Then Exit Do
-                    
-            bol_encontrou_palavra = False
-            contadorPalavra = 0
-        
-            Do While contadorPalavra <= lstPalavraExistente.ListCount - 1
-    
-                If lstClassificacao.List(contador, 0) = lstPalavraExistente.List(contadorPalavra) Then
-                
-                    bol_encontrou_palavra = True
-                    Exit Do
-                
-                End If
-                
-                contadorPalavra = contadorPalavra + 1
-                
-            Loop
-            
-            If bol_encontrou_palavra = False Then
-                           
-                Range("G" + CStr(linha)).Value = classificacao(contador, 1)
-                Range("H" + CStr(linha)).Value = classificacao(contador, 4)
-                Range("I" + CStr(linha)).Value = classificacao(contador, 2)
-                Range("J" + CStr(linha)).Value = classificacao(contador, 3)
-                Range("T" + CStr(linha)).Value = classificacao(contador, 5)
-                                
-                linha = linha + 1
-                
-            End If
-            
-            contador = contador + 1
-            
-        Loop
-        
-        Range("K5").Value = txtCaminhoPlanilha.Text
-        Range("L5").Value = txtLinhaInicial.Text
-        Range("M5").Value = txtLinhaFinal.Text
-        Range("N5").Value = txtColunaClassificacao.Text
-        Range("P5").Value = txtDiaOrigem.Text
-        Range("Q5").Value = txtDocRefOrigem.Text
-        Range("R5").Value = txtInstFinOrigem.Text
-        Range("S5").Value = txtValorOrigem.Text
-        
-        linha = 5
-        contador = 0
-        
-        Do While contador <= lstPalavraExistente.ListCount - 1
-            
-            Range("O" + CStr(linha)).Value = lstPalavraExistente.List(contador, 0)
-                        
-            linha = linha + 1
-            contador = contador + 1
-            
-        Loop
-        
-        Range("D5").Select
-        
-        Worksheets(mes_processamento).Activate
-        
-        MsgBox "Gravação dos dados realizada com sucesso!", vbInformation, "Importação de Dados"
-        
-    Else
-    
-        Worksheets(mes_processamento).Activate
-    
-    End If
-    
-    Exit Sub
-
-Erro:
-
-    MsgBox "Erro salvar os dados.", vbOKOnly + vbInformation, "Erro ao Salvar os Dados de Importação"
-
-End Sub
 
 Private Sub cmbClassificacao_Click()
         
@@ -737,8 +430,6 @@ Private Sub cmdRetiraPalavraExistente_Click()
 
 End Sub
 
-
-
 Private Sub lstClassificacao_Click()
 
     itemListaClassificacao = lstClassificacao.ListIndex
@@ -846,6 +537,7 @@ End Sub
 Sub fazLeituraDadosImportacao()
 
     Dim linha As Integer
+    Dim linhaFinal As Integer
     Dim contador As Integer
     Dim contador_comparacao As Integer
     Dim contador_classificacao As Integer
@@ -924,6 +616,8 @@ Sub fazLeituraDadosImportacao()
     
     Loop
     
+    linhaFinal = CInt(Range("M5").Value)
+    
     Set WB1 = Workbooks.Open(txtCaminhoPlanilha.Text)
     
     linha = CInt(txtLinhaInicial.Text)
@@ -933,9 +627,9 @@ Sub fazLeituraDadosImportacao()
         
     encontrou_classificacao = True
                             
-    Do While contador <= 1000
+    Do While contador <= linhaFinal
         
-        Do While contador_comparacao <= 1000
+        Do While contador_comparacao <= linhaFinal
             
             If classificacao(contador_comparacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
                 encontrou_classificacao = True
@@ -989,6 +683,7 @@ Sub fazLeituraDadosImportacao()
         
     Loop
     
+    WB1.Save
     WB1.Close
     
     lstClassificacao.List = classificacao
@@ -996,7 +691,351 @@ Sub fazLeituraDadosImportacao()
     Worksheets(mes_processamento).Activate
     Range("D5").Select
     
-    
 End Sub
 
+Public Sub ProcessaImportacao()
+
+On Error GoTo Erro
+
+    Dim dia As String
+    Dim docref As String
+    Dim instfin As String
+    Dim valor As String
+    Dim status As String
+    
+    Dim linha As Integer
+    Dim contador As Integer
+    Dim linha_classificacao As Integer
+    Dim contadorPalavra As Integer
+        
+    Dim processamentoImportacao(1 To 1000, 1 To 8) As String
+    
+    Dim bol_encontrou_palavra As Boolean
+        
+    mes_processamento = ActiveSheet.Name
+    
+    linha = 5
+    
+    'Etapa de limpeza dados da planilha do mês atual
+    frmBarraProgressaoImportacao.AtualizaBarra (20 / 100), "Limpando os dados da planilha " + mes_processamento
+    
+    Do While linha <= 600
+        
+        Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = ""
+        Range(txtDiaDestino.Text + CStr(linha)).Value = ""
+        Range(txtDocRefDestino.Text + CStr(linha)).Value = ""
+        Range(txtInstFinDestino.Text + CStr(linha)).Value = ""
+        Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(0)
+        Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(0)
+        Range("L" + CStr(linha)).Value = ""
+        Range(txtColunaDescricaoClassificacaoDestino.Text + CStr(linha)).Value = ""
+        
+        linha = linha + 1
+        
+    Loop
+    
+    Set WB1 = Workbooks.Open(txtCaminhoPlanilha.Text)
+    
+    'Etapa de limpeza dados da planilha do mês atual
+    frmBarraProgressaoImportacao.AtualizaBarra (40 / 100), "Abrindo a planilha " + txtCaminhoPlanilha.Text
+     
+    linha = CInt(txtLinhaInicial.Text)
+    contador = 1
+                
+    bol_encontrou_palavra = False
+    contadorPalavra = 0
+    
+    'Etapa de limpeza dados da planilha do mês atual
+    frmBarraProgressaoImportacao.AtualizaBarra (50 / 100), "Lendo os dados da planilha " + txtCaminhoPlanilha.Text
+    
+    Do While (linha >= CInt(txtLinhaInicial.Text) And linha <= CInt(txtLinhaFinal.Text))
+        
+        bol_encontrou_palavra = False
+        
+        Do While contadorPalavra <= lstPalavraExistente.ListCount - 1
+            
+            If Range(txtColunaContemPalavra + CStr(linha)).Value = lstPalavraExistente.List(contadorPalavra) Then
+            
+                bol_encontrou_palavra = True
+                Exit Do
+            
+            End If
+            
+            contadorPalavra = contadorPalavra + 1
+            
+        Loop
+        
+        contadorPalavra = 0
+        
+        'Etapa de limpeza dados da planilha do mês atual
+        frmBarraProgressaoImportacao.AtualizaBarra (70 / 100), "Armazenando os dados em memória "
+        
+        If bol_encontrou_palavra = False Then
+        
+            linha_classificacao = 2
+            
+            Do While linha_classificacao <= 1000
+                
+                If classificacao(linha_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Value Then
+                
+                    If Range(txtDiaOrigem.Text + CStr(linha)).Value = "" Then
+                        processamentoImportacao(contador, 1) = "1"
+                    Else
+                        processamentoImportacao(contador, 1) = Mid(Range(txtDiaOrigem.Text + CStr(linha)).Value, 1, 2)
+                    End If
+                
+                    processamentoImportacao(contador, 2) = classificacao(linha_classificacao, 4)
+                    processamentoImportacao(contador, 3) = Range(txtDocRefOrigem.Text + CStr(linha)).Value
+                    processamentoImportacao(contador, 4) = classificacao(linha_classificacao, 3)
+                    processamentoImportacao(contador, 5) = Range(txtInstFinOrigem.Text + CStr(linha)).Value
+                    
+                    If Range(txtValorOrigem.Text + CStr(linha)).Value = "" Or Not IsNumeric(Range(txtValorOrigem.Text + CStr(linha)).Value) Then
+                        processamentoImportacao(contador, 6) = 0
+                    Else
+                        processamentoImportacao(contador, 6) = Range(txtValorOrigem.Text + CStr(linha)).Value
+                    End If
+                    
+                    processamentoImportacao(contador, 7) = classificacao(linha_classificacao, 5)
+                    
+                    contador = contador + 1
+            
+                    Exit Do
+                    
+                End If
+                
+                linha_classificacao = linha_classificacao + 1
+                
+            Loop
+            
+        End If
+        
+        linha = linha + 1
+                   
+    Loop
+    
+    WB1.Save
+    WB1.Close
+    
+    Worksheets(mes_processamento).Activate
+    
+    contador = 1
+    linha = 5
+    
+    'Etapa de limpeza dados da planilha do mês atual
+    frmBarraProgressaoImportacao.AtualizaBarra (80 / 100), "Gravando os dados na planilha atual "
+    
+    Do While contador <= CInt(txtLinhaFinal.Text)
+          
+        If processamentoImportacao(contador, 4) <> "" Then
+          
+            Range(txtDiaDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 1)
+            Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 4)
+            Range(txtDocRefDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 3)
+            Range(txtColunaDescricaoClassificacaoDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 2)
+            Range(txtInstFinDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 5)
+            
+            If processamentoImportacao(contador, 7) = "D" Then
+                Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
+                Range(txtValorDestinoReceita.Text + CStr(linha)).Value = 0
+                Range("L" + CStr(linha)).Value = "Pago"
+            Else
+                Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
+                Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = 0
+                Range("L" + CStr(linha)).Value = "Realizado"
+            End If
+            
+            linha = linha + 1
+            
+        End If
+            
+        contador = contador + 1
+                   
+    Loop
+        
+    Range("C5").Select
+    frmBarraProgressaoImportacao.Hide
+    
+    MsgBox "Importação realizada com sucesso!", vbInformation, "Processamento de Recebimentos"
+    
+    Exit Sub
+    
+Erro:
+
+    MsgBox "Foi localizado um erro no processamento de dados. Favor observar os seguintes itens: " & Chr(13) & Chr(13) & _
+    "-> Verifique se o nome do arquivo está correto." & Chr(13) & _
+    "-> Verifique se a coluna de origem está correta para transferir os dados." & Chr(13) & _
+    "-> Verifique se a coluna de destino está correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+    
+    frmImportarPlanilhaComParametro.Hide
+    
+End Sub
+Public Sub SalvarImportacao()
+
+On Error GoTo Erro
+
+    Dim linha As Integer
+    Dim contador As Integer
+    Dim contadorPalavra As Integer
+    
+    Dim bol_encontrou_palavra As Boolean
+    Dim SalvarImportacao As Boolean
+        
+    'If MsgBox("Deseja salvar importação?", vbYesNo, "Salvar Importação") = vbYes Then
+    SalvarImportacao = True
+    'Else
+    '    salvarImportacao = False
+    'End If
+    
+    If txtCaminhoPlanilha.Text = "" Or txtLinhaInicial.Text = "" Or txtLinhaFinal.Text = "" Or txtColunaClassificacao.Text = "" _
+        Or txtDiaOrigem.Text = "" Or txtDocRefOrigem.Text = "" Or txtInstFinOrigem.Text = "" Or _
+        txtValorOrigem.Text = "" Then
+        
+        MsgBox "Os dados sobre o caminho do arquivo, valor de linha inicial, valor de linha final, coluna de origem da classificação, " & Chr(13) & _
+                "coluna de origem do documento de referência e coluna de origem de valor, devem estar preenchidos.", vbInformation, "Gravação dos Dados de Importação"
+                
+        Exit Sub
+        
+    End If
+    
+    mes_processamento = ActiveSheet.Name
+    
+    Worksheets("Configurações Básicas").Activate
+    
+    Range("E6").Select
+    Range("E6").Value = IIf(SalvarImportacao = True, "Sim", "Não")
+    
+    If SalvarImportacao = True Then
+    
+        Range("G5").Select
+        linha = 5
+        contador = 1
+        
+        'Etapa de limpeza das configurações da aplicação
+        frmBarraProgressaoImportacao.AtualizaBarra (20 / 100), "Limpando os dados para o novo cenário..."
+        
+        Do While contador <= 1000
+            
+            Range("G" + CStr(linha)).Value = ""
+            Range("H" + CStr(linha)).Value = ""
+            Range("I" + CStr(linha)).Value = ""
+            Range("J" + CStr(linha)).Value = ""
+            Range("T" + CStr(linha)).Value = ""
+            
+            linha = linha + 1
+            contador = contador + 1
+            
+        Loop
+        
+        linha = 5
+        
+        Do While linha <= 1000
+            
+            Range("O" + CStr(linha)).Value = ""
+            linha = linha + 1
+            
+        Loop
+        
+        Range("K5").Value = ""
+        Range("L5").Value = ""
+        Range("M5").Value = ""
+        Range("N5").Value = ""
+        Range("P5").Value = ""
+        Range("Q5").Value = ""
+        Range("R5").Value = ""
+        Range("S5").Value = ""
+        
+        Range("G5").Select
+        
+        linha = 5
+        contador = 1
+        contadorPalavra = 0
+        
+        'Etapa de descarte de palavras
+        frmBarraProgressaoImportacao.AtualizaBarra (60 / 100), "Descartando palavras..."
+        
+        bol_encontrou_palavra = False
+        
+        Do While contador <= lstClassificacao.ListCount - 1
+            
+            If lstClassificacao.List(contador, 0) = "" Then Exit Do
+                    
+            bol_encontrou_palavra = False
+            contadorPalavra = 0
+        
+            Do While contadorPalavra <= lstPalavraExistente.ListCount - 1
+    
+                If lstClassificacao.List(contador, 0) = lstPalavraExistente.List(contadorPalavra) Then
+                
+                    bol_encontrou_palavra = True
+                    Exit Do
+                
+                End If
+                
+                contadorPalavra = contadorPalavra + 1
+                
+            Loop
+            
+            If bol_encontrou_palavra = False Then
+                           
+                Range("G" + CStr(linha)).Value = classificacao(contador, 1)
+                Range("H" + CStr(linha)).Value = classificacao(contador, 4)
+                Range("I" + CStr(linha)).Value = classificacao(contador, 2)
+                Range("J" + CStr(linha)).Value = classificacao(contador, 3)
+                Range("T" + CStr(linha)).Value = classificacao(contador, 5)
+                                
+                linha = linha + 1
+                
+            End If
+            
+            contador = contador + 1
+            
+        Loop
+        
+        'Etapa de término da gravação do cenário
+        frmBarraProgressaoImportacao.AtualizaBarra (80 / 100), "Terminando a gravação de cenário..."
+        
+        Range("K5").Value = txtCaminhoPlanilha.Text
+        Range("L5").Value = txtLinhaInicial.Text
+        Range("M5").Value = txtLinhaFinal.Text
+        Range("N5").Value = txtColunaClassificacao.Text
+        Range("P5").Value = txtDiaOrigem.Text
+        Range("Q5").Value = txtDocRefOrigem.Text
+        Range("R5").Value = txtInstFinOrigem.Text
+        Range("S5").Value = txtValorOrigem.Text
+        
+        linha = 5
+        contador = 0
+        
+        'Etapa de finalização
+        frmBarraProgressaoImportacao.AtualizaBarra (95 / 100), "Finalização da gravação de cenário..."
+        
+        Do While contador <= lstPalavraExistente.ListCount - 1
+            
+            Range("O" + CStr(linha)).Value = lstPalavraExistente.List(contador, 0)
+                        
+            linha = linha + 1
+            contador = contador + 1
+            
+        Loop
+        
+        Range("D5").Select
+        
+        Worksheets(mes_processamento).Activate
+        
+        'MsgBox "Gravação dos dados realizada com sucesso!", vbInformation, "Importação de Dados"
+        
+    Else
+    
+        Worksheets(mes_processamento).Activate
+    
+    End If
+    
+    Exit Sub
+
+Erro:
+
+    MsgBox "Erro salvar os dados.", vbOKOnly + vbInformation, "Erro ao Salvar os Dados de Importação"
+    frmBarraProgressaoImportacao.Hide
+    
+End Sub
 
