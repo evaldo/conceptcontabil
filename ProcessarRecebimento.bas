@@ -135,7 +135,7 @@ On Error GoTo Erro
                     Sheets(mes(conta_mes)).Select
                     
                     percentual = conta_mes / flag_mes_processamento
-                    frmBarraProgressao.AtualizaBarra percentual, mes(conta_mes)
+                    frmBarraProgressaoRecebimento.AtualizaBarra percentual, mes(conta_mes)
                                    
                     Do While Range("E" + CStr(linha_planilha)).Value <> ""
                         
@@ -199,7 +199,7 @@ On Error GoTo Erro
         
     Loop
     
-    frmBarraProgressao.Hide
+    frmBarraProgressaoRecebimento.Hide
     
     MsgBox "Processamento Realizado com sucesso.", vbInformation, "Processamento de Recebimentos"
     
@@ -219,12 +219,8 @@ Sub processar_recebimento_com_barra()
     
 End Sub
 
-Sub importar_Com_Parametro()
-    
-    resposta = MsgBox("Deseja realmente processar a importação com Parâmetros?", vbYesNo + vbExclamation, "Processamento de Recebimentos")
- 
-    If resposta = vbYes Then frmImportarPlanilhaComParametro.Show
-    
-End Sub
+
+
+
 
 

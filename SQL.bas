@@ -89,7 +89,7 @@ Sub ExportardadosSQL()
         strSQL = strSQL + "'" & Range("F" + CStr(linha)).Value & "',"
         strSQL = strSQL + "99999,"
         strSQL = strSQL + "'" & Range("G" + CStr(linha)).Value & "',"
-        strSQL = strSQL + "'" & Range("H" + CStr(linha)).Value & "',"
+        strSQL = strSQL + "'" & IIf(Range("H" + CStr(linha)).Value = "", "RECEITA", Range("H" + CStr(linha)).Value) & "',"
         strSQL = strSQL + "'" & Replace(Range("J" + CStr(linha)).Value, ",", ".") & "',"
         strSQL = strSQL + "'" & Replace(Range("K" + CStr(linha)).Value, ",", ".") & "',"
         strSQL = strSQL + "'" & Range("L" + CStr(linha)).Value & "');"

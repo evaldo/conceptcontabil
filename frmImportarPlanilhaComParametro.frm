@@ -20,6 +20,9 @@ Dim classificacao(0 To 1000, 1 To 5) As String
 Dim descricaoClassificacao(1 To 20, 1 To 3) As String
 Public erroAtualizaCenario As Boolean
 Public bolSalvarImportacao As Boolean
+Public bolExistemDados As Boolean
+Public bolLimparDados As Boolean
+
 
 Private Sub btnAtualizaClassificacao_Click()
 
@@ -31,7 +34,7 @@ On Error GoTo Erro
     
     mes_processamento = ActiveSheet.Name
     
-    If optClassificacaoReceita.Value = True Then
+    If frmEscolhaDesRec.bolClassificacaoReceita = True Then
                 
         Worksheets("PC Receitas").Activate
         receitaDespesa = "R"
@@ -213,7 +216,7 @@ On Error GoTo Erro
                     
                 Next linha
                 
-                If optClassificacaoReceita.Value = True Then
+                If frmEscolhaDesRec.bolClassificacaoReceita = True Then
                 
                     descricaoClassificacao(1, 2) = "D"
                     descricaoClassificacao(1, 1) = "RECEITAS COM PRODUTO"
@@ -233,7 +236,7 @@ On Error GoTo Erro
                 
                 End If
                 
-                If optClassificacaoDespesa.Value = True Then
+                If frmEscolhaDesRec.bolClassificacaoDespesa = True Then
                 
                     descricaoClassificacao(1, 2) = "D"
                     descricaoClassificacao(1, 1) = "DESPESAS COM PRODUTOS"
@@ -302,9 +305,6 @@ Erro:
     
 End Sub
 
-Private Sub btnCarregar_Click()
-
-End Sub
 
 Private Sub btnFechar_Click()
 
@@ -315,11 +315,39 @@ End Sub
 Private Sub btnImportarDados_Click()
     
     erroAtualizaCenario = False
+    bolExistemDados = False
+    bolLimparDados = False
     
     If MsgBox("Os dados de cenário e da planilha serão carregados. Deseja atualizar os dados?", vbYesNo, "Atualização o Cenário Carga de Dados para Importação") = vbYes Then
+        
+        Range("C5").Select
+        linha = 5
+        
+        Do While Range("C" + CStr(linha)).Value <> ""
+            
+            linha = linha + 1
+            
+            If Range("C" + CStr(linha)).Value <> "" Then
+                bolExistemDados = True
+                Exit Do
+            End If
+            
+        Loop
+        
+        If bolExistemDados = True Then
+            If MsgBox("Existem dados importados ou digitados na planilha. Deseja acrescentar os dados da planilha de origem?", vbYesNo, "Atualização o Cenário Carga de Dados para Importação") = vbYes Then
+                bolLimparDados = False
+            Else
+                bolLimparDados = True
+            End If
+        End If
+        
         frmBarraProgressaoImportacao.Show
+        
     Else
+    
         Exit Sub
+        
     End If
     
 End Sub
@@ -330,7 +358,7 @@ On Error GoTo Erro
 
     mes_processamento = ActiveSheet.Name
     
-    If optClassificacaoReceita.Value = True Then
+    If frmEscolhaDesRec.bolClassificacaoReceita = True Then
                 
         Worksheets("PC Receitas").Activate
     
@@ -378,7 +406,7 @@ Private Sub cmbListaDescricaoClassificacao_Click()
     mes_processamento = ActiveSheet.Name
     linha = 5
     
-    If optClassificacaoReceita.Value = True Then
+    If frmEscolhaDesRec.bolClassificacaoReceita = True Then
                 
         Worksheets("PC Receitas").Activate
     
@@ -445,6 +473,8 @@ Private Sub cmdSalvarCenario_Click()
 
 End Sub
 
+
+
 Private Sub lstClassificacao_Click()
 
     itemListaClassificacao = lstClassificacao.ListIndex
@@ -471,7 +501,6 @@ Function ConverteParaLetra(iCol As Integer) As String
 End Function
 
 Private Sub optClassificacaoDespesa_Click()
-
 
     For linha = 1 To 20
                     
@@ -566,7 +595,13 @@ Sub fazLeituraDadosImportacao()
     lstPalavraExistente.Clear
     lstClassificacao.Clear
     
-    Call optClassificacaoReceita_Click
+    If frmEscolhaDesRec.bolClassificacaoReceita = True Then
+        Call optClassificacaoReceita_Click
+        Worksheets("Cenario Receitas").Activate
+    Else
+        Call optClassificacaoDespesa_Click
+        Worksheets("Cenario Despesas").Activate
+    End If
     
     For i = 0 To 1000
         
@@ -578,8 +613,6 @@ Sub fazLeituraDadosImportacao()
         
     Next i
 
-    Worksheets("Configurações Básicas").Activate
-    
     If txtCaminhoPlanilha.Text = "" Then
         MsgBox "Favor selecionar o arquivo a ser importado!", vbOKOnly, "Carga de Dados para Importação"
         Exit Sub
@@ -729,25 +762,29 @@ On Error GoTo Erro
         
     mes_processamento = ActiveSheet.Name
     
-    linha = 5
+    If bolLimparDados = True Then
     
-    'Etapa de limpeza dados da planilha do mês atual
-    frmBarraProgressaoImportacao.AtualizaBarra (20 / 100), "Limpando os dados da planilha " + mes_processamento
-    
-    Do While linha <= 600
+        linha = 5
         
-        Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = ""
-        Range(txtDiaDestino.Text + CStr(linha)).Value = ""
-        Range(txtDocRefDestino.Text + CStr(linha)).Value = ""
-        Range(txtInstFinDestino.Text + CStr(linha)).Value = ""
-        Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(0)
-        Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(0)
-        Range("L" + CStr(linha)).Value = ""
-        Range(txtColunaDescricaoClassificacaoDestino.Text + CStr(linha)).Value = ""
+        'Etapa de limpeza dados da planilha do mês atual
+        frmBarraProgressaoImportacao.AtualizaBarra (20 / 100), "Limpando os dados da planilha " + mes_processamento
         
-        linha = linha + 1
+        Do While linha <= 10000
+            
+            Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = ""
+            Range(txtDiaDestino.Text + CStr(linha)).Value = ""
+            Range(txtDocRefDestino.Text + CStr(linha)).Value = ""
+            Range(txtInstFinDestino.Text + CStr(linha)).Value = ""
+            Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(0)
+            Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(0)
+            Range("L" + CStr(linha)).Value = ""
+            Range(txtColunaDescricaoClassificacaoDestino.Text + CStr(linha)).Value = ""
+            
+            linha = linha + 1
+            
+        Loop
         
-    Loop
+    End If
     
     Set WB1 = Workbooks.Open(txtCaminhoPlanilha.Text)
     
@@ -834,7 +871,22 @@ On Error GoTo Erro
     Worksheets(mes_processamento).Activate
     
     contador = 1
-    linha = 5
+    
+    If bolLimparDados = True Then
+        
+        linha = 5
+        
+    Else
+       
+        Range("C5").Select
+        linha = 5
+        
+        Do While Range("C" + CStr(linha)).Value <> ""
+            linha = linha + 1
+            If Range("C" + CStr(linha)).Value = "" Then Exit Do
+        Loop
+        
+    End If
     
     'Etapa de limpeza dados da planilha do mês atual
     frmBarraProgressaoImportacao.AtualizaBarra (80 / 100), "Gravando os dados na planilha atual "
@@ -922,6 +974,12 @@ On Error GoTo Erro
     
     Range("E6").Select
     Range("E6").Value = IIf(SalvarImportacao = True, "Sim", "Não")
+    
+    If frmEscolhaDesRec.bolClassificacaoReceita = True Then
+        Worksheets("Cenario Receitas").Activate
+    Else
+        Worksheets("Cenario Despesas").Activate
+    End If
     
     If SalvarImportacao = True Then
     
@@ -1064,4 +1122,17 @@ Erro:
     frmBarraProgressaoImportacao.Hide
     
 End Sub
+
+Private Sub UserForm_Activate()
+
+    If frmEscolhaDesRec.bolClassificacaoDespesa = True Then
+        Call optClassificacaoDespesa_Click
+        optClassificacaoReceita.Enabled = False
+    Else
+        Call optClassificacaoReceita_Click
+        optClassificacaoDespesa.Enabled = False
+    End If
+        
+End Sub
+
 
