@@ -1,6 +1,8 @@
 Attribute VB_Name = "SQL"
 Sub ExportardadosSQL()
 
+On Error GoTo Erro
+
     Dim ano As String
     Dim mes(1 To 12) As String
     Dim numeroMes As Integer
@@ -34,6 +36,11 @@ Sub ExportardadosSQL()
     mes(12) = "Dez"
     
     mes_processamento = ActiveSheet.Name
+    
+    If ValidaPlanilhaProcessamento() = False Then
+        MsgBox "Escolha um planilha para lançamento do Fluxo de Caixa entre Jan e Dez.", vbOKOnly + vbInformation, "Salvar Dados"
+        Exit Sub
+    End If
     
     For numeroMes = 1 To 12
         If mes(numeroMes) = mes_processamento Then Exit For
@@ -113,6 +120,13 @@ Sub ExportardadosSQL()
     cnn.CommitTrans
     
     cnn.Close
+    
+    Exit Sub
+    
+Erro:
+
+    MsgBox "Erro ao processar o envio de dados para nuvem. " + Err.Description, vbOKOnly + vbInformation, "Envio de Dados para Nuvem"
+    Exit Sub
 
 End Sub
 

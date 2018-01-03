@@ -45,6 +45,4 @@ Public Sub importar_Com_Parametro()
     
 End Sub
 
-Private Sub UserForm_Click()
 
-End Sub

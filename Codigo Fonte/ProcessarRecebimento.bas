@@ -1,46 +1,51 @@
 Attribute VB_Name = "ProcessarRecebimento"
 Sub ExportarCSV()
     
-On Error Resume Next
+On Error GoTo Erro
     
-    Dim NomeDoArquivo As String
-    Dim WB1 As Workbook
-    Dim WB2 As Workbook
-    Dim rng As Range
-     
-    Set WB1 = ActiveWorkbook
-    Set rng = Application.InputBox("Selecione o intervalo de células para a exportação da planilha atual:", "Processamento de Recebimentos", Default:="Por exemplo -> C5:L35", Type:=8)
-    
-    If rng <> "" Then
-    
-       Application.ScreenUpdating = False
-       rng.Copy
-    
-       Set WB2 = Application.Workbooks.Add(1)
-       WB2.Sheets(1).Range("A1").PasteSpecial xlPasteValues
-        
-       NomeDoArquivo = "CSV_Export_" & Format(Date, "ddmmyyyy")
-       FullPath = WB1.Path & "\" & NomeDoArquivo
-        
-       Application.DisplayAlerts = False
-       
-       If MsgBox("Dados copiados para " & WB1.Path & "\" & NomeDoArquivo & vbCrLf & _
-       "Atenção: Arquivos no diretório com mesmo nome serão sobrescritos!!", vbQuestion + vbYesNo) <> vbYes Then
-           Exit Sub
-       End If
-        
-       If Not Right(NomeDoArquivo, 4) = ".csv" Then MyFileName = NomeDoArquivo & ".csv"
-       
-       With WB2
-           .SaveAs Filename:=FullPath, FileFormat:=xlCSV, CreateBackup:=False
-           .Close False
-       End With
-       
-       Application.DisplayAlerts = True
-       
-    End If
-End Sub
+    Dim myCSVFileName As String
+    Dim myWB As Workbook
+    Dim rngToSave As Range
+    Dim fNum As Integer
+    Dim csvVal As String
+    Dim strIntervalo As String
 
+    Set myWB = ThisWorkbook
+    
+    myCSVFileName = myWB.Path & "\" & "FluxoCaixa_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv"
+    
+    csvVal = ""
+    
+    fNum = FreeFile
+    
+    strIntervalo = InputBox("O intervalo de células para a exportação da planilha atual será (coluna C = Dia e N igual Saldo diário):", "Exportação de Dados para .CSV", Default:="C5:N10000")
+    
+    Set rngToSave = Range(strIntervalo)
+
+    Open myCSVFileName For Output As #fNum
+
+    For i = 1 To rngToSave.Rows.Count
+        For j = 1 To rngToSave.Columns.Count
+            csvVal = csvVal & Chr(34) & rngToSave(i, j).Value & Chr(34) & ";"
+        Next
+        Print #fNum, Left(csvVal, Len(csvVal) - 2)
+        csvVal = ""
+    Next
+
+    Close #fileNumber
+    
+    MsgBox "Exportação realizada com sucesso. Nome do arquivo exportado: " & "FluxoCaixa_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv" & Chr(13) & Chr(13) & _
+    " no diretório: " & myWB.Path, vbOKOnly + vbInformation, "Exportação de Dados para .CSV"
+    
+    Exit Sub
+    
+Erro:
+
+    MsgBox "Erro ao processar a exportação para .CSV. " + Err.Description + ". Tente exportar novamente em instantes.", vbOKOnly + vbInformation, "Erro ao Exportar"
+
+End Sub
+    
+    
 Sub processa_recebimento_caixa()
 
 On Error GoTo Erro
@@ -86,6 +91,12 @@ On Error GoTo Erro
     linha_planilha = 5
     linha_planilha_mes_processmento = 5
     
+    If ValidaPlanilhaProcessamento() = False Then
+        MsgBox "Escolha um planilha para lançamento do Fluxo de Caixa entre Jan e Dez.", vbOKOnly + vbInformation, "Processamento dos Recebimentos"
+        frmBarraProgressaoRecebimento.Hide
+        Exit Sub
+    End If
+    
     mes_processamento = ActiveSheet.Name
     
     For conta_mes = 1 To 12
@@ -126,6 +137,49 @@ On Error GoTo Erro
            
         End If
         
+        
+        If classificacao = "RECEITAS COM SERVIÇOS" Then
+        
+           Sheets("PC Receitas").Select
+           linha_planilha_recebimento = 5
+           
+           Do While Range("H" + CStr(linha_planilha_recebimento)).Value <> ""
+           
+                If Range("H" + CStr(linha_planilha_recebimento)).Value = plano_contas And _
+                  (Not IsEmpty(Range("I" + CStr(linha_planilha_recebimento)).Value) _
+                  Or Range("I" + CStr(linha_planilha_recebimento)).Value = "-") Then
+                    bol_processar_classificacao = True
+                    Exit Do
+                End If
+                 
+                linha_planilha_recebimento = linha_planilha_recebimento + 1
+            
+           Loop
+           
+        End If
+        
+        
+        If classificacao = "RECEITAS NÃO OPERACIONAIS" Then
+        
+           Sheets("PC Receitas").Select
+           linha_planilha_recebimento = 5
+           
+           Do While Range("L" + CStr(linha_planilha_recebimento)).Value <> ""
+           
+                If Range("L" + CStr(linha_planilha_recebimento)).Value = plano_contas And _
+                  (Not IsEmpty(Range("M" + CStr(linha_planilha_recebimento)).Value) _
+                  Or Range("M" + CStr(linha_planilha_recebimento)).Value = "-") Then
+                    bol_processar_classificacao = True
+                    Exit Do
+                End If
+                 
+                linha_planilha_recebimento = linha_planilha_recebimento + 1
+            
+           Loop
+           
+        End If
+        
+        
         If bol_processar_classificacao = True Then
         
             For conta_mes = 1 To flag_mes_processamento - 1
@@ -133,11 +187,11 @@ On Error GoTo Erro
                 If mes(conta_mes) = mes_baixa Then
                         
                     Sheets(mes(conta_mes)).Select
-                    
-                    percentual = conta_mes / flag_mes_processamento
-                    frmBarraProgressaoRecebimento.AtualizaBarra percentual, mes(conta_mes)
                                    
                     Do While Range("E" + CStr(linha_planilha)).Value <> ""
+                    
+                        percentual = linha_planilha / 1000
+                        frmBarraProgressaoRecebimento.AtualizaBarra percentual, mes(conta_mes)
                         
                         If Range("E" + CStr(linha_planilha)).Value = classificacao _
                            And Range("H" + CStr(linha_planilha)).Value = instituicao_finaceira _
@@ -208,6 +262,7 @@ On Error GoTo Erro
 Erro:
 
     MsgBox "Erro ao processar o recebimento.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+    Worksheets(mes_processamento).Activate
     
 End Sub
 
@@ -215,7 +270,7 @@ Sub processar_recebimento_com_barra()
     
     resposta = MsgBox("Deseja realmente processar recebimentos?", vbYesNo + vbExclamation, "Processamento de Recebimentos")
  
-    If resposta = vbYes Then frmBarraProgressao.Show
+    If resposta = vbYes Then frmBarraProgressaoRecebimento.Show
     
 End Sub
 

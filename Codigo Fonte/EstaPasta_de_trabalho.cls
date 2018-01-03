@@ -9,6 +9,24 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+
+Private Sub Workbook_Open()
+    Call Ocultar
+    Application.DisplayFullScreen = True
+    
+End Sub
+
+Private Sub Workbook_WindowActivate(ByVal Wn As Window)
+    
+    Call Ocultar
+    
+End Sub
+
+Private Sub Workbook_WindowDeactivate(ByVal Wn As Window)
+    Call Reexibir
+    
+End Sub
+
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
     
     Application.EnableEvents = False
@@ -23,6 +41,11 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
     
     Application.EnableEvents = True
  
+End Sub
+Private Sub Workbook_WindowResize(ByVal Wn As Window)
+    Wn.WindowState = xlMaximized
+    Wn.EnableResize = False
+    Call Ocultar
 End Sub
 
 Function ConverteParaLetra(iCol As Integer) As String
@@ -41,4 +64,6 @@ Function ConverteParaLetra(iCol As Integer) As String
    End If
    
 End Function
+
+
 

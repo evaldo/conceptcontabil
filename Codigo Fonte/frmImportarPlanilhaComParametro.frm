@@ -13,11 +13,15 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Dim itemListaClassificacao As Integer
-Dim mes_processamento  As String
 Dim WB1 As Workbook
-Dim classificacao(0 To 1000, 1 To 5) As String
-Dim descricaoClassificacao(1 To 20, 1 To 3) As String
+
+Dim itemListaClassificacao As Integer
+
+Dim mes_processamento  As String
+
+Dim classificacao(0 To 10000, 1 To 5) As String
+Dim descricaoClassificacao(1 To 100, 1 To 3) As String
+
 Public erroAtualizaCenario As Boolean
 Public bolSalvarImportacao As Boolean
 Public bolExistemDados As Boolean
@@ -131,7 +135,7 @@ On Error GoTo Erro
     mes_processamento = ActiveSheet.Name
     Worksheets(mes_processamento).Activate
     
-    For i = 0 To 1000
+    For i = 0 To 10000
         
         classificacao(i, 1) = ""
         classificacao(i, 2) = ""
@@ -185,7 +189,7 @@ On Error GoTo Erro
                     
                     If bol_encontrou_palavra = False Then
                         
-                        For i_armazenada = 1 To 100
+                        For i_armazenada = 1 To 10000
                             
                             If classificacao(i_armazenada, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
                                 bol_ja_existe_classificacao = True
@@ -213,6 +217,7 @@ On Error GoTo Erro
                     
                 Loop
                 
+                'ReDim Preserve classificacao(i, 5)
                 lstClassificacao.List = classificacao
                 
                 WB1.Save
@@ -220,7 +225,7 @@ On Error GoTo Erro
                 
                 cmbListaDescricaoClassificacao.Clear
                 
-                For linha = 1 To 20
+                For linha = 1 To 100
                     
                     descricaoClassificacao(linha, 2) = ""
                     descricaoClassificacao(linha, 1) = ""
@@ -329,6 +334,11 @@ Private Sub btnImportarDados_Click()
     erroAtualizaCenario = False
     bolExistemDados = False
     bolLimparDados = False
+    
+    If ValidaPlanilhaProcessamento() = False Then
+        MsgBox "Escolha um planilha para lançamento do Fluxo de Caixa entre Jan e Dez.", vbOKOnly + vbInformation, "Importação de Dados"
+        Exit Sub
+    End If
     
     If MsgBox("Os dados de cenário e da planilha serão carregados. Deseja atualizar os dados?", vbYesNo, "Atualização o Cenário Carga de Dados para Importação") = vbYes Then
         
@@ -492,7 +502,6 @@ Private Sub cmdSalvarCenario_Click()
 
 End Sub
 
-
 Private Sub lstClassificacao_Click()
 
     itemListaClassificacao = lstClassificacao.ListIndex
@@ -621,7 +630,7 @@ Sub fazLeituraDadosImportacao()
         Worksheets("Cenario Despesas").Activate
     End If
     
-    For i = 0 To 1000
+    For i = 0 To 10000
         
         classificacao(i, 1) = ""
         classificacao(i, 2) = ""
@@ -942,6 +951,20 @@ On Error GoTo Erro
     Range("C5").Select
     frmBarraProgressaoImportacao.Hide
     
+    Range("C4:N10000").Select
+    ActiveWorkbook.Worksheets(mes_processamento).Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets(mes_processamento).Sort.SortFields.Add Key:=Range("C5:C10000"), _
+        SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets(mes_processamento).Sort
+        .SetRange Range("C4:N10000")
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    Range("C5").Select
+    
     MsgBox "Importação realizada com sucesso!", vbInformation, "Processamento de Recebimentos"
     
     Exit Sub
@@ -952,6 +975,8 @@ Erro:
     "-> Verifique se o nome do arquivo está correto." & Chr(13) & _
     "-> Verifique se a coluna de origem está correta para transferir os dados." & Chr(13) & _
     "-> Verifique se a coluna de destino está correta para receber os dados.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+    
+    Worksheets(mes_processamento).Activate
     
     frmBarraProgressaoImportacao.Hide
     
@@ -1136,6 +1161,8 @@ On Error GoTo Erro
 Erro:
 
     MsgBox "Erro salvar os dados.", vbOKOnly + vbInformation, "Erro ao Salvar os Dados de Importação"
+    
+    Worksheets(mes_processamento).Activate
     
     frmImportarPlanilhaComParametro.erroAtualizaCenario = True
     
