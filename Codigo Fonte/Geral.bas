@@ -17,3 +17,10 @@ Public Sub Salvar()
     ThisWorkbook.Save
     
 End Sub
+
+Public Sub FecharArquivo()
+
+    ActiveWorkbook.Close
+    ActiveWorkbook.Save
+
+End Sub

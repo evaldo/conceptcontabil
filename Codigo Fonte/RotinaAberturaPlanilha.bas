@@ -149,10 +149,7 @@ Dim barras
     ActiveWindow.DisplayVerticalScrollBar = False
     ActiveWindow.DisplayWorkbookTabs = False
     ActiveWindow.Caption = "Fluxo de Caixa"
-    ActiveWindow.EnableResize = False
-        
-    Sheets("Início").Select
-
+                
     Call Title_Hide
     
 End Sub
@@ -225,7 +222,7 @@ On Error Resume Next
     ActiveWindow.DisplayHorizontalScrollBar = True
     ActiveWindow.DisplayVerticalScrollBar = True
     ActiveWindow.DisplayWorkbookTabs = True
-    ActiveWindow.EnableResize = True
+    'ActiveWindow.EnableResize = True
     
     Call Title_Show
    

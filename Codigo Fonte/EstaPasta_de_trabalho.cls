@@ -11,8 +11,13 @@ Option Explicit
 
 
 Private Sub Workbook_Open()
-    Call Ocultar
+    
     Application.DisplayFullScreen = True
+    Application.WindowState = xlMaximized
+    
+    Call Ocultar
+    
+    Sheets("Início").Select
     
 End Sub
 
@@ -23,6 +28,8 @@ Private Sub Workbook_WindowActivate(ByVal Wn As Window)
 End Sub
 
 Private Sub Workbook_WindowDeactivate(ByVal Wn As Window)
+
+    ActiveWorkbook.Save
     Call Reexibir
     
 End Sub
@@ -44,7 +51,7 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
 End Sub
 Private Sub Workbook_WindowResize(ByVal Wn As Window)
     Wn.WindowState = xlMaximized
-    Wn.EnableResize = False
+    'Wn.EnableResize = False
     Call Ocultar
 End Sub
 

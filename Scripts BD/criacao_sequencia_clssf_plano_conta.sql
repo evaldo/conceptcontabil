@@ -1,0 +1,10 @@
+/****** Object:  Sequence [dbo].[SQ_CLSSF_PLANO_CONTA]    Script Date: 06/01/2018 14:39:05 ******/
+CREATE SEQUENCE [dbo].[SQ_CLSSF_PLANO_CONTA] 
+ AS [bigint]
+ START WITH 1
+ INCREMENT BY 1
+ MINVALUE 1
+ MAXVALUE 99999999999
+ CACHE 
+GO
+

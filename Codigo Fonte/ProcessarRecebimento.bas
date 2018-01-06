@@ -28,6 +28,7 @@ On Error GoTo Erro
         For j = 1 To rngToSave.Columns.Count
             csvVal = csvVal & Chr(34) & rngToSave(i, j).Value & Chr(34) & ";"
         Next
+        csvVal = csvVal & Chr(34)
         Print #fNum, Left(csvVal, Len(csvVal) - 2)
         csvVal = ""
     Next

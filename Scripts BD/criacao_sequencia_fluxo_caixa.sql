@@ -1,0 +1,10 @@
+/****** Object:  Sequence [dbo].[SQ_FLUXO_CAIXA]    Script Date: 06/01/2018 14:43:50 ******/
+CREATE SEQUENCE [dbo].[SQ_FLUXO_CAIXA] 
+ AS [bigint]
+ START WITH 1
+ INCREMENT BY 1
+ MINVALUE 1
+ MAXVALUE 9999999999
+ CACHE 
+GO
+
