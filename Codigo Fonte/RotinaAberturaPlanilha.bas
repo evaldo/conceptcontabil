@@ -150,7 +150,7 @@ Dim barras
     ActiveWindow.DisplayWorkbookTabs = False
     ActiveWindow.Caption = "Fluxo de Caixa"
                 
-    Call Title_Hide
+    'Call Title_Hide
     
 End Sub
 
