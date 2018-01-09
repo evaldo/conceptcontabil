@@ -1,4 +1,5 @@
 Attribute VB_Name = "SQL"
+Dim strSQLCenario As String
 Sub ExportardadosSQL()
 
 On Error GoTo Erro
@@ -20,7 +21,15 @@ On Error GoTo Erro
     Dim codigoPlano As String
     Dim descricaoPlano As String
     Dim indicadorClassificacaoPlanoContas As String
-    
+    Dim DS_CMNH_ARQV_ORIG As String
+    Dim NU_INIC_LTRA_ARQV_ORIG As String
+    Dim NU_FIM_LTRA_ARQV_ORIG As String
+    Dim CD_COL_CLSSF_PLANO_CONTA As String
+    Dim CD_COL_DIA As String
+    Dim CD_COL_DCTO_RFRC_FLUXO_CAIXA As String
+    Dim CD_COL_INSTT_FNCR As String
+    Dim CD_COL_VL_FLUXO_CAIXA As String
+
     Dim cnn As New ADODB.Connection
     Dim rst As New ADODB.Recordset
     Dim rstTempo As New ADODB.Recordset
@@ -63,6 +72,7 @@ On Error GoTo Erro
     ano = Range("E5").Value
     nomeClie = Range("E9").Value
     cnpjClie = Range("E8").Value
+    
     
     linha = 12
     indice = 1
@@ -208,6 +218,135 @@ On Error GoTo Erro
         
     Loop
         
+    Worksheets("Cenario Despesas").Activate
+    linha = 5
+    
+    DS_CMNH_ARQV_ORIG = Range("K" + CStr(linha)).Value
+    NU_INIC_LTRA_ARQV_ORIG = Range("L" + CStr(linha)).Value
+    NU_FIM_LTRA_ARQV_ORIG = Range("M" + CStr(linha)).Value
+    CD_COL_CLSSF_PLANO_CONTA = Range("N" + CStr(linha)).Value
+    CD_COL_DIA = Range("P" + CStr(linha)).Value
+    CD_COL_DCTO_RFRC_FLUXO_CAIXA = Range("Q" + CStr(linha)).Value
+    CD_COL_INSTT_FNCR = Range("R" + CStr(linha)).Value
+    CD_COL_VL_FLUXO_CAIXA = Range("S" + CStr(linha)).Value
+    
+    strSQL = "DELETE FROM T_CNRIO_IMPRT_ARQV "
+    strSQL = strSQL + "WHERE NU_ANO_PLAN_ORIG_PROC = " & ano & " "
+    strSQL = strSQL + "and NU_CNPJ = '" & cnpjClie & "';"
+    
+    cnn.Execute strSQL
+    
+    Do While Range("G" + CStr(linha)).Value <> ""
+    
+        Call insturcaoSQLCenario(cnpjClie, _
+                        Range("G" + CStr(linha)).Value, _
+                        Range("H" + CStr(linha)).Value, _
+                        Range("I" + CStr(linha)).Value, _
+                        Range("J" + CStr(linha)).Value, _
+                        DS_CMNH_ARQV_ORIG, _
+                        NU_INIC_LTRA_ARQV_ORIG, _
+                        NU_FIM_LTRA_ARQV_ORIG, _
+                        CD_COL_CLSSF_PLANO_CONTA, _
+                        CD_COL_DIA, _
+                        CD_COL_DCTO_RFRC_FLUXO_CAIXA, _
+                        CD_COL_INSTT_FNCR, _
+                        CD_COL_VL_FLUXO_CAIXA, _
+                        "D", _
+                        ano)
+                        
+        cnn.Execute strSQLCenario
+        
+        linha = linha + 1
+        
+    Loop
+        
+    linha = 5
+    
+    strSQL = "DELETE FROM T_LISTA_PLVR_EXCD "
+    strSQL = strSQL + "WHERE NU_ANO_PLAN_ORIG_PROC = " & ano & " "
+    strSQL = strSQL + "and NU_CNPJ = '" & cnpjClie & "';"
+    
+    cnn.Execute strSQL
+    
+    Do While Range("O" + CStr(linha)).Value <> ""
+        
+        strSQL = "INSERT INTO T_LISTA_PLVR_EXCD"
+        strSQL = strSQL + "("
+        strSQL = strSQL + "ID_LISTA_PLVR_EXCD"
+        strSQL = strSQL + ",NU_CNPJ"
+        strSQL = strSQL + ",NU_ANO_PLAN_ORIG_PROC"
+        strSQL = strSQL + ",DS_PLVR_EXCD"
+        strSQL = strSQL + ",IC_TIPO_TRANS_FLUXO_CAIXA"
+        strSQL = strSQL + ")"
+        strSQL = strSQL + "VALUES"
+        strSQL = strSQL + "("
+        strSQL = strSQL + "NEXT VALUE FOR SQ_LISTA_PLVR_EXCD"
+        strSQL = strSQL + ",'" & cnpjClie & "'"
+        strSQL = strSQL + ",'" & ano & "'"
+        strSQL = strSQL + ",'" & Range("O" + CStr(linha)).Value & "'"
+        strSQL = strSQL + ",'D'"
+        strSQL = strSQL + ");"
+        
+        cnn.Execute strSQL
+        
+        linha = linha + 1
+        
+    Loop
+        
+    Worksheets("Cenario Receitas").Activate
+    linha = 5
+    
+    Do While Range("G" + CStr(linha)).Value <> ""
+    
+         Call insturcaoSQLCenario(cnpjClie, _
+                        Range("G" + CStr(linha)).Value, _
+                        Range("H" + CStr(linha)).Value, _
+                        Range("I" + CStr(linha)).Value, _
+                        Range("J" + CStr(linha)).Value, _
+                        DS_CMNH_ARQV_ORIG, _
+                        NU_INIC_LTRA_ARQV_ORIG, _
+                        NU_FIM_LTRA_ARQV_ORIG, _
+                        CD_COL_CLSSF_PLANO_CONTA, _
+                        CD_COL_DIA, _
+                        CD_COL_DCTO_RFRC_FLUXO_CAIXA, _
+                        CD_COL_INSTT_FNCR, _
+                        CD_COL_VL_FLUXO_CAIXA, _
+                        "R", _
+                        ano)
+                        
+        cnn.Execute strSQLCenario
+        
+        linha = linha + 1
+        
+    Loop
+    
+    linha = 5
+    
+    Do While Range("O" + CStr(linha)).Value <> ""
+        
+         strSQL = "INSERT INTO T_LISTA_PLVR_EXCD"
+        strSQL = strSQL + "("
+        strSQL = strSQL + "ID_LISTA_PLVR_EXCD"
+        strSQL = strSQL + ",NU_CNPJ"
+        strSQL = strSQL + ",NU_ANO_PLAN_ORIG_PROC"
+        strSQL = strSQL + ",DS_PLVR_EXCD"
+        strSQL = strSQL + ",IC_TIPO_TRANS_FLUXO_CAIXA"
+        strSQL = strSQL + ")"
+        strSQL = strSQL + "VALUES"
+        strSQL = strSQL + "("
+        strSQL = strSQL + "NEXT VALUE FOR SQ_LISTA_PLVR_EXCD"
+        strSQL = strSQL + ",'" & cnpjClie & "'"
+        strSQL = strSQL + ",'" & ano & "'"
+        strSQL = strSQL + ",'" & Range("O" + CStr(linha)).Value & "'"
+        strSQL = strSQL + ",'R'"
+        strSQL = strSQL + ");"
+        
+        cnn.Execute strSQL
+        
+        linha = linha + 1
+        
+    Loop
+    
     Worksheets(mes_processamento).Activate
     
     cnn.BeginTrans
@@ -346,3 +485,60 @@ Function UltimoDiaMes(Data As Date) As String
     UltimoDiaMes = CStr(Month(UltimoDiaMes) & "/" & Day(UltimoDiaMes) & "/" & Year(UltimoDiaMes))
 
 End Function
+
+Sub insturcaoSQLCenario(pNU_CNPJ As String, _
+                        pDS_CONTA_CLIE As String, _
+                        pDS_CLSSF_PLANO_CONTA As String, _
+                        pCD_PLANO_CONTA As String, _
+                        pDS_PLANO_CONTA As String, _
+                        pDS_CMNH_ARQV_ORIG As String, _
+                        pNU_INIC_LTRA_ARQV_ORIG As String, _
+                        pNU_FIM_LTRA_ARQV_ORIG As String, _
+                        pCD_COL_CLSSF_PLANO_CONTA As String, _
+                        pCD_COL_DIA As String, _
+                        pCD_COL_DCTO_RFRC_FLUXO_CAIXA As String, _
+                        pCD_COL_INSTT_FNCR As String, _
+                        pCD_COL_VL_FLUXO_CAIXA As String, _
+                        pIC_TIPO_TRANS_FLUXO_CAIXA As String, _
+                        pNU_ANO_PLAN_ORIG_PROC As String)
+
+    strSQLCenario = "INSERT INTO T_CNRIO_IMPRT_ARQV"
+    strSQLCenario = strSQLCenario + "("
+    strSQLCenario = strSQLCenario + "ID_CNRIO_IMPRT_ARQV"
+    strSQLCenario = strSQLCenario + ",NU_CNPJ"
+    strSQLCenario = strSQLCenario + ",DS_CONTA_CLIE"
+    strSQLCenario = strSQLCenario + ",DS_CLSSF_PLANO_CONTA"
+    strSQLCenario = strSQLCenario + ",CD_PLANO_CONTA"
+    strSQLCenario = strSQLCenario + ",DS_PLANO_CONTA"
+    strSQLCenario = strSQLCenario + ",DS_CMNH_ARQV_ORIG"
+    strSQLCenario = strSQLCenario + ",NU_INIC_LTRA_ARQV_ORIG"
+    strSQLCenario = strSQLCenario + ",NU_FIM_LTRA_ARQV_ORIG"
+    strSQLCenario = strSQLCenario + ",CD_COL_CLSSF_PLANO_CONTA"
+    strSQLCenario = strSQLCenario + ",CD_COL_DIA"
+    strSQLCenario = strSQLCenario + ",CD_COL_DCTO_RFRC_FLUXO_CAIXA"
+    strSQLCenario = strSQLCenario + ",CD_COL_INSTT_FNCR"
+    strSQLCenario = strSQLCenario + ",CD_COL_VL_FLUXO_CAIXA"
+    strSQLCenario = strSQLCenario + ",IC_TIPO_TRANS_FLUXO_CAIXA"
+    strSQLCenario = strSQLCenario + ",NU_ANO_PLAN_ORIG_PROC"
+    strSQLCenario = strSQLCenario + ")"
+    strSQLCenario = strSQLCenario + "VALUES"
+    strSQLCenario = strSQLCenario + "("
+    strSQLCenario = strSQLCenario + "NEXT VALUE FOR SQ_CNRIO_IMPRT_ARQV"
+    strSQLCenario = strSQLCenario + ",'" & pNU_CNPJ & "'"
+    strSQLCenario = strSQLCenario + ",'" & pDS_CONTA_CLIE & "'"
+    strSQLCenario = strSQLCenario + ",'" & pDS_CLSSF_PLANO_CONTA & "'"
+    strSQLCenario = strSQLCenario + ",'" & pCD_PLANO_CONTA & "'"
+    strSQLCenario = strSQLCenario + ",'" & pDS_PLANO_CONTA & "'"
+    strSQLCenario = strSQLCenario + ",'" & pDS_CMNH_ARQV_ORIG & "'"
+    strSQLCenario = strSQLCenario + ",'" & pNU_INIC_LTRA_ARQV_ORIG & "'"
+    strSQLCenario = strSQLCenario + ",'" & pNU_FIM_LTRA_ARQV_ORIG & "'"
+    strSQLCenario = strSQLCenario + ",'" & pCD_COL_CLSSF_PLANO_CONTA & "'"
+    strSQLCenario = strSQLCenario + ",'" & pCD_COL_DIA & "'"
+    strSQLCenario = strSQLCenario + ",'" & pCD_COL_DCTO_RFRC_FLUXO_CAIXA & "'"
+    strSQLCenario = strSQLCenario + ",'" & pCD_COL_INSTT_FNCR & "'"
+    strSQLCenario = strSQLCenario + ",'" & pCD_COL_VL_FLUXO_CAIXA & "'"
+    strSQLCenario = strSQLCenario + ",'" & pIC_TIPO_TRANS_FLUXO_CAIXA & "'"
+    strSQLCenario = strSQLCenario + ",'" & pNU_ANO_PLAN_ORIG_PROC & "'"
+    strSQLCenario = strSQLCenario + ");"
+
+End Sub

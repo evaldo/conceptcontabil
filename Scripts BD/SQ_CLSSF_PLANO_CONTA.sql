@@ -1,4 +1,4 @@
-/****** Object:  Sequence [dbo].[SQ_CLSSF_PLANO_CONTA]    Script Date: 06/01/2018 14:39:05 ******/
+/****** Object:  Sequence [dbo].[SQ_CLSSF_PLANO_CONTA]    Script Date: 08/01/2018 19:12:47 ******/
 CREATE SEQUENCE [dbo].[SQ_CLSSF_PLANO_CONTA] 
  AS [bigint]
  START WITH 1

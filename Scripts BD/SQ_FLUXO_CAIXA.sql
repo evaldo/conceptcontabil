@@ -1,4 +1,4 @@
-/****** Object:  Sequence [dbo].[SQ_FLUXO_CAIXA]    Script Date: 06/01/2018 14:43:50 ******/
+/****** Object:  Sequence [dbo].[SQ_FLUXO_CAIXA]    Script Date: 08/01/2018 19:13:11 ******/
 CREATE SEQUENCE [dbo].[SQ_FLUXO_CAIXA] 
  AS [bigint]
  START WITH 1
