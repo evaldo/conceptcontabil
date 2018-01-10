@@ -35,7 +35,7 @@ On Error GoTo Erro
     Dim rstTempo As New ADODB.Recordset
     
     Dim linha As Integer
-    Dim linhaPlanoConta As Integer
+    Dim linhaplanoConta As Integer
     Dim qtFluxo As Integer
     Dim qtRegistroCommit As Integer
     Dim indice As Integer
@@ -122,17 +122,17 @@ On Error GoTo Erro
                 Worksheets("PC Despesas").Activate
             End If
             
-            linhaPlanoConta = 6
+            linhaplanoConta = 6
             
-            Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaPlanoConta)).Value <> ""
+            Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value <> ""
             
                 strSQL = "INSERT INTO T_CLSSF_PLANO_CONTA (ID_CLSSF_PLANO_CONTA, CD_CLSSF_PLANO_CONTA, NU_CNPJ,IC_TIPO_TRANS_FLUXO_CAIXA, DS_CLSSF_PLANO_CONTA, CD_PLANO_CONTA, DS_PLANO_CONTA) "
                 strSQL = strSQL + "VALUES("
                 strSQL = strSQL + "NEXT VALUE FOR SQ_CLSSF_PLANO_CONTA, "
                 strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 1) & "', "
                 strSQL = strSQL + "'" & cnpjClie & "', '" & planoClassificacaoPlanoConta(indice, 3) & "',"
-                strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 2) & "', '" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaPlanoConta)).Value & "',"
-                strSQL = strSQL + "'" & Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaPlanoConta)).Value & "');"
+                strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 2) & "', '" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value & "',"
+                strSQL = strSQL + "'" & Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value & "');"
             
                 cnn.Execute strSQL
                                 
@@ -147,13 +147,13 @@ On Error GoTo Erro
                 'Coluna da descrição da classificação do plano de contas
                 planoPlanoConta(indicePlano, 5) = planoClassificacaoPlanoConta(indice, 5)
                 'Codigo do plano de contas
-                planoPlanoConta(indicePlano, 6) = Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaPlanoConta)).Value
+                planoPlanoConta(indicePlano, 6) = Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value
                 'Descrição do plano de contas
-                planoPlanoConta(indicePlano, 7) = Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaPlanoConta)).Value
+                planoPlanoConta(indicePlano, 7) = Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value
                 
                 indicePlano = indicePlano + 1
                 
-                linhaPlanoConta = linhaPlanoConta + 1
+                linhaplanoConta = linhaplanoConta + 1
             
             Loop
             
@@ -173,20 +173,20 @@ On Error GoTo Erro
                 Worksheets("PC Despesas").Activate
             End If
             
-            linhaPlanoConta = 6
+            linhaplanoConta = 6
             
-            Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaPlanoConta)).Value <> ""
+            Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value <> ""
             
                 strSQL = "UPDATE T_CLSSF_PLANO_CONTA SET NU_CNPJ = '" & cnpjClie & "'"
                 strSQL = strSQL + ", IC_TIPO_TRANS_FLUXO_CAIXA = '" & planoClassificacaoPlanoConta(indice, 3) & "'"
                 strSQL = strSQL + ", DS_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 2) & "'"
                 strSQL = strSQL + ", CD_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 1) & "'"
-                strSQL = strSQL + ", DS_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaPlanoConta)).Value & "'"
-                strSQL = strSQL + "WHERE CD_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaPlanoConta)).Value & "';"
+                strSQL = strSQL + ", DS_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value & "'"
+                strSQL = strSQL + "WHERE CD_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value & "';"
             
                 cnn.Execute strSQL
                 
-                 'Código da classificação do plano de contas
+                'Código da classificação do plano de contas
                 planoPlanoConta(indicePlano, 1) = planoClassificacaoPlanoConta(indice, 1)
                 'Descrição da classificação do plano de contas
                 planoPlanoConta(indicePlano, 2) = planoClassificacaoPlanoConta(indice, 2)
@@ -197,13 +197,13 @@ On Error GoTo Erro
                 'Coluna da descrição da classificação do plano de contas
                 planoPlanoConta(indicePlano, 5) = planoClassificacaoPlanoConta(indice, 5)
                 'Codigo do plano de contas
-                planoPlanoConta(indicePlano, 6) = Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaPlanoConta)).Value
+                planoPlanoConta(indicePlano, 6) = Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value
                 'Descrição do plano de contas
-                planoPlanoConta(indicePlano, 7) = Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaPlanoConta)).Value
+                planoPlanoConta(indicePlano, 7) = Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value
                 
                 indicePlano = indicePlano + 1
                 
-                linhaPlanoConta = linhaPlanoConta + 1
+                linhaplanoConta = linhaplanoConta + 1
             
             Loop
             
@@ -324,7 +324,7 @@ On Error GoTo Erro
     
     Do While Range("O" + CStr(linha)).Value <> ""
         
-         strSQL = "INSERT INTO T_LISTA_PLVR_EXCD"
+        strSQL = "INSERT INTO T_LISTA_PLVR_EXCD"
         strSQL = strSQL + "("
         strSQL = strSQL + "ID_LISTA_PLVR_EXCD"
         strSQL = strSQL + ",NU_CNPJ"

@@ -53,6 +53,8 @@ On Error GoTo Erro
     
     mes_processamento = ActiveSheet.Name
     
+    Application.ScreenUpdating = False
+    
     For conta_mes = 1 To 12
         If mes(conta_mes) = mes_processamento Then
             flag_mes_processamento = conta_mes
@@ -208,6 +210,8 @@ On Error GoTo Erro
     Loop
     
     frmBarraProgressaoRecebimento.Hide
+    
+    Application.ScreenUpdating = True
     
     MsgBox "Processamento Realizado com sucesso.", vbInformation, "Processamento de Recebimentos"
     

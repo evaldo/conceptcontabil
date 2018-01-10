@@ -773,7 +773,7 @@ Public Sub ProcessaImportacao()
 On Error GoTo Erro
 
     Dim dia As String
-    Dim docref As String
+    Dim docRef As String
     Dim instfin As String
     Dim valor As String
     Dim status As String
@@ -951,19 +951,7 @@ On Error GoTo Erro
     Range("C5").Select
     frmBarraProgressaoImportacao.Hide
     
-    Range("C4:N10000").Select
-    ActiveWorkbook.Worksheets(mes_processamento).Sort.SortFields.Clear
-    ActiveWorkbook.Worksheets(mes_processamento).Sort.SortFields.Add Key:=Range("C5:C10000"), _
-        SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
-    With ActiveWorkbook.Worksheets(mes_processamento).Sort
-        .SetRange Range("C4:N10000")
-        .Header = xlYes
-        .MatchCase = False
-        .Orientation = xlTopToBottom
-        .SortMethod = xlPinYin
-        .Apply
-    End With
-    Range("C5").Select
+    ordernarPlanilhaLancamento (mes_processamento)
     
     MsgBox "Importação realizada com sucesso!", vbInformation, "Processamento de Recebimentos"
     

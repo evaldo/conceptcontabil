@@ -15,7 +15,7 @@ Private Sub Workbook_Open()
     Application.DisplayFullScreen = True
     Application.WindowState = xlMaximized
     
-    Call Ocultar
+    'Call Ocultar
     
     Sheets("Início").Select
     
@@ -23,7 +23,7 @@ End Sub
 
 Private Sub Workbook_WindowActivate(ByVal Wn As Window)
     
-    Call Ocultar
+    'Call Ocultar
     
 End Sub
 
@@ -52,7 +52,7 @@ End Sub
 Private Sub Workbook_WindowResize(ByVal Wn As Window)
     Wn.WindowState = xlMaximized
     'Wn.EnableResize = False
-    Call Ocultar
+    'Call Ocultar
 End Sub
 
 Function ConverteParaLetra(iCol As Integer) As String

@@ -63,6 +63,7 @@ On Error GoTo Erro
     Dim valorLancamento As String
     
     Dim numeroLancamento As Integer
+    Dim i As Integer
     
     nomePlanilhaAtual = ActiveSheet.Name
 
@@ -112,6 +113,8 @@ On Error GoTo Erro
     
     numeroLancamento = 1
     
+    frmEscolhaSistemaExportacao.frameProgressoExportacao.Visible = True
+    
     For i = 1 To rngToSave.Rows.Count
     
         If rngToSave(i, 2).Value <> "" Then
@@ -146,14 +149,16 @@ On Error GoTo Erro
             End If
             
             csvVal = "03" + Format(CStr(numeroLancamento), "0000000") _
-                    + Format("1", "0000000") _
-                    + Format("1", "0000000") _
+                    + Replace(Format(localizaContaDevedora(rngToSave(i, 5).Value, rngToSave(i, 3).Value), "00000"), ".", "") _
+                    + Format(localizaContaCredora(rngToSave(i, 6).Value), "00000") _
                     + Format(valorLancamento, "0000000000000") _
                     + "0000001" _
                     + Trim(Format(rngToSave(i, 4).Value, "@@@@@@@@@@"))
             Print #fNum, csvVal
             
             numeroLancamento = numeroLancamento + 1
+            
+            Call frmEscolhaSistemaExportacao.barraProgresso("Exportando dados no formato do Sistema Domínio ", numeroLancamento)
             
          Else
             
@@ -171,6 +176,8 @@ On Error GoTo Erro
 
     Close #fNum
     
+    frmEscolhaSistemaExportacao.frameProgressoExportacao.Visible = False
+    
     MsgBox "Exportação de dados para o Sistema Domínio realizada com sucesso. Nome do arquivo exportado: " & "FluxoCaixaDominio_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv" & Chr(13) & Chr(13) & _
     " no diretório: " & myWB.Path, vbOKOnly + vbInformation, "Exportação de Dados"
     
@@ -178,7 +185,7 @@ On Error GoTo Erro
     
 Erro:
 
-    MsgBox "Erro ao processar a exportação para .CSV. " + Err.Description + ". Tente exportar novamente em instantes.", vbOKOnly + vbInformation, "Erro ao Exportar"
+    MsgBox "Erro ao processar a exportação para .txt. " + Err.Description + ". Tente exportar novamente em instantes.", vbOKOnly + vbInformation, "Erro ao Exportar"
 
 End Sub
 
@@ -218,6 +225,8 @@ On Error GoTo Erro
     
     numeroLancamento = 1
     
+    frmEscolhaSistemaExportacao.frameProgressoExportacao.Visible = True
+    
     For i = 1 To rngToSave.Rows.Count
     
         If rngToSave(i, 2).Value <> "" Then
@@ -242,9 +251,9 @@ On Error GoTo Erro
                     + "   " _
                     + "                                                " _
                     + "1" + Replace(rngToSave(i, 2).Value, "/", "") _
-                    + Format("1", "00000") _
+                    + Replace(Format(localizaContaDevedora(rngToSave(i, 5).Value, rngToSave(i, 3).Value), "00000"), ".", "") _
                     + "                   " _
-                    + Format("1", "00000") _
+                    + Format(localizaContaCredora(rngToSave(i, 6).Value), "00000") _
                     + "                   " _
                     + Format(valorLancamento, "0000000000000000") _
                     + "1  " _
@@ -252,6 +261,8 @@ On Error GoTo Erro
             Print #fNum, csvVal
             
             numeroLancamento = numeroLancamento + 1
+            
+            Call frmEscolhaSistemaExportacao.barraProgresso("Exportando dados no formato do Sistema Prosoft ", numeroLancamento)
             
         Else
         
@@ -270,7 +281,7 @@ On Error GoTo Erro
     
 Erro:
 
-    MsgBox "Erro ao processar a exportação para .CSV. " + Err.Description + ". Tente exportar novamente em instantes.", vbOKOnly + vbInformation, "Erro ao Exportar"
+    MsgBox "Erro ao processar a exportação para .txt. " + Err.Description + ". Tente exportar novamente em instantes.", vbOKOnly + vbInformation, "Erro ao Exportar"
 
 End Sub
 
@@ -293,4 +304,100 @@ Dim linha_panilha As Integer
     
 End Sub
 
+Public Function localizaContaDevedora(descricaoContaDevedora As String, descricaoClassificacaoPlanoConta As String)
+
+Dim linha_planilha As Integer
+Dim linhaplanoConta As Integer
+Dim nomePlanilha As String
+Dim colCodigoPlanoConta As String
+Dim colDescricaoPlanoConta As String
+Dim contaDevedoraLocalizada As String
+
+Dim achouContaDevedora As Boolean
+ 
+    nomePlanilha = ActiveSheet.Name
+    
+    Worksheets("Configurações Básicas").Activate
+    
+    linha_planilha = 12
+    achouContaDevedora = False
+    
+    Do While Range("E" + CStr(linha_planilha)).Value <> ""
+    
+        If descricaoClassificacaoPlanoConta = Range("E" + CStr(linha_planilha)).Value Then
+    
+            colCodigoPlanoConta = Range("G" + CStr(linha_planilha)).Value
+            colDescricaoPlanoConta = Range("H" + CStr(linha_planilha)).Value
+    
+            If Range("F" + CStr(linha_planilha)).Value = "R" Then
+                Worksheets("PC Receitas").Activate
+            Else
+                Worksheets("PC Despesas").Activate
+            End If
+        
+            linhaplanoConta = 5
+            
+            Do While Range(colCodigoPlanoConta + CStr(linhaplanoConta)).Value <> ""
+                        
+                If Range(colDescricaoPlanoConta + CStr(linhaplanoConta)).Value = descricaoContaDevedora Then
+                
+                    contaDevedoraLocalizada = Range(colCodigoPlanoConta + CStr(linhaplanoConta)).Value
+                    achouContaDevedora = True
+                    Exit Do
+                    
+                End If
+                
+                linhaplanoConta = linhaplanoConta + 1
+                
+                Call frmEscolhaSistemaExportacao.barraProgresso("Localizando Conta Devedora ", linhaplanoConta)
+                
+            Loop
+            
+        End If
+        
+        If achouContaDevedora = True Then Exit Do
+        
+        Worksheets("Configurações Básicas").Activate
+        
+        linha_planilha = linha_planilha + 1
+        
+    Loop
+    
+    localizaContaDevedora = contaDevedoraLocalizada
+    
+    Worksheets(nomePlanilha).Activate
+
+End Function
+
+Public Function localizaContaCredora(descricaoContaCredora As String)
+
+Dim linha_planilha As Integer
+Dim contaCredora As String
+
+    nomePlanilha = ActiveSheet.Name
+    
+    Worksheets("Cenario de Exportacao").Activate
+    
+    linha_planilha = 5
+    
+    achouContaDevedora = False
+    
+    Do While Range("H" + CStr(linha_planilha)).Value <> ""
+    
+        If descricaoContaCredora = Range("H" + CStr(linha_planilha)).Value Then
+        
+            contaCredora = Range("G" + CStr(linha_planilha)).Value
+            Exit Do
+            
+        End If
+        
+        linha_planilha = linha_planilha + 1
+        
+        Call frmEscolhaSistemaExportacao.barraProgresso("Localizando Conta Credora ", linha_planilha)
+        
+    Loop
+    
+    localizaContaCredora = contaCredora
+
+End Function
 
