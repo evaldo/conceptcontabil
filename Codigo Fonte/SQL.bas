@@ -347,6 +347,74 @@ On Error GoTo Erro
         
     Loop
     
+    Worksheets("Cenario de Exportacao").Activate
+    
+    linha = 5
+    
+    strSQL = "DELETE FROM T_CNRO_EXPRT_ARQV "
+    strSQL = strSQL + "WHERE NU_ANO_PLAN_ORIG_PROC = " & ano & " "
+    strSQL = strSQL + "and NU_CNPJ = '" & cnpjClie & "';"
+    
+    cnn.Execute strSQL
+    
+    Do While Range("G" + CStr(linha)).Value <> ""
+        
+        strSQL = "INSERT INTO T_CNRO_EXPRT_ARQV"
+        strSQL = strSQL + " (ID_CNRO_EXPRT"
+        strSQL = strSQL + ",CD_INSTT_FNCR"
+        strSQL = strSQL + ",DS_INSTT_FNCR"
+        strSQL = strSQL + ",CD_DCTO_RFRC_FLUXO_CAIXA"
+        strSQL = strSQL + ",DS_DCTO_RFRC_FLUXO_CAIXA"
+        strSQL = strSQL + ",NU_ANO_PLAN_ORIG_PROC"
+        strSQL = strSQL + ",NU_CNPJ"
+        strSQL = strSQL + ",TP_CNRO_EXPRT)"
+        strSQL = strSQL + "Values"
+        strSQL = strSQL + "(NEXT VALUE FOR SQ_CNRO_EXPRT_ARQV"
+        strSQL = strSQL + ",'" & Range("G" + CStr(linha)).Value & "'"
+        strSQL = strSQL + ",'" & Range("H" + CStr(linha)).Value & "'"
+        strSQL = strSQL + ",NULL "
+        strSQL = strSQL + ",NULL "
+        strSQL = strSQL + ",'" & ano & "'"
+        strSQL = strSQL + ",'" & cnpjClie & "'"
+        strSQL = strSQL + ",'INSTFIN'"
+        strSQL = strSQL + ");"
+        
+        cnn.Execute strSQL
+        
+        linha = linha + 1
+        
+    Loop
+    
+    linha = 5
+    
+    Do While Range("I" + CStr(linha)).Value <> ""
+        
+        strSQL = "INSERT INTO T_CNRO_EXPRT_ARQV"
+        strSQL = strSQL + " (ID_CNRO_EXPRT"
+        strSQL = strSQL + ",CD_INSTT_FNCR"
+        strSQL = strSQL + ",DS_INSTT_FNCR"
+        strSQL = strSQL + ",CD_DCTO_RFRC_FLUXO_CAIXA"
+        strSQL = strSQL + ",DS_DCTO_RFRC_FLUXO_CAIXA"
+        strSQL = strSQL + ",NU_ANO_PLAN_ORIG_PROC"
+        strSQL = strSQL + ",NU_CNPJ"
+        strSQL = strSQL + ",TP_CNRO_EXPRT)"
+        strSQL = strSQL + "Values"
+        strSQL = strSQL + "(NEXT VALUE FOR SQ_CNRO_EXPRT_ARQV"
+        strSQL = strSQL + ",NULL "
+        strSQL = strSQL + ",NULL "
+        strSQL = strSQL + ",'" & Range("I" + CStr(linha)).Value & "'"
+        strSQL = strSQL + ",'" & Range("J" + CStr(linha)).Value & "'"
+        strSQL = strSQL + ",'" & ano & "'"
+        strSQL = strSQL + ",'" & cnpjClie & "'"
+        strSQL = strSQL + ",'DOCREF'"
+        strSQL = strSQL + ");"
+        
+        cnn.Execute strSQL
+        
+        linha = linha + 1
+        
+    Loop
+    
     Worksheets(mes_processamento).Activate
     
     cnn.BeginTrans

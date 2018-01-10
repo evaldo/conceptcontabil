@@ -951,7 +951,19 @@ On Error GoTo Erro
     Range("C5").Select
     frmBarraProgressaoImportacao.Hide
     
-    ordernarPlanilhaLancamento (mes_processamento)
+    Range("C4:N10000").Select
+    ActiveWorkbook.Worksheets(mes_processamento).Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets(mes_processamento).Sort.SortFields.Add Key:=Range("C5:C10000"), _
+        SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets(mes_processamento).Sort
+        .SetRange Range("C4:N10000")
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    Range("C5").Select
     
     MsgBox "Importação realizada com sucesso!", vbInformation, "Processamento de Recebimentos"
     

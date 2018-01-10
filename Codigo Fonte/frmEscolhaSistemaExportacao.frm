@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Public indiceArrayListaInstFinanc As Integer
 Public bolAchouInstFinancLista As Boolean
 Public indiceAtualizarInstFinanc As Integer
@@ -110,6 +111,9 @@ Dim nomePlanilha As String
             
         Case "Prosoft"
             Call ExportarProsoft
+            
+        Case "Alterdata"
+            Call ExportarAlterdata
     
     End Select
     
@@ -170,28 +174,27 @@ Dim arrayDocRef(1 To 10000, 1 To 2) As String
         
     End If
 
-    For indiceArrayListaDocRef = 0 To lstDocRefCodigo.ListCount - 1
+    For indiceArrayListaDocRef = 0 To Me.lstDocRefCodigo.ListCount - 1
     
-        If cmbDocRefCodigo.Text = lstDocRefCodigo.List(indiceAtualizarDocRef, 0) Then
-            lstDocRefCodigo.List(indiceAtualizarDocRef, 1) = txtCodigoRef.Text
+        If Me.cmbDocRefCodigo.Text = lstDocRefCodigo.List(indiceArrayListaDocRef, 0) Then
+            lstDocRefCodigo.List(indiceArrayListaDocRef, 1) = Me.txtCodigoRef.Text
             
             bolAchoudocRef = True
             
-            Exit For
-            
         End If
         
-        If bolAchoudocRef = False Then
+        If lstDocRefCodigo.List(indiceArrayListaDocRef, 0) <> "" Then
             indiceAtualizarDocRef = indiceAtualizarDocRef + 1
         End If
         
     Next
-            
+    
+    
     If bolAchoudocRef = False Then
         
         lstDocRefCodigo.List(indiceAtualizarDocRef, 0) = cmbDocRefCodigo.Text
         lstDocRefCodigo.List(indiceAtualizarDocRef, 1) = txtCodigoRef.Text
-   
+    
     End If
 
 End Sub
@@ -499,6 +502,7 @@ Dim sistema(1 To 10) As String
     sistema(1) = "Sem Formato"
     sistema(2) = "Dominio"
     sistema(3) = "Prosoft"
+    sistema(4) = "Alterdata"
 
     cmbSistemaExportacao.List = sistema
     
@@ -508,7 +512,7 @@ Public Sub barraProgresso(mensagem As String, percentual As Integer)
 
     Me.lblDescricaoProgresso.Caption = mensagem + "... " + CStr(percentual) + " registros"
     DoEvents
-    Me.lblProgresso.Width = ((percentual / 100) * Me.lblDescricaoProgresso.Width)
+    Me.lblProgresso.Width = ((percentual / 10000) * Me.lblDescricaoProgresso.Width)
     DoEvents
     
 End Sub

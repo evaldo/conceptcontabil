@@ -2,7 +2,7 @@ Attribute VB_Name = "ProcessarRecebimento"
     
 Sub processa_recebimento_caixa()
 
-On Error GoTo Erro
+'On Error GoTo Erro
 
     Dim plano_conta As String
     Dim mes(1 To 12) As String
@@ -45,6 +45,8 @@ On Error GoTo Erro
     linha_planilha = 5
     linha_planilha_mes_processmento = 5
     
+    Application.ScreenUpdating = False
+    
     If ValidaPlanilhaProcessamento() = False Then
         MsgBox "Escolha um planilha para lançamento do Fluxo de Caixa entre Jan e Dez.", vbOKOnly + vbInformation, "Processamento dos Recebimentos"
         frmBarraProgressaoRecebimento.Hide
@@ -52,8 +54,6 @@ On Error GoTo Erro
     End If
     
     mes_processamento = ActiveSheet.Name
-    
-    Application.ScreenUpdating = False
     
     For conta_mes = 1 To 12
         If mes(conta_mes) = mes_processamento Then
@@ -63,6 +63,8 @@ On Error GoTo Erro
     Next conta_mes
     
     Do While Range("E" + CStr(linha_planilha_mes_processmento)).Value <> ""
+    
+        frmBarraProgressaoRecebimento.AtualizaBarra percentual, "Processando Recebimento dos meses"
     
         doc_ref = Range("F" + CStr(linha_planilha_mes_processmento)).Value
         instituicao_finaceira = Range("H" + CStr(linha_planilha_mes_processmento)).Value
@@ -147,7 +149,6 @@ On Error GoTo Erro
                     Do While Range("E" + CStr(linha_planilha)).Value <> ""
                     
                         percentual = linha_planilha / 1000
-                        frmBarraProgressaoRecebimento.AtualizaBarra percentual, mes(conta_mes)
                         
                         If Range("E" + CStr(linha_planilha)).Value = classificacao _
                            And Range("H" + CStr(linha_planilha)).Value = instituicao_finaceira _
@@ -211,16 +212,16 @@ On Error GoTo Erro
     
     frmBarraProgressaoRecebimento.Hide
     
-    Application.ScreenUpdating = True
-    
     MsgBox "Processamento Realizado com sucesso.", vbInformation, "Processamento de Recebimentos"
     
+    Application.ScreenUpdating = True
+        
     Exit Sub
     
-Erro:
+'Erro:
 
-    MsgBox "Erro ao processar o recebimento.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
-    Worksheets(mes_processamento).Activate
+'    MsgBox "Erro ao processar o recebimento.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+'    Worksheets(mes_processamento).Activate
     
 End Sub
 

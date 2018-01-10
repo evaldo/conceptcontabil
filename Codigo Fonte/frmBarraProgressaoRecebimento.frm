@@ -17,16 +17,18 @@ Attribute VB_Exposed = False
 Private Sub UserForm_Activate()
 
     lblProgresso.Width = 0
+    
     Call processa_recebimento_caixa
     
 End Sub
 
 Sub AtualizaBarra(percentual As Single, informacao As String)
-
- With frmBarraProgressaoRecebimento
-    .nomeQuadro.Caption = "Processando... " + informacao + "... " + CStr(Format(percentual, "00%"))
-    .lblProgresso.Width = percentual * (.nomeQuadro.Width - 10)
- End With
-
- DoEvents
+    
+    With frmBarraProgressaoRecebimento
+       
+       .nomeQuadro.Caption = "Processando... " + informacao + "... " + CStr(Format(percentual, "00%"))
+       .lblProgresso.Width = percentual * (.nomeQuadro.Width - 10)
+       
+    End With
+    
 End Sub

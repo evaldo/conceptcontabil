@@ -401,3 +401,123 @@ Dim contaCredora As String
 
 End Function
 
+
+Public Sub ExportarAlterdata()
+    
+'On Error GoTo Erro
+    
+    Dim myCSVFileName As String
+    Dim myWB As Workbook
+    Dim rngToSave As Range
+    Dim fNum As Integer
+    Dim csvVal As String
+    Dim strIntervalo As String
+    Dim nomePlanilhaAtual As String
+    Dim valorLancamento As String
+    
+    Dim numeroLancamento As Integer
+    
+    nomePlanilhaAtual = ActiveSheet.Name
+
+    Worksheets(nomePlanilhaAtual).Activate
+
+    Set myWB = ThisWorkbook
+    
+    ordernarPlanilhaLancamento (ActiveSheet.Name)
+    
+    myCSVFileName = myWB.Path & "\" & "FluxoCaixaAlterdata_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".txt"
+    
+    csvVal = ""
+    
+    fNum = FreeFile
+    
+    Open myCSVFileName For Output As #fNum
+    
+    strIntervalo = "C5:N10000"
+    Set rngToSave = Range(strIntervalo)
+    
+    numeroLancamento = 1
+    
+    frmEscolhaSistemaExportacao.frameProgressoExportacao.Visible = True
+    
+    For i = 1 To rngToSave.Rows.Count
+    
+        If rngToSave(i, 2).Value <> "" Then
+     
+            '-------Para cada lançamento, o registro abaixo é lançado----
+            'Coluna 1
+            'Código do Lançamento Automático
+             
+            'Coluna 2
+            'Conta Débito
+             
+            'Coluna 3
+            'Conta Crédito
+             
+            'Coluna 4
+            'Data
+             
+            'Coluna 5
+            'valor
+             
+            'Coluna 6
+            'Código do Histórico
+             
+            'Coluna 7
+            'Complemento Histórico
+             
+            'Coluna 8
+            'Centro de custo Débito
+             
+            'Coluna 9
+            'Centro de custo Crédito
+             
+            'Coluna 10
+            'Número de Documento
+            '-------Para cada lançamento, o registro abaixo é lançado----
+            
+            If rngToSave(8, j).Value = "" Then
+                valorLancamento = CStr(Replace(rngToSave(i, 9).Value, ",", "."))
+            Else
+                valorLancamento = CStr(Replace(rngToSave(i, 8).Value, ",", "."))
+            End If
+            
+            csvVal = CStr(numeroLancamento) + ";" & _
+                    localizaContaDevedora(rngToSave(i, 5).Value, rngToSave(i, 3).Value) + ";" & _
+                    localizaContaCredora(rngToSave(i, 6).Value) + ";" & _
+                    Format(rngToSave(i, 2).Value, "dd/mm/yyyy") + ";" & _
+                    valorLancamento + ";" & _
+                    "" + ";" & _
+                    "" + ";" & _
+                    "" + ";" & _
+                    "" + ";" & _
+                    CStr(rngToSave(i, 4).Value) + ";"
+            Print #fNum, csvVal
+            
+            numeroLancamento = numeroLancamento + 1
+            
+            Call frmEscolhaSistemaExportacao.barraProgresso("Exportando dados no formato do Sistema Prosoft ", numeroLancamento)
+            
+        Else
+        
+            Exit For
+        
+        End If
+        
+    Next
+
+    Close #fNum
+    
+    MsgBox "Exportação de dados para o Sistema Alterdata realizada com sucesso. Nome do arquivo exportado: " & "FluxoCaixaProsoft_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv" & Chr(13) & Chr(13) & _
+    " no diretório: " & myWB.Path, vbOKOnly + vbInformation, "Exportação de Dados"
+    
+    Exit Sub
+    
+'Erro:
+
+'    MsgBox "Erro ao processar a exportação para .txt. " + Err.Description + ". Tente exportar novamente em instantes.", vbOKOnly + vbInformation, "Erro ao Exportar"
+'    Close #fNum
+
+End Sub
+
+
