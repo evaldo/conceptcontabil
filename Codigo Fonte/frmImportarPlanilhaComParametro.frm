@@ -189,7 +189,7 @@ On Error GoTo Erro
                     
                     If bol_encontrou_palavra = False Then
                         
-                        For i_armazenada = 1 To 10000
+                        For i_armazenada = 1 To CInt(txtLinhaFinal.Text)
                             
                             If classificacao(i_armazenada, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
                                 bol_ja_existe_classificacao = True
@@ -796,7 +796,7 @@ On Error GoTo Erro
         'Etapa de limpeza dados da planilha do mês atual
         frmBarraProgressaoImportacao.AtualizaBarra (20 / 100), "Limpando os dados da planilha " + mes_processamento
         
-        Do While linha <= 10000
+        Do While linha <= CInt(Me.txtLinhaFinal.Text)
             
             Range(txtColunaClassificacaoDestino.Text + CStr(linha)).Value = ""
             Range(txtDiaDestino.Text + CStr(linha)).Value = ""
@@ -853,7 +853,7 @@ On Error GoTo Erro
         
             linha_classificacao = 1
             
-            Do While linha_classificacao <= 1000
+            Do While linha_classificacao <= CInt(Me.txtLinhaFinal.Text)
                 
                 If classificacao(linha_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Value Then
                 

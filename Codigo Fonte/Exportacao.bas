@@ -149,7 +149,7 @@ On Error GoTo Erro
             End If
             
             csvVal = "03" + Format(CStr(numeroLancamento), "0000000") _
-                    + Replace(Format(localizaContaDevedora(rngToSave(i, 5).Value, rngToSave(i, 3).Value), "00000"), ".", "") _
+                    + Replace(Format(localizaContaDevedora(rngToSave(i, 5).Value), "00000"), ".", "") _
                     + Format(localizaContaCredora(rngToSave(i, 6).Value), "00000") _
                     + Format(valorLancamento, "0000000000000") _
                     + "0000001" _
@@ -304,68 +304,96 @@ Dim linha_panilha As Integer
     
 End Sub
 
-Public Function localizaContaDevedora(descricaoContaDevedora As String, descricaoClassificacaoPlanoConta As String)
+Public Function localizaContaDevedora(descricaoContaDevedora As String)
 
 Dim linha_planilha As Integer
-Dim linhaplanoConta As Integer
-Dim nomePlanilha As String
-Dim colCodigoPlanoConta As String
-Dim colDescricaoPlanoConta As String
-Dim contaDevedoraLocalizada As String
+Dim contaDevedora As String
 
-Dim achouContaDevedora As Boolean
- 
     nomePlanilha = ActiveSheet.Name
     
-    Worksheets("Configurações Básicas").Activate
+    Worksheets("Cenario de Exportacao").Activate
     
-    linha_planilha = 12
-    achouContaDevedora = False
+    linha_planilha = 5
     
-    Do While Range("E" + CStr(linha_planilha)).Value <> ""
+    Do While Range("K" + CStr(linha_planilha)).Value <> ""
     
-        If descricaoClassificacaoPlanoConta = Range("E" + CStr(linha_planilha)).Value Then
-    
-            colCodigoPlanoConta = Range("G" + CStr(linha_planilha)).Value
-            colDescricaoPlanoConta = Range("H" + CStr(linha_planilha)).Value
-    
-            If Range("F" + CStr(linha_planilha)).Value = "R" Then
-                Worksheets("PC Receitas").Activate
-            Else
-                Worksheets("PC Despesas").Activate
-            End If
+        If descricaoContaDevedora = Range("L" + CStr(linha_planilha)).Value Then
         
-            linhaplanoConta = 5
-            
-            Do While Range(colCodigoPlanoConta + CStr(linhaplanoConta)).Value <> ""
-                        
-                If Range(colDescricaoPlanoConta + CStr(linhaplanoConta)).Value = descricaoContaDevedora Then
-                
-                    contaDevedoraLocalizada = Range(colCodigoPlanoConta + CStr(linhaplanoConta)).Value
-                    achouContaDevedora = True
-                    Exit Do
-                    
-                End If
-                
-                linhaplanoConta = linhaplanoConta + 1
-                
-                Call frmEscolhaSistemaExportacao.barraProgresso("Localizando Conta Devedora ", linhaplanoConta)
-                
-            Loop
+            contaDevedora = Range("K" + CStr(linha_planilha)).Value
+            Exit Do
             
         End If
         
-        If achouContaDevedora = True Then Exit Do
-        
-        Worksheets("Configurações Básicas").Activate
-        
         linha_planilha = linha_planilha + 1
+        
+        Call frmEscolhaSistemaExportacao.barraProgresso("Localizando Conta Devedora ", linha_planilha)
         
     Loop
     
-    localizaContaDevedora = contaDevedoraLocalizada
+    localizaContaDevedora = contaDevedora
     
     Worksheets(nomePlanilha).Activate
+
+'Dim linha_planilha As Integer
+'Dim linhaplanoConta As Integer
+'Dim nomePlanilha As String
+'Dim colCodigoPlanoConta As String
+'Dim colDescricaoPlanoConta As String
+'Dim contaDevedoraLocalizada As String
+
+'Dim achouContaDevedora As Boolean
+ 
+'    nomePlanilha = ActiveSheet.Name
+    
+'    Worksheets("Configurações Básicas").Activate
+    
+'    linha_planilha = 12
+'    achouContaDevedora = False
+'
+'    Do While Range("E" + CStr(linha_planilha)).Value <> ""
+'
+'        If descricaoClassificacaoPlanoConta = Range("E" + CStr(linha_planilha)).Value Then
+'
+'            colCodigoPlanoConta = Range("G" + CStr(linha_planilha)).Value
+'            colDescricaoPlanoConta = Range("H" + CStr(linha_planilha)).Value
+'
+'            If Range("F" + CStr(linha_planilha)).Value = "R" Then
+'                Worksheets("PC Receitas").Activate
+'            Else
+'                Worksheets("PC Despesas").Activate
+'            End If
+'
+'            linhaplanoConta = 5
+'
+'            Do While Range(colCodigoPlanoConta + CStr(linhaplanoConta)).Value <> ""
+'
+'                If Range(colDescricaoPlanoConta + CStr(linhaplanoConta)).Value = descricaoContaDevedora Then
+'
+'                    contaDevedoraLocalizada = Range(colCodigoPlanoConta + CStr(linhaplanoConta)).Value
+'                    achouContaDevedora = True
+'                    Exit Do
+'
+'                End If
+'
+'                linhaplanoConta = linhaplanoConta + 1
+'
+'                Call frmEscolhaSistemaExportacao.barraProgresso("Localizando Conta Devedora ", linhaplanoConta)
+'
+'            Loop
+'
+'        End If
+'
+'        If achouContaDevedora = True Then Exit Do
+'
+'        Worksheets("Configurações Básicas").Activate
+'
+'        linha_planilha = linha_planilha + 1
+'
+'    Loop
+    
+'    localizaContaDevedora = contaDevedoraLocalizada
+    
+'    Worksheets(nomePlanilha).Activate
 
 End Function
 
@@ -404,7 +432,7 @@ End Function
 
 Public Sub ExportarAlterdata()
     
-'On Error GoTo Erro
+On Error GoTo Erro
     
     Dim myCSVFileName As String
     Dim myWB As Workbook
@@ -513,10 +541,10 @@ Public Sub ExportarAlterdata()
     
     Exit Sub
     
-'Erro:
+Erro:
 
-'    MsgBox "Erro ao processar a exportação para .txt. " + Err.Description + ". Tente exportar novamente em instantes.", vbOKOnly + vbInformation, "Erro ao Exportar"
-'    Close #fNum
+    MsgBox "Erro ao processar a exportação para .txt. " + Err.Description + ". Tente exportar novamente em instantes.", vbOKOnly + vbInformation, "Erro ao Exportar"
+    Close #fNum
 
 End Sub
 
