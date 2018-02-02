@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmImportarPlanilhaComParametro 
    Caption         =   "Importação de Dados de Planilhas"
-   ClientHeight    =   10200
+   ClientHeight    =   10275
    ClientLeft      =   45
    ClientTop       =   390
-   ClientWidth     =   11175
+   ClientWidth     =   13620
    OleObjectBlob   =   "frmImportarPlanilhaComParametro.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -326,6 +326,7 @@ End Sub
 Private Sub btnFechar_Click()
 
     Unload Me
+    frmEscolhaDesRec.Hide
     
 End Sub
 
@@ -1181,5 +1182,6 @@ Private Sub UserForm_Activate()
     End If
         
 End Sub
+
 
 
