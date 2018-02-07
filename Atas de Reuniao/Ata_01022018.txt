@@ -7,20 +7,20 @@ Concluir os itens 1, 2, 3 e 5.
 	- dizer valor de instalação
 	- manutenção dos dados no Azure.
 
-2-) para facilitar busca, modificar a tela de importação para a busca por plano de contas: nome e código.
+2-) (Feito) para facilitar busca, modificar a tela de importação para a busca por plano de contas: nome e código.
 
 3-) criar a facilitação de importação do plano de contas do sistema origem para ser lido na exportação.
 
 4-) colocar no manual como virar o ano. Criar funcionalidade de salvar como para tirar uma foto do estado atual da planilha contendo funções básicas da QLuz.
 
-5-) assim que der o Ok da importação fechar a tela menor de escolha de contas (despesas e receitas).
+5-) (Feito) assim que der o Ok da importação fechar a tela menor de escolha de contas (despesas e receitas).
 
-6-) abrir .PDF na importação.
+6-) (em estudo...) abrir .PDF na importação.
 
 7-) solicitar na tela de importação a coluna de descrição o histórico variável. Concatenar com a descrição da classificação. Comparar se jaá existe.
 Limpar acentuação, espaços e pontuação do hist. variável. 
 
-8-) Verificar como os dados podem ser atualizados em planilha na nuvem. 
+8-) (Feito) Verificar como os dados podem ser atualizados em planilha na nuvem. 
 Verificar se os dados em nuvem podem ser colocados no Office em nuvem.
 
 9-) Documentar a base de dados.

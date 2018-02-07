@@ -1,4 +1,10 @@
 Attribute VB_Name = "Geral"
+Public anoAtual As String
+Public nomeClieAtual As String
+Public cnpjClieAtual As String
+Public codigoPlanoContas As String
+Public descricaoPlanoContas As String
+
 Public Sub Desfazer()
     
     Application.SendKeys ("^(z)")

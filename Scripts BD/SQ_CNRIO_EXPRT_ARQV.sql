@@ -1,5 +1,5 @@
-/****** Object:  Sequence [dbo].[SQ_CNRIO_IMPRT_ARQV]    Script Date: 10/01/2018 15:58:02 ******/
-CREATE SEQUENCE [dbo].[SQ_CNRIO_IMPRT_ARQV] 
+/****** Object:  Sequence [dbo].[SQ_CNRIO_EXPRT_ARQV]    Script Date: 10/01/2018 15:58:02 ******/
+CREATE SEQUENCE [dbo].[SQ_CNRIO_EXPRT_ARQV] 
  AS [bigint]
  START WITH 1
  INCREMENT BY 1

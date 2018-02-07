@@ -15,7 +15,7 @@ On Error GoTo Erro
 
     Set myWB = ThisWorkbook
     
-    myCSVFileName = myWB.Path & "\" & "FluxoCaixaSemFormato_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv"
+    myCSVFileName = myWB.path & "\" & "FluxoCaixaSemFormato_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv"
     
     csvVal = ""
     
@@ -39,7 +39,7 @@ On Error GoTo Erro
     Close #fNum
     
     MsgBox "Exportação realizada com sucesso. Nome do arquivo exportado: " & "FluxoCaixa_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv" & Chr(13) & Chr(13) & _
-    " no diretório: " & myWB.Path, vbOKOnly + vbInformation, "Exportação de Dados para .CSV"
+    " no diretório: " & myWB.path, vbOKOnly + vbInformation, "Exportação de Dados para .CSV"
     
     Exit Sub
     
@@ -90,7 +90,7 @@ On Error GoTo Erro
         Exit Sub
     End If
     
-    myCSVFileName = myWB.Path & "\" & "FluxoCaixaDominio_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".txt"
+    myCSVFileName = myWB.path & "\" & "FluxoCaixaDominio_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".txt"
     
     csvVal = ""
     
@@ -179,7 +179,7 @@ On Error GoTo Erro
     frmEscolhaSistemaExportacao.frameProgressoExportacao.Visible = False
     
     MsgBox "Exportação de dados para o Sistema Domínio realizada com sucesso. Nome do arquivo exportado: " & "FluxoCaixaDominio_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv" & Chr(13) & Chr(13) & _
-    " no diretório: " & myWB.Path, vbOKOnly + vbInformation, "Exportação de Dados"
+    " no diretório: " & myWB.path, vbOKOnly + vbInformation, "Exportação de Dados"
     
     Exit Sub
     
@@ -212,7 +212,7 @@ On Error GoTo Erro
     
     ordernarPlanilhaLancamento (ActiveSheet.Name)
     
-    myCSVFileName = myWB.Path & "\" & "FluxoCaixaProsoft_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".txt"
+    myCSVFileName = myWB.path & "\" & "FluxoCaixaProsoft_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".txt"
     
     csvVal = ""
     
@@ -275,7 +275,7 @@ On Error GoTo Erro
     Close #fNum
     
     MsgBox "Exportação de dados para o Sistema Prosoft realizada com sucesso. Nome do arquivo exportado: " & "FluxoCaixaProsoft_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv" & Chr(13) & Chr(13) & _
-    " no diretório: " & myWB.Path, vbOKOnly + vbInformation, "Exportação de Dados"
+    " no diretório: " & myWB.path, vbOKOnly + vbInformation, "Exportação de Dados"
     
     Exit Sub
     
@@ -453,7 +453,7 @@ On Error GoTo Erro
     
     ordernarPlanilhaLancamento (ActiveSheet.Name)
     
-    myCSVFileName = myWB.Path & "\" & "FluxoCaixaAlterdata_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".txt"
+    myCSVFileName = myWB.path & "\" & "FluxoCaixaAlterdata_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".txt"
     
     csvVal = ""
     
@@ -537,7 +537,7 @@ On Error GoTo Erro
     Close #fNum
     
     MsgBox "Exportação de dados para o Sistema Alterdata realizada com sucesso. Nome do arquivo exportado: " & "FluxoCaixaProsoft_Exportado" & VBA.Format(VBA.Now, "dd-MM-yyyy hh-mm") & ".csv" & Chr(13) & Chr(13) & _
-    " no diretório: " & myWB.Path, vbOKOnly + vbInformation, "Exportação de Dados"
+    " no diretório: " & myWB.path, vbOKOnly + vbInformation, "Exportação de Dados"
     
     Exit Sub
     

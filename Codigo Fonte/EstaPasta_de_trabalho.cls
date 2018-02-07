@@ -9,6 +9,9 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+Private Sub Workbook_Activate()
+
+End Sub
 
 Private Sub Workbook_Open()
     
@@ -17,13 +20,12 @@ Private Sub Workbook_Open()
     
     'Call Ocultar
     
-    Worksheets("Configurações Básicas").Activate
-    
-    anoAtual = Range("E5").Value
-    nomeClieAtual = Range("E9").Value
-    cnpjClieAtual = Range("E8").Value
-    
     Sheets("Início").Select
+    
+    '------------------------------------------------------------
+    'Retirar quando colocar em produção
+    '------------------------------------------------------------
+    Call Reexibir
     
 End Sub
 
@@ -43,8 +45,23 @@ End Sub
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
 
 Dim numeroMes As Integer
+Dim planilhaMes As String
 
     'Application.EnableEvents = False
+    
+    If anoAtual = "" Then
+    
+        planilhaMes = ActiveSheet.Name
+    
+        Worksheets("Configurações Básicas").Activate
+    
+        anoAtual = Range("E5").Value
+        nomeClieAtual = Range("E9").Value
+        cnpjClieAtual = Range("E8").Value
+        
+        Worksheets(planilhaMes).Activate
+        
+    End If
     
     If Target.Column = 3 And _
         Target.Row >= 5 And _

@@ -65,7 +65,8 @@ On Error GoTo Erro
         If mes(numeroMes) = mes_processamento Then Exit For
     Next numeroMes
     
-    cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcon.database.windows.net,1433;Database=fluxocaixa;Uid=evaldo@contarcon;Pwd={Gcas1302};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+    'cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcon.database.windows.net,1433;Database=fluxocaixa;Uid=evaldo@contarcon;Pwd={Gcas1302};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+    cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcondb.ckwultmbill2.us-east-1.rds.amazonaws.com,1433;Database=fluxocaixa;Uid=evaldo;Pwd={Gcas1302};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=300;"
     cnn.Open
     
     Worksheets("Configurações Básicas").Activate
@@ -369,7 +370,7 @@ On Error GoTo Erro
         strSQL = strSQL + ",NU_CNPJ"
         strSQL = strSQL + ",TP_CNRO_EXPRT)"
         strSQL = strSQL + "Values"
-        strSQL = strSQL + "(NEXT VALUE FOR SQ_CNRO_EXPRT_ARQV"
+        strSQL = strSQL + "(NEXT VALUE FOR SQ_CNRIO_EXPRT_ARQV"
         strSQL = strSQL + ",'" & Range("G" + CStr(linha)).Value & "'"
         strSQL = strSQL + ",'" & Range("H" + CStr(linha)).Value & "'"
         strSQL = strSQL + ",NULL "
@@ -399,7 +400,7 @@ On Error GoTo Erro
         strSQL = strSQL + ",NU_CNPJ"
         strSQL = strSQL + ",TP_CNRO_EXPRT)"
         strSQL = strSQL + "Values"
-        strSQL = strSQL + "(NEXT VALUE FOR SQ_CNRO_EXPRT_ARQV"
+        strSQL = strSQL + "(NEXT VALUE FOR SQ_CNRIO_EXPRT_ARQV"
         strSQL = strSQL + ",NULL "
         strSQL = strSQL + ",NULL "
         strSQL = strSQL + ",'" & Range("I" + CStr(linha)).Value & "'"

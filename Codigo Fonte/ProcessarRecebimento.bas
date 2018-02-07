@@ -2,7 +2,7 @@ Attribute VB_Name = "ProcessarRecebimento"
     
 Sub processa_recebimento_caixa()
 
-'On Error GoTo Erro
+On Error GoTo Erro
 
     Dim plano_conta As String
     Dim mes(1 To 12) As String
@@ -218,10 +218,10 @@ Sub processa_recebimento_caixa()
         
     Exit Sub
     
-'Erro:
+Erro:
 
-'    MsgBox "Erro ao processar o recebimento.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
-'    Worksheets(mes_processamento).Activate
+    MsgBox "Erro ao processar o recebimento.", vbOKOnly + vbInformation, "Erro ao Carregar Dados"
+    Worksheets(mes_processamento).Activate
     
 End Sub
 

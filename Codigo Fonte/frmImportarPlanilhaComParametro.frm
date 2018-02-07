@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmImportarPlanilhaComParametro 
    Caption         =   "Importação de Dados de Planilhas"
-   ClientHeight    =   10275
+   ClientHeight    =   10035
    ClientLeft      =   45
    ClientTop       =   390
-   ClientWidth     =   13620
+   ClientWidth     =   15150
    OleObjectBlob   =   "frmImportarPlanilhaComParametro.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -88,6 +88,8 @@ On Error GoTo Erro
     Worksheets(mes_processamento).Activate
     
     txtDescricaoClassificacao.Text = ""
+    Me.cmbClassificacao.Clear
+    Me.cmbListaDescricaoClassificacao.Text = ""
     
     Exit Sub
     
@@ -125,6 +127,8 @@ On Error GoTo Erro
             Worksheets(mes_processamento).Activate
             Call fazLeituraDadosImportacao
             Worksheets(mes_processamento).Activate
+            
+            txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
                     
             Exit Sub
             
@@ -311,6 +315,8 @@ On Error GoTo Erro
             
     End If
     
+    txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
+    
     Exit Sub
     
 Erro:
@@ -322,6 +328,12 @@ Erro:
     
 End Sub
 
+
+Private Sub btnConsultaClassificacao_Click()
+
+    frmConsultaClassificacao.Show
+
+End Sub
 
 Private Sub btnFechar_Click()
 
@@ -335,6 +347,8 @@ Private Sub btnImportarDados_Click()
     erroAtualizaCenario = False
     bolExistemDados = False
     bolLimparDados = False
+    
+    txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
     
     If ValidaPlanilhaProcessamento() = False Then
         MsgBox "Escolha um planilha para lançamento do Fluxo de Caixa entre Jan e Dez.", vbOKOnly + vbInformation, "Importação de Dados"
@@ -398,7 +412,7 @@ On Error GoTo Erro
         
         If cmbClassificacao.Text = Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 3) + CStr(linha)).Text Then
                     
-            txtDescricaoClassificacao = Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 2) + CStr(linha)).Value
+            txtDescricaoClassificacao.Text = Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 2) + CStr(linha)).Value
             
             Exit Do
             
@@ -419,12 +433,13 @@ Erro:
     
 End Sub
 
+
 Private Sub cmbListaDescricaoClassificacao_Click()
 
     Dim linha As Integer
     
     cmbClassificacao.Clear
-    txtDescricaoClassificacao.Text = ""
+    Me.txtDescricaoClassificacao.Text = ""
     
     mes_processamento = ActiveSheet.Name
     linha = 5
@@ -441,12 +456,16 @@ Private Sub cmbListaDescricaoClassificacao_Click()
     
     Range("D5").Select
     
-    Do While (Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 2) + CStr(linha)).Value <> "" And Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 2) + CStr(linha)).Value <> "-")
-                    
-        cmbClassificacao.AddItem Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 3) + CStr(linha)).Text
-        linha = linha + 1
-                       
-    Loop
+    If descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 2) <> "" Then
+    
+        Do While (Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 2) + CStr(linha)).Value <> "" And Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 2) + CStr(linha)).Value <> "-")
+                        
+            cmbClassificacao.AddItem Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 3) + CStr(linha)).Text
+            linha = linha + 1
+                           
+        Loop
+        
+    End If
     
     Worksheets(mes_processamento).Activate
 
@@ -470,21 +489,25 @@ End Sub
 
 Private Sub cmdOkInserePalavraExistente_Click()
     
-    Dim i As Long
+Dim i As Long
+Dim indicePalavraInserida As Long
     
     For i = 0 To lstClassificacao.ListCount - 1
         If lstClassificacao.Selected(i) = True Then
            lstPalavraExistente.AddItem lstClassificacao.List(i, 0)
+           indicePalavraInserida = i
         End If
     Next i
     
     txtPalavra.Text = ""
+    
+    lstClassificacao.RemoveItem indicePalavraInserida
 
 End Sub
 
 Private Sub cmdRetiraPalavraExistente_Click()
 
-    Dim i As Long
+Dim i As Long
     
     For i = 0 To lstPalavraExistente.ListCount - 1
         If lstPalavraExistente.Selected(i) Then
@@ -492,7 +515,14 @@ Private Sub cmdRetiraPalavraExistente_Click()
             lstPalavraExistente.RemoveItem (lstPalavraExistente.ListIndex)
         End If
     Next i
-
+    
+     For i = 0 To lstClassificacao.ListCount - 1
+        If lstClassificacao.List(i, 0) = "" Then
+            Me.lstClassificacao.List(i, 0) = Me.txtPalavra.Text
+            Exit For
+        End If
+    Next i
+    
 End Sub
 
 Private Sub cmdSalvarCenario_Click()
@@ -500,16 +530,12 @@ Private Sub cmdSalvarCenario_Click()
     bolSalvarImportacao = True
     frmBarraProgressaoImportacao.Show
     bolSalvarImportacao = False
-
-End Sub
-
-Private Sub lstClassificacao_Click()
-
-    itemListaClassificacao = lstClassificacao.ListIndex
-    txtCodigoClassificacaoOrigem.Text = lstClassificacao.List(itemListaClassificacao, 0)
-    txtPalavra.Text = lstClassificacao.List(itemListaClassificacao, 0)
     
+    txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
+
 End Sub
+
+
 
 Function ConverteParaLetra(iCol As Integer) As String
    Dim iAlpha As Integer
@@ -527,6 +553,25 @@ Function ConverteParaLetra(iCol As Integer) As String
    End If
    
 End Function
+
+Private Sub lstClassificacao_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+
+    itemListaClassificacao = lstClassificacao.ListIndex
+    txtCodigoClassificacaoOrigem.Text = lstClassificacao.List(itemListaClassificacao, 0)
+    txtPalavra.Text = lstClassificacao.List(itemListaClassificacao, 0)
+
+End Sub
+
+
+
+Private Sub lstPalavraExistente_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+
+Dim itemListaPalavraExistente As Long
+
+    itemListaPalavraExistente = lstPalavraExistente.ListIndex
+    txtPalavra.Text = lstPalavraExistente.List(itemListaPalavraExistente, 0)
+
+End Sub
 
 Private Sub optClassificacaoDespesa_Click()
 
@@ -1176,9 +1221,11 @@ Private Sub UserForm_Activate()
     If frmEscolhaDesRec.bolClassificacaoDespesa = True Then
         Call optClassificacaoDespesa_Click
         optClassificacaoReceita.Enabled = False
+        optClassificacaoDespesa.Enabled = True
     Else
         Call optClassificacaoReceita_Click
         optClassificacaoDespesa.Enabled = False
+        optClassificacaoReceita.Enabled = True
     End If
         
 End Sub

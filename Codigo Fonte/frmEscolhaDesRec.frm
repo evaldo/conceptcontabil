@@ -28,6 +28,7 @@ Private Sub cmdEscolhaTipoClassificacao_Click()
     End If
     
     frmImportarPlanilhaComParametro.Show
+    Me.Hide
     
 End Sub
 
