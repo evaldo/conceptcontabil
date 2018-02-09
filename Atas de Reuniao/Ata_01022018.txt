@@ -1,7 +1,7 @@
 Concluir os itens 1, 2, 3 e 5.
 
 
-1-) fazer o conjunto de atividades para implantação da planilha.
+1-) (feito.) fazer o conjunto de atividades para implantação da planilha.
 	Por versão (sem nuvem e nuvem [incluindo indicadores]).
 
 	- dizer valor de instalação
@@ -24,3 +24,5 @@ Limpar acentuação, espaços e pontuação do hist. variável.
 Verificar se os dados em nuvem podem ser colocados no Office em nuvem.
 
 9-) Documentar a base de dados.
+
+10-) Criar rotina de atualização de dados para nuvem (o usuário selecionar o que deve ser levado para nuvem, e recuperado da nuvem).
