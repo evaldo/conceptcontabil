@@ -17,7 +17,7 @@ Attribute VB_Name = "Importacao"
 Option Explicit
 
 Sub importar_Com_Parametro()
-    
+Dim resposta As String
     resposta = MsgBox("Deseja realmente processar a importação com Parâmetros?", vbYesNo + vbExclamation, "Processamento de Recebimentos")
  
     If resposta = vbYes Then frmEscolhaDesRec.Show
@@ -207,3 +207,5 @@ ES: ' End of Sub
       Range("A1").Select
 
 End Sub
+
+

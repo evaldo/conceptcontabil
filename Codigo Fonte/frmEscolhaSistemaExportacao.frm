@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmEscolhaSistemaExportacao 
-   Caption         =   "Escolha do Sistema Contábil para Exportação dos Dados"
-   ClientHeight    =   5985
+   Caption         =   "Vinculação de Dados para Exportação dos Dados em Sistemas Contábeis"
+   ClientHeight    =   6600
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   7335
+   ClientWidth     =   7125
    OleObjectBlob   =   "frmEscolhaSistemaExportacao.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -13,10 +13,15 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Dim arrayPlanoConta(1 To 5000, 1 To 3) As String
+Dim caracterImportacaoArquivoTexto As String
+Dim nomePlanilha As String
 
 Public indiceArrayListaInstFinanc As Integer
 Public bolAchouInstFinancLista As Boolean
 Public indiceAtualizarInstFinanc As Integer
+Public indicePlanoConta As Integer
+Dim linha As Integer
 
 Public indiceArrayListaDocRef As Integer
 Public bolAchoudocRef As Boolean
@@ -26,11 +31,11 @@ Public indiceArrayPlanoConta As Integer
 Public bolAchouPlanoConta As Boolean
 Public indiceAtualizarPlanoConta As Integer
 
+
 Private Sub btnGerarExportacao_Click()
 
 Dim indice As Integer
 Dim linha_planilha As Integer
-Dim nomePlanilha As String
 
     If ValidaPlanilhaProcessamento() = False Then
         MsgBox "Escolha um planilha para lançamento do Fluxo de Caixa entre Jan e Dez.", vbOKOnly + vbInformation, "Salvar Dados"
@@ -150,6 +155,29 @@ End Sub
 Private Sub cmbDocRefCodigo_Click()
     
     Me.txtCodigoRef.Text = Me.cmbDocRefCodigo.Text
+    
+End Sub
+
+Private Sub cmbPlanoContaImportado_Click()
+
+indicePlanoConta = 1
+
+    If cmbPlanoContaImportado.Text <> "" Then
+
+        Do While indicePlanoConta <= UBound(arrayPlanoConta)
+            
+            If cmbPlanoContaImportado.Text = arrayPlanoConta(indicePlanoConta, 1) Then
+                
+                txtNomePlanoConta.Text = arrayPlanoConta(indicePlanoConta, 3)
+                Exit Sub
+                
+            End If
+            
+            indicePlanoConta = indicePlanoConta + 1
+                
+        Loop
+        
+    End If
     
 End Sub
 
@@ -295,6 +323,22 @@ Dim arrayPlanoConta(1 To 10000, 1 To 2) As String
         lstPlanoContaCodigo.List(indiceAtualizarPlanoConta, 1) = txtCodigoPlanoConta.Text
     
     End If
+    
+End Sub
+
+Private Sub cmdCaminho_Click()
+
+Dim intResult As Integer
+Dim strPath As String
+    
+    'the dialog is displayed to the user
+    intResult = Application.FileDialog(msoFileDialogOpen).Show
+    
+    'checks if user has cancled the dialog
+    If intResult <> 0 Then
+        'dispaly message box
+        txtArquivoPlanoContas.Text = Application.FileDialog(msoFileDialogFolderPicker).SelectedItems(1)
+    End If
 
 End Sub
 
@@ -304,7 +348,6 @@ Dim linha_panilha As Integer
 Dim indice As Integer
 Dim indiceAchou As Integer
 
-Dim nomePlanilha As String
 Dim instFinanc(1 To 10000) As String
 Dim docRef(1 To 10000) As String
 Dim instFinancAchou(1 To 10000) As String
@@ -597,9 +640,6 @@ Dim bolAchou As Boolean
         
     Loop
     
-    
-    
-    
     Me.frameProgressoExportacao.Visible = False
     
     Application.ScreenUpdating = True
@@ -612,6 +652,114 @@ Private Sub cmdFechar_Click()
 
     Unload Me
 
+End Sub
+
+Private Sub cmdImportarPlanoContas_Click()
+
+On Error GoTo Erro
+
+    If Me.cmbTipoArquivo.Text = "" Then
+    
+        MsgBox "Favor escolher o tipo de arquivo. " + Err.Description + ". Tente novamente ou avalie o formato do arquivo.", vbOKOnly + vbInformation, "Erro ao Importar Plano de Contas"
+        Exit Sub
+    
+    End If
+
+    If Me.cmbTipoArquivo.Text = "Texto" Then
+        caracterImportacaoArquivoTexto = InputBox("Importação de Plano de Contas do Sistema de Origem para Vinculação de Contas do Fluxo de Caixa" + Chr(13) + "" + Chr(13) + "Digite o caracter separador do arquivo texto:", "Importação do Plano de Contas")
+        Call Importar_Arquivo_Texto_PlanoContas
+    Else
+    
+        frmArquivoPlanoContasExcel.Show
+    
+        If codigoReduzidoPlanoContas <> "" And classificacaoContabil <> "" And nomePlanoConta <> "" Then
+            
+            For indicePlanoConta = 1 To 5000
+                arrayPlanoConta(indicePlanoConta, 1) = ""
+                arrayPlanoConta(indicePlanoConta, 2) = ""
+                arrayPlanoConta(indicePlanoConta, 3) = ""
+            Next indicePlanoConta
+            
+            Set WB1 = Workbooks.Open(Me.txtArquivoPlanoContas.Text)
+            
+            linha = linhaInicialLeituraPlanilhaPlanoContas
+            indicePlanoConta = 1
+            
+            Do While Range(codigoReduzidoPlanoContas + CStr(linha)).Value <> ""
+                
+                arrayPlanoConta(indicePlanoConta, 1) = Range(codigoReduzidoPlanoContas + CStr(linha)).Value
+                arrayPlanoConta(indicePlanoConta, 2) = Range(classificacaoContabil + CStr(linha)).Value
+                arrayPlanoConta(indicePlanoConta, 3) = Range(nomePlanoConta + CStr(linha)).Value
+                
+                indicePlanoConta = indicePlanoConta + 1
+                
+                linha = linha + 1
+        
+            Loop
+            
+            WB1.Close
+                        
+            Me.cmbPlanoContaCodigo.Clear
+    
+            nomePlanilha = ActiveSheet.Name
+             
+            Worksheets("Cenario Importacao Plano Contas").Activate
+            Range("G5").Select
+            
+            indicePlanoConta = 1
+            
+            Me.cmbPlanoContaImportado.Clear
+            
+            '--------------------------------------------------------------------------------------------
+            'Limpar o plano de contas da planilha Cenario Importacao Plano Contas
+            '--------------------------------------------------------------------------------------------
+            linha = 5
+            Do While Range("G" + CStr(linha)).Value <> ""
+                
+                Range("G" + CStr(linha)).Value = ""
+                Range("H" + CStr(linha)).Value = ""
+                Range("I" + CStr(linha)).Value = ""
+                
+                linha = linha + 1
+                
+            Loop
+            '--------------------------------------------------------------------------------------------
+            
+            linha = 5
+            indicePlanoConta = 1
+            Do While arrayPlanoConta(indicePlanoConta, 1) <> ""
+                 
+                Me.cmbPlanoContaImportado.AddItem arrayPlanoConta(indicePlanoConta, 1)
+                 
+                Range("G" + CStr(linha)).Value = arrayPlanoConta(indicePlanoConta, 1)
+                Range("H" + CStr(linha)).Value = arrayPlanoConta(indicePlanoConta, 2)
+                Range("I" + CStr(linha)).Value = arrayPlanoConta(indicePlanoConta, 3)
+                 
+                indicePlanoConta = indicePlanoConta + 1
+                 
+                linha = linha + 1
+                 
+            Loop
+             
+            Range("G5").Select
+             
+            Worksheets(nomePlanilha).Activate
+            
+        Else
+        
+            MsgBox "Digite as três colunas de origem para a importação do plano de contas e a linha inicial. " + Err.Description + ". Tente novamente ou avalie o formato do arquivo.", vbOKOnly + vbInformation, "Erro ao Importar Plano de Contas"
+            Exit Sub
+        End If
+            
+    End If
+    
+    Exit Sub
+    
+Erro:
+
+    MsgBox "Erro na importação do plano de contas. " + Err.Description + ". Tente novamente ou avalie o formato do arquivo.", vbOKOnly + vbInformation, "Erro ao Importar Plano de Contas"
+    Exit Sub
+    
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -631,6 +779,17 @@ Dim sistema(1 To 10) As String
 
     cmbSistemaExportacao.List = sistema
     
+    cmbTipoArquivo.AddItem "Texto"
+    cmbTipoArquivo.AddItem "Excel"
+    
+    '--------------------------------------------------------------------------------------------
+    'Preencher o combo de plano de contas vindo da planilha Cenario Importacao Plano Contas
+    '--------------------------------------------------------------------------------------------
+        
+    Call atualizaComboPlanoConta
+    
+    '--------------------------------------------------------------------------------------------
+    
 End Sub
 
 Public Sub barraProgresso(mensagem As String, percentual As Integer)
@@ -642,4 +801,108 @@ Public Sub barraProgresso(mensagem As String, percentual As Integer)
     
 End Sub
 
+Public Sub Importar_Arquivo_Texto_PlanoContas()
 
+On Error GoTo Erro
+
+    Dim Arquivo As String
+    Dim X As Variant
+    Dim S As String, N As Integer, C As Integer
+    Dim rg As Range
+    
+    Arquivo = Me.txtArquivoPlanoContas.Text
+    
+    nomePlanilha = ActiveSheet.Name
+    
+    Worksheets("Cenario Importacao Plano Contas").Activate
+    Range("G5").Select
+    
+    '--------------------------------------------------------------------------------------------
+    'Limpar o plano de contas da planilha Cenario Importacao Plano Contas
+    '--------------------------------------------------------------------------------------------
+    linha = 5
+    Do While Range("G" + CStr(linha)).Value <> ""
+        
+        Range("G" + CStr(linha)).Value = ""
+        Range("H" + CStr(linha)).Value = ""
+        Range("I" + CStr(linha)).Value = ""
+        
+        linha = linha + 1
+        
+    Loop
+    '--------------------------------------------------------------------------------------------
+    
+    Set rg = Range("G5")
+    
+    Open Arquivo For Input As #1
+        
+    Do Until EOF(1)
+        Line Input #1, S
+        C = 0
+        X = Split(S, caracterImportacaoArquivoTexto)
+        For N = 0 To UBound(X)
+            If X(N) <> "" Then
+                rg.Offset(0, C) = X(N)
+                C = C + 1
+            End If
+        Next N
+        Set rg = rg.Offset(1, 0)
+    Loop
+    
+    Close #1
+    
+    Worksheets(nomePlanilha).Activate
+    
+    Call atualizaComboPlanoConta
+    
+    Exit Sub
+    
+Erro:
+
+    MsgBox "Erro ao processar a importação do arquivo. " + Err.Description + ". Tente novamente ou avalie o formato do arquivo.", vbOKOnly + vbInformation, "Erro ao Importar Plano de Contas"
+    Close #1
+    Worksheets(nomePlanilha).Activate
+    
+End Sub
+
+Private Sub atualizaComboPlanoConta()
+
+    Me.cmbPlanoContaCodigo.Clear
+    
+    nomePlanilha = ActiveSheet.Name
+    
+    Worksheets("Cenario Importacao Plano Contas").Activate
+    Range("G5").Select
+   
+    For indicePlanoConta = 1 To 5000
+        
+        arrayPlanoConta(indicePlanoConta, 1) = ""
+        arrayPlanoConta(indicePlanoConta, 2) = ""
+        arrayPlanoConta(indicePlanoConta, 3) = ""
+        
+    Next indicePlanoConta
+   
+    indicePlanoConta = 1
+   
+    Me.cmbPlanoContaImportado.Clear
+   
+    linha = 5
+    Do While Range("G" + CStr(linha)).Value <> ""
+        
+        Me.cmbPlanoContaImportado.AddItem Range("G" + CStr(linha)).Value
+        
+        arrayPlanoConta(indicePlanoConta, 1) = Range("G" + CStr(linha)).Value
+        arrayPlanoConta(indicePlanoConta, 2) = Range("H" + CStr(linha)).Value
+        arrayPlanoConta(indicePlanoConta, 3) = Range("I" + CStr(linha)).Value
+        
+        indicePlanoConta = indicePlanoConta + 1
+        
+        linha = linha + 1
+        
+    Loop
+    
+    Range("G5").Select
+    
+    Worksheets(nomePlanilha).Activate
+
+End Sub

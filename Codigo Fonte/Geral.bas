@@ -4,6 +4,11 @@ Public nomeClieAtual As String
 Public cnpjClieAtual As String
 Public codigoPlanoContas As String
 Public descricaoPlanoContas As String
+Public codigoReduzidoPlanoContas As String
+Public classificacaoContabil As String
+Public nomePlanoConta As String
+
+Public linhaInicialLeituraPlanilhaPlanoContas As Integer
 
 Public Sub Desfazer()
     

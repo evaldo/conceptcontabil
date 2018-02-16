@@ -20,7 +20,7 @@ Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" _
 
 Private Declare Function SetWindowPos Lib "user32" _
     (ByVal hwnd As Long, ByVal hWndInsertAfter As Long, _
-    ByVal x As Long, ByVal y As Long, ByVal cx As Long, _
+    ByVal X As Long, ByVal y As Long, ByVal cx As Long, _
     ByVal cy As Long, ByVal wFlags As Long) As Long
 
  
