@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmEscolhaSistemaExportacao 
    Caption         =   "Vinculação de Dados para Exportação dos Dados em Sistemas Contábeis"
-   ClientHeight    =   6600
+   ClientHeight    =   7845
    ClientLeft      =   120
    ClientTop       =   465
    ClientWidth     =   7125
@@ -289,12 +289,19 @@ End Sub
 Private Sub cmdAtualizarPlanoConta_Click()
 
 Dim arrayPlanoConta(1 To 10000, 1 To 2) As String
+Dim planoConta As String
 
     bolAchouPlanoConta = False
 
     indiceAtualizarPlanoConta = 0
-
-    If cmbPlanoContaCodigo.Text = "" Or txtCodigoPlanoConta.Text = "" Then
+    
+    If Me.optNaoExportSistemaContabil.Value = True Then
+        planoConta = Me.txtCodigoPlanoContas.Text
+    Else
+        planoConta = Me.cmbPlanoContaImportado.Text
+    End If
+    
+    If cmbPlanoContaCodigo.Text = "" Or planoConta = "" Then
     
         MsgBox "Campos Plano de Contas e/ou Código de Plano de Contas não podem estar vazios.", vbOKOnly + vbInformation, "Exportação de Dados"
         Exit Sub
@@ -304,7 +311,7 @@ Dim arrayPlanoConta(1 To 10000, 1 To 2) As String
     For indiceArrayPlanoConta = 0 To lstPlanoContaCodigo.ListCount - 1
     
         If cmbPlanoContaCodigo.Text = lstPlanoContaCodigo.List(indiceArrayPlanoConta, 0) Then
-            lstPlanoContaCodigo.List(indiceArrayPlanoConta, 1) = txtCodigoPlanoConta.Text
+            lstPlanoContaCodigo.List(indiceArrayPlanoConta, 1) = planoConta
             
             bolAchouPlanoConta = True
             
@@ -320,7 +327,7 @@ Dim arrayPlanoConta(1 To 10000, 1 To 2) As String
     If bolAchouPlanoConta = False Then
         
         lstPlanoContaCodigo.List(indiceAtualizarPlanoConta, 0) = cmbPlanoContaCodigo.Text
-        lstPlanoContaCodigo.List(indiceAtualizarPlanoConta, 1) = txtCodigoPlanoConta.Text
+        lstPlanoContaCodigo.List(indiceAtualizarPlanoConta, 1) = planoConta
     
     End If
     
@@ -699,7 +706,7 @@ On Error GoTo Erro
             
             WB1.Close
                         
-            Me.cmbPlanoContaCodigo.Clear
+            Me.cmbPlanoContaImportado.Clear
     
             nomePlanilha = ActiveSheet.Name
              
@@ -762,9 +769,47 @@ Erro:
     
 End Sub
 
+
+
+Private Sub optNaoExportSistemaContabil_Click()
+
+    Me.txtArquivoPlanoContas.Enabled = False
+    Me.cmbTipoArquivo.Enabled = False
+    Me.cmbPlanoContaImportado.Visible = False
+    Me.txtNomePlanoConta.Visible = False
+    Me.cmbPlanoContaImportado.Enabled = False
+    Me.txtNomePlanoConta.Enabled = False
+    Me.lblPlanoContasImportado.Visible = False
+    Me.lblPlanoContasDigitado.Visible = True
+    Me.txtCodigoPlanoContas.Visible = True
+    Me.cmdImportarPlanoContas.Enabled = False
+    Me.cmdCaminho.Enabled = False
+    
+End Sub
+
+Private Sub optSimExportSistemaContabil_Click()
+
+    Me.txtArquivoPlanoContas.Enabled = True
+    Me.cmbTipoArquivo.Enabled = True
+    Me.cmbPlanoContaImportado.Visible = True
+    Me.txtNomePlanoConta.Visible = True
+    Me.cmbPlanoContaImportado.Enabled = True
+    Me.txtNomePlanoConta.Enabled = False
+    Me.lblPlanoContasImportado.Visible = True
+    Me.lblPlanoContasDigitado.Visible = False
+    Me.txtCodigoPlanoContas.Visible = False
+    Me.cmdImportarPlanoContas.Enabled = True
+    Me.cmdCaminho.Enabled = True
+    
+End Sub
+
 Private Sub UserForm_Initialize()
 
 Dim sistema(1 To 10) As String
+
+    Call optSimExportSistemaContabil_Click
+    Me.optSimExportSistemaContabil.Value = 1
+    Me.optNaoExportSistemaContabil.Value = 0
 
     txtCodigoEmpresaExportacao.Enabled = False
     txtLoginUsuarioExportacao.Enabled = False

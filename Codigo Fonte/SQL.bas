@@ -61,6 +61,15 @@ On Error GoTo Erro
         Exit Sub
     End If
     
+    If MsgBox("Deseja atualizar os dados do mês corrente na nuvem?", vbYesNo, "Envio de Dados para Nuvem") = vbNo Then
+        If MsgBox("Deseja recuperar os dados armazenados na nuvem?", vbYesNo, "Envio de Dados para Nuvem") = vbNo Then
+            Exit Sub
+        Else
+            frmRecuperarDadosNuvem.Show
+            Exit Sub
+        End If
+    End If
+    
     For numeroMes = 1 To 12
         If mes(numeroMes) = mes_processamento Then Exit For
     Next numeroMes
@@ -78,6 +87,7 @@ On Error GoTo Erro
     linha = 12
     indice = 1
     indicePlano = 1
+    
     
     Do While Range("D" + CStr(linha)).Value <> ""
             

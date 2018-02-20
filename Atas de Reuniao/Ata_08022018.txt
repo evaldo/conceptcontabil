@@ -14,7 +14,7 @@ Concluir os itens 1, 2, 3 e 5.
 
 2-) (Feito) para facilitar busca, modificar a tela de importação para a busca por plano de contas: nome e código.
 
-3-) (...em teste) criar a facilitação de importação do plano de contas do sistema origem para ser lido na exportação.
+3-) (Feito) criar a facilitação de importação do plano de contas do sistema origem para ser lido na exportação.
 
 4-) colocar no manual como virar o ano. Criar funcionalidade de salvar como para tirar uma foto do estado atual da planilha contendo funções básicas da QLuz.
 
@@ -30,4 +30,4 @@ Verificar se os dados em nuvem podem ser colocados no Office em nuvem.
 
 9-) Documentar a base de dados.
 
-10-) Criar rotina de atualização de dados para nuvem (o usuário selecionar o que deve ser levado para nuvem, e recuperado da nuvem).
+10-) (em andamento...) Criar rotina de atualização de dados para nuvem (o usuário selecionar o que deve ser levado para nuvem, e recuperado da nuvem).
