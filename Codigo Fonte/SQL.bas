@@ -83,11 +83,9 @@ On Error GoTo Erro
     nomeClie = Range("E9").Value
     cnpjClie = Range("E8").Value
     
-    
     linha = 12
     indice = 1
     indicePlano = 1
-    
     
     Do While Range("D" + CStr(linha)).Value <> ""
             
@@ -114,7 +112,9 @@ On Error GoTo Erro
             strSQL = strSQL + "IC_TIPO_TRANS_FLUXO_CAIXA, "
             strSQL = strSQL + "DS_CLSSF_PLANO_CONTA, "
             strSQL = strSQL + "CD_PLANO_CONTA, "
-            strSQL = strSQL + "DS_PLANO_CONTA) "
+            strSQL = strSQL + "DS_PLANO_CONTA,"
+            strSQL = strSQL + "CD_CLUN_CDGO_CLSSF_PLANO_CONTA,"
+            strSQL = strSQL + "CD_CLUN_DSCR_PLANO_CONTA) "
             strSQL = strSQL + "VALUES("
             strSQL = strSQL + "NEXT VALUE FOR SQ_CLSSF_PLANO_CONTA,"
             strSQL = strSQL + "'" & Range("D" + CStr(linha)).Value & "',"
@@ -122,7 +122,9 @@ On Error GoTo Erro
             strSQL = strSQL + "'" & Range("F" + CStr(linha)).Value & "',"
             strSQL = strSQL + "'" & Range("E" + CStr(linha)).Value & "',"
             strSQL = strSQL + "'" & Range("D" + CStr(linha)).Value & "',"
-            strSQL = strSQL + "'" & Range("E" + CStr(linha)).Value & "');"
+            strSQL = strSQL + "'" & Range("E" + CStr(linha)).Value & "',"
+            strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 4) & "',"
+            strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 5) & "');"
             
             cnn.Execute strSQL
                         
@@ -137,12 +139,20 @@ On Error GoTo Erro
             
             Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value <> ""
             
-                strSQL = "INSERT INTO T_CLSSF_PLANO_CONTA (ID_CLSSF_PLANO_CONTA, CD_CLSSF_PLANO_CONTA, NU_CNPJ,IC_TIPO_TRANS_FLUXO_CAIXA, DS_CLSSF_PLANO_CONTA, CD_PLANO_CONTA, DS_PLANO_CONTA) "
+                strSQL = "INSERT INTO T_CLSSF_PLANO_CONTA ("
+                strSQL = strSQL + "ID_CLSSF_PLANO_CONTA, "
+                strSQL = strSQL + "CD_CLSSF_PLANO_CONTA, "
+                strSQL = strSQL + "NU_CNPJ,IC_TIPO_TRANS_FLUXO_CAIXA, "
+                strSQL = strSQL + "DS_CLSSF_PLANO_CONTA, "
+                strSQL = strSQL + "CD_PLANO_CONTA, "
+                strSQL = strSQL + "DS_PLANO_CONTA) "
                 strSQL = strSQL + "VALUES("
                 strSQL = strSQL + "NEXT VALUE FOR SQ_CLSSF_PLANO_CONTA, "
                 strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 1) & "', "
-                strSQL = strSQL + "'" & cnpjClie & "', '" & planoClassificacaoPlanoConta(indice, 3) & "',"
-                strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 2) & "', '" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value & "',"
+                strSQL = strSQL + "'" & cnpjClie & "', "
+                strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 3) & "',"
+                strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 2) & "', "
+                strSQL = strSQL + "'" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value & "',"
                 strSQL = strSQL + "'" & Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value & "');"
             
                 cnn.Execute strSQL
@@ -172,7 +182,11 @@ On Error GoTo Erro
             
         Else
                 
-            strSQL = "UPDATE T_CLSSF_PLANO_CONTA SET NU_CNPJ = '" & cnpjClie & "', IC_TIPO_TRANS_FLUXO_CAIXA = '" & Range("F" + CStr(linha)).Value & "', DS_CLSSF_PLANO_CONTA = '" & Range("E" + CStr(linha)).Value & "'"
+            strSQL = "UPDATE T_CLSSF_PLANO_CONTA SET NU_CNPJ = '" & cnpjClie & "',"
+            strSQL = strSQL + "IC_TIPO_TRANS_FLUXO_CAIXA = '" & Range("F" + CStr(linha)).Value & "',"
+            strSQL = strSQL + "DS_CLSSF_PLANO_CONTA = '" & Range("E" + CStr(linha)).Value & "',"
+            strSQL = strSQL + "CD_CLUN_CDGO_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 4) & "',"
+            strSQL = strSQL + "CD_CLUN_DSCR_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 5) & "'"
             strSQL = strSQL + "WHERE CD_CLSSF_PLANO_CONTA = '" & Range("D" + CStr(linha)).Value & "';"
             
             cnn.Execute strSQL
