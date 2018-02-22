@@ -4,7 +4,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmRecuperarDadosNuvem
    ClientHeight    =   5460
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   5250
+   ClientWidth     =   6255
    OleObjectBlob   =   "frmRecuperarDadosNuvem.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -17,6 +17,7 @@ Dim nomePlanilha As String
 Dim linha As Integer
 Dim cnn As New ADODB.Connection
 Dim rst As New ADODB.Recordset
+Dim rstQtdePlanoConta As New ADODB.Recordset
 Dim cnpjParam As String
 
 Private Sub cmdFechar_Click()
@@ -35,6 +36,9 @@ Dim colunaCodigoPlanoContaPlanilha As String
 Dim colunaDescricaoPlanoContaPlanilha As String
 Dim planoConta As String
 Dim icTipoPlanoConta As String
+Dim strSQLQtdePlanoConta As String
+
+Dim bolExisteQtdePlanoConta As Boolean
 
     frmProgresso.Visible = True
 
@@ -42,6 +46,8 @@ Dim icTipoPlanoConta As String
     cnn.Open
     
     nomePlanilha = ActiveSheet.Name
+    
+    bolExisteQtdePlanoConta = False
     
     Worksheets("Configurações Básicas").Activate
     
@@ -102,9 +108,9 @@ Dim icTipoPlanoConta As String
         
         Do While rst.EOF = False
         
-            Call barraProgresso("Recuperando dados do Plano de Contas de " + IIf(rst(3).Value = "D", "Despesas", "Receitas") + "", linha)
+             Call barraProgresso("Recuperando dados do Plano de Contas de " + IIf(rst(3).Value = "D", "Despesas", "Receitas") + "", linha)
             
-            If rst(2).Value <> icTipoPlanoConta Then
+             If rst(2).Value <> icTipoPlanoConta Then
                 icTipoPlanoConta = rst(2).Value
                 If rst(2).Value = "D" Then
                     Worksheets("PC Despesas").Activate
@@ -128,14 +134,43 @@ Dim icTipoPlanoConta As String
                 
                 linha = linha + 1
                 
+                rst.MoveNext
+                
+                'strSQLQtdePlanoConta = "SELECT COUNT(1) "
+                'strSQLQtdePlanoConta = strSQLQtdePlanoConta + "FROM T_CLSSF_PLANO_CONTA "
+                'strSQLQtdePlanoConta = strSQLQtdePlanoConta + "WHERE CD_CLSSF_PLANO_CONTA = '" & rst(0).Value & "'"
+                
+                'rstQtdePlanoConta.Open (strSQLQtdePlanoConta), cnn
+    
+                'If rstQtdePlanoConta.EOF = False Then
+                    
+                '    If rstQtdePlanoConta(0).Value <= 1 Then
+                '        rst.MoveNext
+                '        bolExisteQtdePlanoConta = True
+                '    End If
+                    
+                'End If
+                
+                'rstQtdePlanoConta.Close
+                
              End If
-                          
-             Range(colunaCodigoPlanoContaPlanilha + CStr(linha)) = rst(4).Value
-             Range(colunaDescricaoPlanoContaPlanilha + CStr(linha)) = rst(5).Value
+            
+             'If bolExisteQtdePlanoConta = False Then
+             
+             '   If planoConta = rst(0).Value Then
+             If rst.EOF = False Then
+                Range(colunaCodigoPlanoContaPlanilha + CStr(linha)) = rst(4).Value
+                Range(colunaDescricaoPlanoContaPlanilha + CStr(linha)) = rst(5).Value
+                
+                rst.MoveNext
+                    
+             End If
                 
              linha = linha + 1
+                
+             'End If
             
-             rst.MoveNext
+             bolExisteQtdePlanoConta = False
             
         Loop
         

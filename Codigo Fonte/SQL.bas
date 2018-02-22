@@ -135,7 +135,7 @@ On Error GoTo Erro
                 Worksheets("PC Despesas").Activate
             End If
             
-            linhaplanoConta = 6
+            linhaplanoConta = 5
             
             Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value <> ""
             
@@ -198,7 +198,7 @@ On Error GoTo Erro
                 Worksheets("PC Despesas").Activate
             End If
             
-            linhaplanoConta = 6
+            linhaplanoConta = 5
             
             Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value <> ""
             
