@@ -33,6 +33,7 @@ On Error GoTo Erro
     Dim cnn As New ADODB.Connection
     Dim rst As New ADODB.Recordset
     Dim rstTempo As New ADODB.Recordset
+    Dim rstPlanoContaExistente As New ADODB.Recordset
     
     Dim linha As Integer
     Dim linhaplanoConta As Integer
@@ -75,7 +76,7 @@ On Error GoTo Erro
     Next numeroMes
     
     'cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcon.database.windows.net,1433;Database=fluxocaixa;Uid=evaldo@contarcon;Pwd={Gcas1302};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
-    cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcondb.cmxd2lqddzlw.sa-east-1.rds.amazonaws.com,1433;Database=fluxocaixa;Uid=evaldo;Pwd={Gcas1302};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=300;"
+    cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcondb.cmxd2lqddzlw.sa-east-1.rds.amazonaws.com,1433;Database=fluxocaixa;Uid=evaldo;Pwd={Gcas1302};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
     cnn.Open
     
     Worksheets("Configurações Básicas").Activate
@@ -202,33 +203,85 @@ On Error GoTo Erro
             
             Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value <> ""
             
-                strSQL = "UPDATE T_CLSSF_PLANO_CONTA SET NU_CNPJ = '" & cnpjClie & "'"
-                strSQL = strSQL + ", IC_TIPO_TRANS_FLUXO_CAIXA = '" & planoClassificacaoPlanoConta(indice, 3) & "'"
-                strSQL = strSQL + ", DS_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 2) & "'"
-                strSQL = strSQL + ", CD_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 1) & "'"
-                strSQL = strSQL + ", DS_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value & "'"
-                strSQL = strSQL + "WHERE CD_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value & "';"
+                strSQL = "SELECT COUNT(1) "
+                strSQL = strSQL + " FROM T_CLSSF_PLANO_CONTA "
+                strSQL = strSQL + " WHERE CD_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value & "';"
+                
+                rstPlanoContaExistente.Open (strSQL), cnn
+                
+                If rstPlanoContaExistente(0).Value = 0 Then
+                    
+                    strSQL = "INSERT INTO T_CLSSF_PLANO_CONTA ("
+                    strSQL = strSQL + "ID_CLSSF_PLANO_CONTA, "
+                    strSQL = strSQL + "CD_CLSSF_PLANO_CONTA, "
+                    strSQL = strSQL + "NU_CNPJ,IC_TIPO_TRANS_FLUXO_CAIXA, "
+                    strSQL = strSQL + "DS_CLSSF_PLANO_CONTA, "
+                    strSQL = strSQL + "CD_PLANO_CONTA, "
+                    strSQL = strSQL + "DS_PLANO_CONTA) "
+                    strSQL = strSQL + "VALUES("
+                    strSQL = strSQL + "NEXT VALUE FOR SQ_CLSSF_PLANO_CONTA, "
+                    strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 1) & "', "
+                    strSQL = strSQL + "'" & cnpjClie & "', "
+                    strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 3) & "',"
+                    strSQL = strSQL + "'" & planoClassificacaoPlanoConta(indice, 2) & "', "
+                    strSQL = strSQL + "'" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value & "',"
+                    strSQL = strSQL + "'" & Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value & "');"
+                
+                    cnn.Execute strSQL
+                    
+                    'Código da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 1) = planoClassificacaoPlanoConta(indice, 1)
+                    'Descrição da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 2) = planoClassificacaoPlanoConta(indice, 2)
+                    'Indicação da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 3) = planoClassificacaoPlanoConta(indice, 3)
+                    'Coluna do código da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 4) = planoClassificacaoPlanoConta(indice, 4)
+                    'Coluna da descrição da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 5) = planoClassificacaoPlanoConta(indice, 5)
+                    'Codigo do plano de contas
+                    planoPlanoConta(indicePlano, 6) = Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value
+                    'Descrição do plano de contas
+                    planoPlanoConta(indicePlano, 7) = Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value
+                    
+                    indicePlano = indicePlano + 1
+                    
+                    linhaplanoConta = linhaplanoConta + 1
+                    
+                    
+                Else
             
-                cnn.Execute strSQL
+                    strSQL = "UPDATE T_CLSSF_PLANO_CONTA SET NU_CNPJ = '" & cnpjClie & "'"
+                    strSQL = strSQL + ", IC_TIPO_TRANS_FLUXO_CAIXA = '" & planoClassificacaoPlanoConta(indice, 3) & "'"
+                    strSQL = strSQL + ", DS_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 2) & "'"
+                    strSQL = strSQL + ", CD_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 1) & "'"
+                    strSQL = strSQL + ", DS_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value & "'"
+                    strSQL = strSQL + "WHERE CD_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value & "';"
                 
-                'Código da classificação do plano de contas
-                planoPlanoConta(indicePlano, 1) = planoClassificacaoPlanoConta(indice, 1)
-                'Descrição da classificação do plano de contas
-                planoPlanoConta(indicePlano, 2) = planoClassificacaoPlanoConta(indice, 2)
-                'Indicação da classificação do plano de contas
-                planoPlanoConta(indicePlano, 3) = planoClassificacaoPlanoConta(indice, 3)
-                'Coluna do código da classificação do plano de contas
-                planoPlanoConta(indicePlano, 4) = planoClassificacaoPlanoConta(indice, 4)
-                'Coluna da descrição da classificação do plano de contas
-                planoPlanoConta(indicePlano, 5) = planoClassificacaoPlanoConta(indice, 5)
-                'Codigo do plano de contas
-                planoPlanoConta(indicePlano, 6) = Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value
-                'Descrição do plano de contas
-                planoPlanoConta(indicePlano, 7) = Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value
+                    cnn.Execute strSQL
+                    
+                    'Código da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 1) = planoClassificacaoPlanoConta(indice, 1)
+                    'Descrição da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 2) = planoClassificacaoPlanoConta(indice, 2)
+                    'Indicação da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 3) = planoClassificacaoPlanoConta(indice, 3)
+                    'Coluna do código da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 4) = planoClassificacaoPlanoConta(indice, 4)
+                    'Coluna da descrição da classificação do plano de contas
+                    planoPlanoConta(indicePlano, 5) = planoClassificacaoPlanoConta(indice, 5)
+                    'Codigo do plano de contas
+                    planoPlanoConta(indicePlano, 6) = Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value
+                    'Descrição do plano de contas
+                    planoPlanoConta(indicePlano, 7) = Range(planoClassificacaoPlanoConta(indice, 5) + CStr(linhaplanoConta)).Value
+                    
+                    indicePlano = indicePlano + 1
+                    
+                    linhaplanoConta = linhaplanoConta + 1
+                    
+                End If
                 
-                indicePlano = indicePlano + 1
-                
-                linhaplanoConta = linhaplanoConta + 1
+                rstPlanoContaExistente.Close
             
             Loop
             
@@ -442,7 +495,7 @@ On Error GoTo Erro
     
     Worksheets(mes_processamento).Activate
     
-    cnn.BeginTrans
+    'cnn.BeginTrans
     
     'StrQuery = "SELECT COUNT(1), MAX(ID_FLUXO_CAIXA)+1 FROM T_FLUXO_CAIXA"
     'rst.Open (StrQuery), cnn
@@ -545,9 +598,9 @@ On Error GoTo Erro
         cnn.Execute strSQL
         
         If qtRegistroCommit = 10 Then
-            cnn.CommitTrans
+            'cnn.CommitTrans
             qtRegistroCommit = 0
-            cnn.BeginTrans
+            'cnn.BeginTrans
         End If
         
         linha = linha + 1
@@ -558,7 +611,7 @@ On Error GoTo Erro
         
     Loop
     
-    cnn.CommitTrans
+    'cnn.CommitTrans
     cnn.Close
     
     Exit Sub

@@ -63,6 +63,7 @@ Dim bolExisteQtdePlanoConta As Boolean
     'Recuperação do Plano de Contas
     '----------------------------------------------------------------------------------------------
     cnpjParam = cnpjClie
+    
     Call limparDadosPlanoContas("D")
     Call limparDadosPlanoContas("R")
         
@@ -159,6 +160,7 @@ Dim bolExisteQtdePlanoConta As Boolean
              
              '   If planoConta = rst(0).Value Then
              If rst.EOF = False Then
+             
                 Range(colunaCodigoPlanoContaPlanilha + CStr(linha)) = rst(4).Value
                 Range(colunaDescricaoPlanoContaPlanilha + CStr(linha)) = rst(5).Value
                 
