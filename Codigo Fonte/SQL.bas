@@ -688,3 +688,23 @@ Sub insturcaoSQLCenario(pNU_CNPJ As String, _
     strSQLCenario = strSQLCenario + ");"
 
 End Sub
+
+Public Function BuscaIP()
+ 
+Dim objWMIService As Object
+Dim colItems As Object
+Dim itm As Object
+    
+    Set objWMIService = GetObject("winmgmts:\root\cimv2")
+    Set colItems = objWMIService.ExecQuery _
+                   ("SELECT * FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled = True")
+                   
+    For Each itm In colItems
+        getIP = getIP & itm.Properties_("IPAddress")(0) & vbCrLf
+    Next
+    
+    BuscaIP = getIP
+    
+ End Function
+        
+

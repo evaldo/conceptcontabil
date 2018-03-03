@@ -128,7 +128,7 @@ On Error GoTo Erro
             Call fazLeituraDadosImportacao
             Worksheets(mes_processamento).Activate
             
-            txtColunaContemPalavra.Text = Me.txtColunaclassificacao.Text
+            txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
                     
             Exit Sub
             
@@ -162,9 +162,9 @@ On Error GoTo Erro
                 
         If txtLinhaInicial.Text <> "" Then
         
-            If txtColunaclassificacao.Text <> "" Then
+            If txtColunaClassificacao.Text <> "" Then
         
-                Range(txtColunaclassificacao.Text + Trim(txtLinhaInicial.Text)).Select
+                Range(txtColunaClassificacao.Text + Trim(txtLinhaInicial.Text)).Select
                 
                 linha = CInt(txtLinhaInicial.Text)
                 i = 1
@@ -195,7 +195,7 @@ On Error GoTo Erro
                         
                         For i_armazenada = 1 To CInt(txtLinhaFinal.Text)
                             
-                            If classificacao(i_armazenada, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Text Then
+                            If classificacao(i_armazenada, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
                                 bol_ja_existe_classificacao = True
                             End If
                             
@@ -203,7 +203,7 @@ On Error GoTo Erro
                         
                         If bol_ja_existe_classificacao = False Then
                         
-                            classificacao(i, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Text
+                            classificacao(i, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text
                             classificacao(i, 2) = ""
                             classificacao(i, 3) = ""
                             classificacao(i, 4) = ""
@@ -315,7 +315,7 @@ On Error GoTo Erro
             
     End If
     
-    txtColunaContemPalavra.Text = Me.txtColunaclassificacao.Text
+    txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
     
     Exit Sub
     
@@ -348,7 +348,7 @@ Private Sub btnImportarDados_Click()
     bolExistemDados = False
     bolLimparDados = False
     
-    txtColunaContemPalavra.Text = Me.txtColunaclassificacao.Text
+    txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
     
     If ValidaPlanilhaProcessamento() = False Then
         MsgBox "Escolha um planilha para lançamento do Fluxo de Caixa entre Jan e Dez.", vbOKOnly + vbInformation, "Importação de Dados"
@@ -531,7 +531,7 @@ Private Sub cmdSalvarCenario_Click()
     frmBarraProgressaoImportacao.Show
     bolSalvarImportacao = False
     
-    txtColunaContemPalavra.Text = Me.txtColunaclassificacao.Text
+    txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
 
 End Sub
 
@@ -554,6 +554,10 @@ Function ConverteParaLetra(iCol As Integer) As String
    
 End Function
 
+
+
+
+
 Private Sub lstClassificacao_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
 
     itemListaClassificacao = lstClassificacao.ListIndex
@@ -561,8 +565,6 @@ Private Sub lstClassificacao_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
     txtPalavra.Text = lstClassificacao.List(itemListaClassificacao, 0)
 
 End Sub
-
-
 
 Private Sub lstPalavraExistente_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
 
@@ -701,7 +703,7 @@ Sub fazLeituraDadosImportacao()
     
     txtLinhaInicial.Text = Range("L5").Value
     txtLinhaFinal.Text = Range("M5").Value
-    txtColunaclassificacao.Text = Range("N5").Value
+    txtColunaClassificacao.Text = Range("N5").Value
     txtDiaOrigem.Text = Range("P5").Value
     txtDocRefOrigem.Text = Range("Q5").Value
     txtInstFinOrigem.Text = Range("R5").Value
@@ -752,7 +754,7 @@ Sub fazLeituraDadosImportacao()
         
         Do While contador_comparacao <= linhaFinal
             
-            If classificacao(contador_comparacao, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Text Then
+            If classificacao(contador_comparacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
                 encontrou_classificacao = True
                 Exit Do
             End If
@@ -770,7 +772,7 @@ Sub fazLeituraDadosImportacao()
                 
             Do While contadorPalavra <= lstPalavraExistente.ListCount - 1
     
-                If Range(txtColunaclassificacao.Text + CStr(linha)).Text = lstPalavraExistente.List(contadorPalavra) Then
+                If Range(txtColunaClassificacao.Text + CStr(linha)).Text = lstPalavraExistente.List(contadorPalavra) Then
                 
                     bol_encontrou_palavra = True
                     Exit Do
@@ -785,7 +787,7 @@ Sub fazLeituraDadosImportacao()
             
             If bol_encontrou_palavra = False Then
             
-                classificacao(contador_classificacao, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Text
+                classificacao(contador_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text
                 classificacao(contador_classificacao, 2) = ""
                 classificacao(contador_classificacao, 3) = ""
                 classificacao(contador_classificacao, 4) = ""
@@ -901,7 +903,7 @@ On Error GoTo Erro
             
             Do While linha_classificacao <= CInt(Me.txtLinhaFinal.Text)
                 
-                If classificacao(linha_classificacao, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Value Then
+                If classificacao(linha_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Value Then
                 
                     If Range(txtDiaOrigem.Text + CStr(linha)).Value = "" Then
                         processamentoImportacao(contador, 1) = "1"
@@ -1044,7 +1046,7 @@ On Error GoTo Erro
     '    salvarImportacao = False
     'End If
     
-    If txtCaminhoPlanilha.Text = "" Or txtLinhaInicial.Text = "" Or txtLinhaFinal.Text = "" Or txtColunaclassificacao.Text = "" _
+    If txtCaminhoPlanilha.Text = "" Or txtLinhaInicial.Text = "" Or txtLinhaFinal.Text = "" Or txtColunaClassificacao.Text = "" _
         Or txtDiaOrigem.Text = "" Or txtDocRefOrigem.Text = "" Or txtInstFinOrigem.Text = "" Or _
         txtValorOrigem.Text = "" Then
         
@@ -1165,7 +1167,7 @@ On Error GoTo Erro
         Range("K5").Value = txtCaminhoPlanilha.Text
         Range("L5").Value = txtLinhaInicial.Text
         Range("M5").Value = txtLinhaFinal.Text
-        Range("N5").Value = txtColunaclassificacao.Text
+        Range("N5").Value = txtColunaClassificacao.Text
         Range("P5").Value = txtDiaOrigem.Text
         Range("Q5").Value = txtDocRefOrigem.Text
         Range("R5").Value = txtInstFinOrigem.Text
@@ -1223,9 +1225,15 @@ Private Sub UserForm_Activate()
         optClassificacaoReceita.Enabled = False
         optClassificacaoDespesa.Enabled = True
     Else
-        Call optClassificacaoReceita_Click
-        optClassificacaoDespesa.Enabled = False
-        optClassificacaoReceita.Enabled = True
+        If frmEscolhaDesRec.bolClassificacaoReceita = True Then
+            Call optClassificacaoReceita_Click
+            optClassificacaoDespesa.Enabled = False
+            optClassificacaoReceita.Enabled = True
+        Else
+            Call optClassificacaoReceita_Click
+            optClassificacaoDespesa.Enabled = True
+            optClassificacaoReceita.Enabled = True
+        End If
     End If
         
 End Sub

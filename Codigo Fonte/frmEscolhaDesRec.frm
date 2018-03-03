@@ -24,7 +24,14 @@ Private Sub cmdEscolhaTipoClassificacao_Click()
     If optClassificacaoReceita.Value = True Then
         bolClassificacaoReceita = True
     Else
-        bolClassificacaoDespesa = True
+        If Me.optClassificacaoDespesa.Value = True Then
+            bolClassificacaoDespesa = True
+        Else
+            If Me.optAmbos.Value = True Then
+                bolClassificacaoReceita = False
+                bolClassificacaoDespesa = False
+            End If
+        End If
     End If
     
     frmImportarPlanilhaComParametro.Show
@@ -47,6 +54,3 @@ Public Sub importar_Com_Parametro()
 End Sub
 
 
-Private Sub UserForm_Click()
-
-End Sub
