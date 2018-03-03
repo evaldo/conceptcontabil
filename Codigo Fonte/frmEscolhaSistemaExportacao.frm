@@ -166,9 +166,9 @@ indicePlanoConta = 1
 
         Do While indicePlanoConta <= UBound(arrayPlanoConta)
             
-            If cmbPlanoContaImportado.Text = arrayPlanoConta(indicePlanoConta, 1) Then
+            If cmbPlanoContaImportado.Text = arrayPlanoConta(indicePlanoConta, 3) Then
                 
-                txtNomePlanoConta.Text = arrayPlanoConta(indicePlanoConta, 3)
+                txtPlanoContaImportado.Text = arrayPlanoConta(indicePlanoConta, 1)
                 Exit Sub
                 
             End If
@@ -290,6 +290,7 @@ Private Sub cmdAtualizarPlanoConta_Click()
 
 Dim arrayPlanoConta(1 To 10000, 1 To 2) As String
 Dim planoConta As String
+Dim descricaoPlanoConta As String
 
     bolAchouPlanoConta = False
 
@@ -297,11 +298,13 @@ Dim planoConta As String
     
     If Me.optNaoExportSistemaContabil.Value = True Then
         planoConta = Me.txtCodigoPlanoContas.Text
+        descricaoPlanoConta = Me.cmbPlanoContaCodigo.Text
     Else
-        planoConta = Me.cmbPlanoContaImportado.Text
+        planoConta = Me.txtPlanoContaImportado.Text
+        descricaoPlanoConta = Me.cmbPlanoContaImportado.Text
     End If
     
-    If cmbPlanoContaCodigo.Text = "" Or planoConta = "" Then
+    If planoConta = "" Then
     
         MsgBox "Campos Plano de Contas e/ou Código de Plano de Contas não podem estar vazios.", vbOKOnly + vbInformation, "Exportação de Dados"
         Exit Sub
@@ -309,8 +312,8 @@ Dim planoConta As String
     End If
 
     For indiceArrayPlanoConta = 0 To lstPlanoContaCodigo.ListCount - 1
-    
-        If cmbPlanoContaCodigo.Text = lstPlanoContaCodigo.List(indiceArrayPlanoConta, 0) Then
+        
+        If descricaoPlanoConta = lstPlanoContaCodigo.List(indiceArrayPlanoConta, 0) Then
             lstPlanoContaCodigo.List(indiceArrayPlanoConta, 1) = planoConta
             
             bolAchouPlanoConta = True
@@ -326,7 +329,7 @@ Dim planoConta As String
     
     If bolAchouPlanoConta = False Then
         
-        lstPlanoContaCodigo.List(indiceAtualizarPlanoConta, 0) = cmbPlanoContaCodigo.Text
+        lstPlanoContaCodigo.List(indiceAtualizarPlanoConta, 0) = descricaoPlanoConta
         lstPlanoContaCodigo.List(indiceAtualizarPlanoConta, 1) = planoConta
     
     End If
@@ -365,10 +368,13 @@ Dim arrayPlanoConta(1 To 10000, 1 To 2) As String
 Dim colCodigoPlanoConta As String
 Dim colDescricaoPlanoConta As String
 Dim contaDevedoraLocalizada As String
+Dim nomePlanilhaExport As String
 
 Dim bolAchou As Boolean
 
-    nomePlanilha = ActiveSheet.Name
+    nomePlanilhaExport = ActiveSheet.Name
+    
+    
     
     lstInstFinancCodigo.Clear
     cmbInstituicaoFinanc.Clear
@@ -381,12 +387,12 @@ Dim bolAchou As Boolean
         
     linha_planilha = 5
     indice = 1
+        
+    Application.ScreenUpdating = False
     
     Me.frameProgressoExportacao.Visible = True
     
     Call barraProgresso("Processando dados na memória, Intituição Financeira e Documento de Referência ", 1)
-    
-    Application.ScreenUpdating = False
     
     Do While Range("H" + CStr(linha_planilha)).Value <> ""
                 
@@ -632,14 +638,18 @@ Dim bolAchou As Boolean
     
         linhaplanoConta = 5
         
-        Do While Range(colCodigoPlanoConta + CStr(linhaplanoConta)).Value <> ""
+        If colCodigoPlanoConta <> "-" And colCodigoPlanoConta <> "" Then
+        
+            Do While Range(colCodigoPlanoConta + CStr(linhaplanoConta)).Value <> ""
+                
+                Me.cmbPlanoContaCodigo.AddItem Range(colDescricaoPlanoConta + CStr(linhaplanoConta)).Value
+                linhaplanoConta = linhaplanoConta + 1
+                
+                Call barraProgresso("Armazenando Plano de Conta ", indice)
+                
+            Loop
             
-            Me.cmbPlanoContaCodigo.AddItem Range(colDescricaoPlanoConta + CStr(linhaplanoConta)).Value
-            linhaplanoConta = linhaplanoConta + 1
-            
-            Call barraProgresso("Armazenando Plano de Conta ", indice)
-            
-        Loop
+        End If
         
         Worksheets("Configurações Básicas").Activate
         
@@ -651,7 +661,7 @@ Dim bolAchou As Boolean
     
     Application.ScreenUpdating = True
     
-    Worksheets(nomePlanilha).Activate
+    Worksheets(nomePlanilhaExport).Activate
     
 End Sub
 
@@ -776,9 +786,9 @@ Private Sub optNaoExportSistemaContabil_Click()
     Me.txtArquivoPlanoContas.Enabled = False
     Me.cmbTipoArquivo.Enabled = False
     Me.cmbPlanoContaImportado.Visible = False
-    Me.txtNomePlanoConta.Visible = False
+    Me.txtPlanoContaImportado.Visible = False
     Me.cmbPlanoContaImportado.Enabled = False
-    Me.txtNomePlanoConta.Enabled = False
+    Me.txtPlanoContaImportado.Enabled = False
     Me.lblPlanoContasImportado.Visible = False
     Me.lblPlanoContasDigitado.Visible = True
     Me.txtCodigoPlanoContas.Visible = True
@@ -792,9 +802,9 @@ Private Sub optSimExportSistemaContabil_Click()
     Me.txtArquivoPlanoContas.Enabled = True
     Me.cmbTipoArquivo.Enabled = True
     Me.cmbPlanoContaImportado.Visible = True
-    Me.txtNomePlanoConta.Visible = True
+    Me.txtPlanoContaImportado.Visible = True
     Me.cmbPlanoContaImportado.Enabled = True
-    Me.txtNomePlanoConta.Enabled = False
+    Me.txtPlanoContaImportado.Enabled = False
     Me.lblPlanoContasImportado.Visible = True
     Me.lblPlanoContasDigitado.Visible = False
     Me.txtCodigoPlanoContas.Visible = False
@@ -934,13 +944,17 @@ Private Sub atualizaComboPlanoConta()
     linha = 5
     Do While Range("G" + CStr(linha)).Value <> ""
         
-        Me.cmbPlanoContaImportado.AddItem Range("G" + CStr(linha)).Value
+        If Range("I" + CStr(linha)).Value <> "" Then
         
-        arrayPlanoConta(indicePlanoConta, 1) = Range("G" + CStr(linha)).Value
-        arrayPlanoConta(indicePlanoConta, 2) = Range("H" + CStr(linha)).Value
-        arrayPlanoConta(indicePlanoConta, 3) = Range("I" + CStr(linha)).Value
-        
-        indicePlanoConta = indicePlanoConta + 1
+            Me.cmbPlanoContaImportado.AddItem Range("I" + CStr(linha)).Value
+            
+            arrayPlanoConta(indicePlanoConta, 1) = Range("G" + CStr(linha)).Value
+            arrayPlanoConta(indicePlanoConta, 2) = Range("H" + CStr(linha)).Value
+            arrayPlanoConta(indicePlanoConta, 3) = Range("I" + CStr(linha)).Value
+            
+            indicePlanoConta = indicePlanoConta + 1
+            
+        End If
         
         linha = linha + 1
         
