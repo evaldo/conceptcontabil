@@ -39,7 +39,7 @@ On Error GoTo Erro
     
     mes_processamento = ActiveSheet.Name
     
-    If frmEscolhaDesRec.bolClassificacaoReceita = True Then
+    If Me.optClassificacaoReceita.Value = True Then
                 
         Worksheets("PC Receitas").Activate
         receitaDespesa = "R"
@@ -68,6 +68,7 @@ On Error GoTo Erro
                     
                     txtDescricaoClassificacao.Text = Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 2) + CStr(linha)).Value
                     
+                    classificacao(i, 1) = lstClassificacao.List(i, 0)
                     classificacao(i, 2) = cmbClassificacao.Text
                     classificacao(i, 3) = Range(descricaoClassificacao(cmbListaDescricaoClassificacao.ListIndex + 1, 2) + CStr(linha)).Value
                     classificacao(i, 4) = cmbListaDescricaoClassificacao.Text
@@ -237,7 +238,7 @@ On Error GoTo Erro
                     
                 Next linha
                 
-                If frmEscolhaDesRec.bolClassificacaoReceita = True Then
+                If Me.optClassificacaoReceita.Value = True Then
                 
                     descricaoClassificacao(1, 2) = "D"
                     descricaoClassificacao(1, 1) = "RECEITAS COM PRODUTO"
@@ -257,7 +258,7 @@ On Error GoTo Erro
                 
                 End If
                 
-                If frmEscolhaDesRec.bolClassificacaoDespesa = True Then
+                If Me.optClassificacaoDespesa.Value = True Then
                 
                     descricaoClassificacao(1, 2) = "D"
                     descricaoClassificacao(1, 1) = "DESPESAS COM PRODUTOS"
@@ -395,7 +396,7 @@ On Error GoTo Erro
 
     mes_processamento = ActiveSheet.Name
     
-    If frmEscolhaDesRec.bolClassificacaoReceita = True Then
+    If Me.optClassificacaoReceita.Value = True Then
                 
         Worksheets("PC Receitas").Activate
     
@@ -444,7 +445,7 @@ Private Sub cmbListaDescricaoClassificacao_Click()
     mes_processamento = ActiveSheet.Name
     linha = 5
     
-    If frmEscolhaDesRec.bolClassificacaoReceita = True Then
+    If Me.optClassificacaoReceita.Value = True Then
                 
         Worksheets("PC Receitas").Activate
     
@@ -553,9 +554,6 @@ Function ConverteParaLetra(iCol As Integer) As String
    End If
    
 End Function
-
-
-
 
 
 Private Sub lstClassificacao_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
@@ -674,8 +672,13 @@ Sub fazLeituraDadosImportacao()
         Call optClassificacaoReceita_Click
         Worksheets("Cenario Receitas").Activate
     Else
-        Call optClassificacaoDespesa_Click
-        Worksheets("Cenario Despesas").Activate
+        If frmEscolhaDesRec.bolClassificacaoDespesa = True Then
+            Call optClassificacaoDespesa_Click
+            Worksheets("Cenario Despesas").Activate
+        Else
+            Call optClassificacaoReceita_Click
+            Worksheets("Cenario ReceitasDespesas").Activate
+        End If
     End If
     
     For i = 0 To 10000
@@ -1071,7 +1074,11 @@ On Error GoTo Erro
     If frmEscolhaDesRec.bolClassificacaoReceita = True Then
         Worksheets("Cenario Receitas").Activate
     Else
-        Worksheets("Cenario Despesas").Activate
+        If frmEscolhaDesRec.bolClassificacaoDespesa = True Then
+            Worksheets("Cenario Despesas").Activate
+        Else
+            Worksheets("Cenario ReceitasDespesas").Activate
+        End If
     End If
     
     If SalvarImportacao = True Then

@@ -373,8 +373,7 @@ Dim nomePlanilhaExport As String
 Dim bolAchou As Boolean
 
     nomePlanilhaExport = ActiveSheet.Name
-    
-    
+        
     
     lstInstFinancCodigo.Clear
     cmbInstituicaoFinanc.Clear
