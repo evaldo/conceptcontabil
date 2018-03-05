@@ -58,7 +58,7 @@ Dim planilhaMes As String
         anoAtual = Range("E5").Value
         nomeClieAtual = Range("E9").Value
         cnpjClieAtual = Range("E8").Value
-        
+       
         Worksheets(planilhaMes).Activate
         
     End If
@@ -78,7 +78,7 @@ Dim planilhaMes As String
          Sh.Name = "Nov" Or _
          Sh.Name = "Dez" _
         ) Then
-        
+
         Select Case Sh.Name
             Case "Jan"
                 numeroMes = 1
@@ -105,33 +105,34 @@ Dim planilhaMes As String
             Case "Dez"
                 numeroMes = 12
         End Select
-        
+
         If Range("C" + CStr(Target.Row)).Value <> "" Then
-        
+
             Range("D" + CStr(Target.Row)).Value = Format(Range("C" + CStr(Target.Row)).Value, "00") + "/" + Format(CStr(numeroMes), "00") + "/" + CStr(anoAtual)
-            
+
             If Not IsDate(Range("D" + CStr(Target.Row)).Value) And Range("C" + CStr(Target.Row)).Value <> "" Then
                MsgBox "Data inválida. Favor repetir a digitação do dia de lançamento.", vbInformation, "Processamento de Recebimentos"
-               
+
                Range("C" + CStr(Target.Row)).Activate
-               
+
                Range("D" + CStr(Target.Row)).Value = ""
-               
+
             Else
                 Range("D" + CStr(Target.Row)).Value = CDate(Format(Range("C" + CStr(Target.Row)).Value, "00") + "/" + Format(CStr(numeroMes), "00") + "/" + CStr(anoAtual))
             End If
-        
-        Else
-        
-            Range("D" + CStr(Target.Row)).Value = ""
-            
-        End If
 
+        Else
+
+            Range("D" + CStr(Target.Row)).Value = ""
+
+        End If
+    
     End If
 
     'Application.EnableEvents = True
  
 End Sub
+
 Private Sub Workbook_WindowResize(ByVal Wn As Window)
     'Wn.WindowState = xlMaximized
     'Wn.EnableResize = False

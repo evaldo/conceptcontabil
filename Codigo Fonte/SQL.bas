@@ -510,7 +510,7 @@ On Error GoTo Erro
                         CD_COL_DCTO_RFRC_FLUXO_CAIXA, _
                         CD_COL_INSTT_FNCR, _
                         CD_COL_VL_FLUXO_CAIXA, _
-                        "RD" + IIf(Range("T" + CStr(linha)).Value = "", "", Range("T" + CStr(linha)).Value), _
+                        Range("T" + CStr(linha)).Value, _
                         ano)
                         
         cnn.Execute strSQLCenario
@@ -539,7 +539,7 @@ On Error GoTo Erro
         strSQL = strSQL + ",'" & cnpjClie & "'"
         strSQL = strSQL + ",'" & ano & "'"
         strSQL = strSQL + ",'" & Range("O" + CStr(linha)).Value & "'"
-        strSQL = strSQL + ",'RD" + Range("T" + CStr(linha)).Value + "'"
+        strSQL = strSQL + ",'" + Range("T" + CStr(linha)).Value + "'"
         strSQL = strSQL + ");"
         
         cnn.Execute strSQL
@@ -700,6 +700,7 @@ On Error GoTo Erro
         strSQL = strSQL + ", CD_CLSSF_PLANO_CONTA"
         strSQL = strSQL + ", ID_CLSSF_PLANO_CONTA"
         strSQL = strSQL + ", NU_ANO_PLAN_ORIG_PROC"
+        strSQL = strSQL + ", DS_MES_PROC_RECB"
         strSQL = strSQL + " ) "
         strSQL = strSQL + "VALUES("
         strSQL = strSQL + "NEXT VALUE FOR SQ_FLUXO_CAIXA,"
@@ -721,7 +722,8 @@ On Error GoTo Erro
         strSQL = strSQL + "'" & UCase(mes_processamento) & "',"
         strSQL = strSQL + "'" & codigoClassificacaoPlano & "',"
         strSQL = strSQL + "(SELECT ID_CLSSF_PLANO_CONTA FROM T_CLSSF_PLANO_CONTA WHERE CD_CLSSF_PLANO_CONTA = '" & codigoClassificacaoPlano & "' AND CD_PLANO_CONTA = '" & codigoPlano & "'),"
-        strSQL = strSQL + "" & ano & ""
+        strSQL = strSQL + "" & ano & ","
+        strSQL = strSQL + "'" & Range("I" + CStr(linha)).Value & "'"
         strSQL = strSQL + ");"
         
         cnn.Execute strSQL

@@ -1,0 +1,63 @@
+Item	Descrição			
+Ano de processamento das contas	2018			
+Importação está salva para uso	Sim			
+Dados do cliente				
+CNPJ	75.337.132/0001-02			
+Nome	XPTO			
+Configuração de Plano de Contas				
+Código	Descrição	Receita/Despesa	Coluna do Código	Coluna da Descrição
+4.1	RECEITAS COM PRODUTO	R	C	D
+4.2	RECEITAS COM SERVIÇOS	R	G	H
+4.3	RECEITAS NÃO OPERACIONAIS	R	K	L
+5.1	DESPESAS COM PRODUTOS	D	C	D
+5.2	DESPESAS COM SERVIÇOS	D	F	G
+5.3	DESPESAS NÃO OPERACIONAIS	D	I	J
+5.4	DESPESAS COM RH	D	L	M
+5.5	DESPESAS OPERACIONAIS	D	O	P
+5.6	DESPESAS DE MARKETING	D	R	S
+5.7	IMPOSTOS	D	U	V
+5.8	INVESTIMENTOS	D	X	Y
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
