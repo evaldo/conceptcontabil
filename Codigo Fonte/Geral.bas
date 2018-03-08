@@ -9,6 +9,10 @@ Public classificacaoContabil As String
 Public nomePlanoConta As String
 
 Public linhaInicialLeituraPlanilhaPlanoContas As Integer
+Public manterDadosAposLogin As Boolean
+Public loginAcesso As Boolean
+Public usuario As String
+Public senha As String
 
 Public Sub Desfazer()
     

@@ -1,14 +1,14 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmLogin 
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmLoginManterDadosNuvem 
    Caption         =   "Login"
-   ClientHeight    =   2145
+   ClientHeight    =   2160
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   4155
-   OleObjectBlob   =   "frmLogin.frx":0000
+   ClientWidth     =   4050
+   OleObjectBlob   =   "frmLoginManterDadosNuvem.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
-Attribute VB_Name = "frmLogin"
+Attribute VB_Name = "frmLoginManterDadosNuvem"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -26,7 +26,10 @@ Dim cnn As New ADODB.Connection
     MsgBox "Acesso permitido!", vbOKOnly, "Fluxo de Caixa"
     cnn.Close
     
-    loginAcesso = True
+    manterDadosAposLogin = True
+    
+    usuario = Me.txtUsua.Text
+    senha = Me.txtSenha.Text
     
     Unload Me
     
@@ -35,7 +38,7 @@ Dim cnn As New ADODB.Connection
 Erro:
 
     MsgBox "Erro de acesso. Confira o usuário e a senha.", vbOKOnly, "Fluxo de Caixa"
-    loginAcesso = False
+    manterDadosAposLogin = False
     Exit Sub
     
 End Sub
@@ -43,15 +46,12 @@ End Sub
 Private Sub cmdFechar_Click()
 
     Unload Me
-    ActiveWorkbook.Close SaveChanges:=False
+    manterDadosAposLogin = False
+    'ActiveWorkbook.Close SaveChanges:=False
 
 End Sub
 
 
-Private Sub UserForm_Terminate()
-
-    If loginAcesso = False Then
-        ActiveWorkbook.Close SaveChanges:=False
-    End If
+Private Sub UserForm_Click()
 
 End Sub

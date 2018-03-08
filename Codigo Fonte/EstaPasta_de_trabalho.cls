@@ -9,14 +9,12 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Sub Workbook_Activate()
-
-End Sub
-
 Private Sub Workbook_Open()
     
-    Application.DisplayFullScreen = True
-    Application.WindowState = xlMaximized
+    frmLogin.Show 1
+    
+    'Application.DisplayFullScreen = True
+    'Application.WindowState = xlMaximized
     
     'Call Ocultar
     
@@ -25,7 +23,7 @@ Private Sub Workbook_Open()
     '------------------------------------------------------------
     'Retirar quando colocar em produção
     '------------------------------------------------------------
-    Call Reexibir
+    'Call Reexibir
     
 End Sub
 
@@ -37,7 +35,7 @@ End Sub
 
 Private Sub Workbook_WindowDeactivate(ByVal Wn As Window)
 
-    ActiveWorkbook.Save
+    'ActiveWorkbook.Save
     'Call Reexibir
     
 End Sub

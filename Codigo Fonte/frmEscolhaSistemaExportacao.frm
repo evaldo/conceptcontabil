@@ -148,9 +148,7 @@ Dim linha_planilha As Integer
 
 End Sub
 
-Private Sub cmbDocRefCodigo_Change()
 
-End Sub
 
 Private Sub cmbDocRefCodigo_Click()
     
@@ -387,9 +385,9 @@ Dim bolAchou As Boolean
     linha_planilha = 5
     indice = 1
         
-    Application.ScreenUpdating = False
-    
     Me.frameProgressoExportacao.Visible = True
+        
+    Application.ScreenUpdating = False
     
     Call barraProgresso("Processando dados na memória, Intituição Financeira e Documento de Referência ", 1)
     
@@ -436,9 +434,9 @@ Dim bolAchou As Boolean
     bolVazio = False
     
     If Me.chkAtualizarCargaDados.Value = True Then
-    
+          
         For indice = 1 To UBound(instFinanc)
-        
+            
             Call barraProgresso("Eliminando termos repetidos ", indice)
             
             bolAchou = False
@@ -455,7 +453,7 @@ Dim bolAchou As Boolean
             Loop
             
             If bolAchou = False Then
-            
+                
                 Range("H" + CStr(linha_planilha)).Value = instFinanc(indice)
                 cmbInstituicaoFinanc.AddItem Range("H" + CStr(linha_planilha)).Value
                 
@@ -485,7 +483,8 @@ Dim bolAchou As Boolean
                 
                 
                 If bolAchou = False Then
-            
+                
+                                
                     instFinancAchou(indiceNAchou) = instFinanc(indice)
                     
                     Range("H" + CStr(linha_planilha)).Value = instFinancAchou(indiceNAchou)
@@ -508,6 +507,7 @@ Dim bolAchou As Boolean
     
     linha_planilha = 5
     indice = 1
+       
     
     Do While Range("J" + CStr(linha_planilha)).Value <> ""
     
@@ -521,6 +521,7 @@ Dim bolAchou As Boolean
         linha_planilha = linha_planilha + 1
         
         Call barraProgresso("Listando Documentos de Referência ", indice)
+        
         
     Loop
     
@@ -551,6 +552,8 @@ Dim bolAchou As Boolean
             
             If bolAchou = False Then
             
+                
+            
                 Range("J" + CStr(linha_planilha)).Value = docRef(indice)
                 Me.cmbDocRefCodigo.AddItem Range("J" + CStr(linha_planilha)).Value
                 
@@ -563,6 +566,7 @@ Dim bolAchou As Boolean
         bolAchou = False
         indiceNAchou = 1
         
+                
         If linha_planilha = 5 Then
             
             For indice = 1 To UBound(docRef)
@@ -580,7 +584,7 @@ Dim bolAchou As Boolean
                 
                 
                 If bolAchou = False Then
-            
+                
                     docRefAchou(indiceNAchou) = docRef(indice)
                     
                     Range("J" + CStr(linha_planilha)).Value = docRefAchou(indiceNAchou)
@@ -603,6 +607,8 @@ Dim bolAchou As Boolean
     
     linha_planilha = 5
     indice = 1
+    
+    
     
     Do While Range("L" + CStr(linha_planilha)).Value <> ""
     
@@ -847,11 +853,18 @@ Dim sistema(1 To 10) As String
 End Sub
 
 Public Sub barraProgresso(mensagem As String, percentual As Integer)
-
+    
+    
     Me.lblDescricaoProgresso.Caption = mensagem + "... " + CStr(percentual) + " registros"
-    DoEvents
     Me.lblProgresso.Width = ((percentual / 10000) * Me.lblDescricaoProgresso.Width)
-    DoEvents
+    
+    If Me.lblProgresso.Width >= 169.95 And Me.lblProgresso.Width <= 170 Then
+        DoEvents
+    End If
+    
+    If Me.lblProgresso.Width >= 339.95 And Me.lblProgresso.Width <= 340 Then
+        DoEvents
+    End If
     
 End Sub
 
@@ -861,7 +874,7 @@ On Error GoTo Erro
 
     Dim Arquivo As String
     Dim X As Variant
-    Dim S As String, N As Integer, C As Integer
+    Dim S As String, n As Integer, C As Integer
     Dim rg As Range
     
     Arquivo = Me.txtArquivoPlanoContas.Text
@@ -894,12 +907,12 @@ On Error GoTo Erro
         Line Input #1, S
         C = 0
         X = Split(S, caracterImportacaoArquivoTexto)
-        For N = 0 To UBound(X)
-            If X(N) <> "" Then
-                rg.Offset(0, C) = X(N)
+        For n = 0 To UBound(X)
+            If X(n) <> "" Then
+                rg.Offset(0, C) = X(n)
                 C = C + 1
             End If
-        Next N
+        Next n
         Set rg = rg.Offset(1, 0)
     Loop
     

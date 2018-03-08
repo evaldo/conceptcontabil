@@ -92,7 +92,7 @@ Dim bolExisteQtdePlanoConta As Boolean
         strSQL = strSQL + "  ,DS_PLANO_CONTA"
         strSQL = strSQL + "  ,CD_CLUN_CDGO_CLSSF_PLANO_CONTA"
         strSQL = strSQL + "  ,CD_CLUN_DSCR_PLANO_CONTA "
-        strSQL = strSQL + " FROM T_CLSSF_PLANO_CONTA "
+        strSQL = strSQL + " FROM dbo.T_CLSSF_PLANO_CONTA "
         strSQL = strSQL + " WHERE NU_CNPJ = '" & cnpjClie & "'"
         strSQL = strSQL + " ORDER BY CD_CLSSF_PLANO_CONTA"
         strSQL = strSQL + "  ,IC_TIPO_TRANS_FLUXO_CAIXA"
@@ -276,9 +276,17 @@ End Sub
 Public Sub barraProgresso(mensagem As String, percentual As Integer)
 
     Me.lblDescricaoProgresso.Caption = mensagem + "... " + CStr(percentual) + " registros"
-    DoEvents
+    
     Me.lblProgresso.Width = ((percentual / 10) * Me.lblDescricaoProgresso.Width)
-    DoEvents
+    
+    If Me.lblProgresso.Width >= 140 And Me.lblProgresso.Width <= 150 Then
+        DoEvents
+    End If
+    
+    If Me.lblProgresso.Width >= 290 And Me.lblProgresso.Width <= 300 Then
+        DoEvents
+    End If
+    
     
 End Sub
 
@@ -323,7 +331,7 @@ Dim qtdeRegistros As Integer
     strSQL = strSQL + "  ,CD_COL_INSTT_FNCR"
     strSQL = strSQL + "  ,CD_COL_VL_FLUXO_CAIXA"
     strSQL = strSQL + "  ,IC_TIPO_TRANS_FLUXO_CAIXA"
-    strSQL = strSQL + "  FROM T_CNRIO_IMPRT_ARQV"
+    strSQL = strSQL + "  FROM dbo.T_CNRIO_IMPRT_ARQV"
     
     If icTipoPlanoDados = "N" Then
         strSQL = strSQL + "  WHERE (IC_TIPO_TRANS_FLUXO_CAIXA <> 'R' AND IC_TIPO_TRANS_FLUXO_CAIXA <> 'D')"
@@ -434,7 +442,7 @@ Dim qtdeRegistros As Integer
     strSQL = "SELECT "
     strSQL = strSQL + "   DS_PLVR_EXCD"
     strSQL = strSQL + "  ,IC_TIPO_TRANS_FLUXO_CAIXA"
-    strSQL = strSQL + "  FROM T_LISTA_PLVR_EXCD"
+    strSQL = strSQL + "  FROM dbo.T_LISTA_PLVR_EXCD"
        
     If icTipoPlanoDados = "N" Then
         strSQL = strSQL + "  WHERE (IC_TIPO_TRANS_FLUXO_CAIXA <> 'R' AND IC_TIPO_TRANS_FLUXO_CAIXA <> 'D')"
@@ -525,7 +533,7 @@ Dim qtdeRegistros As Integer
     strSQL = strSQL + " ,NU_ANO_PLAN_ORIG_PROC"
     strSQL = strSQL + " ,NU_CNPJ"
     strSQL = strSQL + " ,TP_CNRO_EXPRT"
-    strSQL = strSQL + " FROM T_CNRO_EXPRT_ARQV"
+    strSQL = strSQL + " FROM dbo.T_CNRO_EXPRT_ARQV"
     strSQL = strSQL + " WHERE NU_ANO_PLAN_ORIG_PROC = " & anoRecuperacao & ""
     strSQL = strSQL + "   AND NU_CNPJ ='" & cnpjParam & "'"
     
@@ -609,7 +617,7 @@ Dim qtdeRegistros As Integer
     strSQL = strSQL + "  ,VL_SAIDA_FLUXO_CAIXA "
     strSQL = strSQL + "  ,IC_STATUS_VALOR "
     strSQL = strSQL + "  ,DS_MES_PROC_RECB "
-    strSQL = strSQL + " FROM T_FLUXO_CAIXA"
+    strSQL = strSQL + " FROM dbo.T_FLUXO_CAIXA"
     strSQL = strSQL + " WHERE DS_PLAN_ORIG_PROC = '" & planilha & "'"
     strSQL = strSQL + " AND NU_ANO_PLAN_ORIG_PROC = " & anoRecuperacao & ""
     strSQL = strSQL + " AND NU_CNPJ = '" & cnpjParam & "'"

@@ -122,12 +122,12 @@ On Error GoTo Erro
             'Coluna da descrição da classificação do plano de contas
             planoClassificacaoPlanoConta(indice, 5) = Range("H" + CStr(linha)).Value
                     
-            StrQuery = "SELECT COUNT(1) FROM T_CLSSF_PLANO_CONTA WHERE CD_CLSSF_PLANO_CONTA = '" & Range("D" + CStr(linha)).Value & "'"
+            StrQuery = "SELECT COUNT(1) FROM dbo.T_CLSSF_PLANO_CONTA WHERE CD_CLSSF_PLANO_CONTA = '" & Range("D" + CStr(linha)).Value & "'"
             rst.Open (StrQuery), cnn
             
             If rst(0).Value = 0 Then
                     
-                strSQL = "INSERT INTO T_CLSSF_PLANO_CONTA ("
+                strSQL = "INSERT INTO dbo.T_CLSSF_PLANO_CONTA ("
                 strSQL = strSQL + "ID_CLSSF_PLANO_CONTA,"
                 strSQL = strSQL + "CD_CLSSF_PLANO_CONTA, "
                 strSQL = strSQL + "NU_CNPJ,"
@@ -161,7 +161,7 @@ On Error GoTo Erro
                 
                 Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value <> ""
                 
-                    strSQL = "INSERT INTO T_CLSSF_PLANO_CONTA ("
+                    strSQL = "INSERT INTO dbo.T_CLSSF_PLANO_CONTA ("
                     strSQL = strSQL + "ID_CLSSF_PLANO_CONTA, "
                     strSQL = strSQL + "CD_CLSSF_PLANO_CONTA, "
                     strSQL = strSQL + "NU_CNPJ,IC_TIPO_TRANS_FLUXO_CAIXA, "
@@ -208,7 +208,7 @@ On Error GoTo Erro
                 
             Else
                     
-                strSQL = "UPDATE T_CLSSF_PLANO_CONTA SET NU_CNPJ = '" & cnpjClie & "',"
+                strSQL = "UPDATE dbo.T_CLSSF_PLANO_CONTA SET NU_CNPJ = '" & cnpjClie & "',"
                 strSQL = strSQL + "IC_TIPO_TRANS_FLUXO_CAIXA = '" & Range("F" + CStr(linha)).Value & "',"
                 strSQL = strSQL + "DS_CLSSF_PLANO_CONTA = '" & Range("E" + CStr(linha)).Value & "',"
                 strSQL = strSQL + "CD_CLUN_CDGO_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 4) & "',"
@@ -231,7 +231,7 @@ On Error GoTo Erro
                     Do While Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value <> ""
                     
                         strSQL = "SELECT COUNT(1) "
-                        strSQL = strSQL + " FROM T_CLSSF_PLANO_CONTA "
+                        strSQL = strSQL + " FROM dbo.T_CLSSF_PLANO_CONTA "
                         strSQL = strSQL + " WHERE CD_PLANO_CONTA = '" & Range(planoClassificacaoPlanoConta(indice, 4) + CStr(linhaplanoConta)).Value & "' "
                         strSQL = strSQL + "   AND CD_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 1) & "';"
                         
@@ -239,7 +239,7 @@ On Error GoTo Erro
                         
                         If rstPlanoContaExistente(0).Value = 0 Then
                             
-                            strSQL = "INSERT INTO T_CLSSF_PLANO_CONTA ("
+                            strSQL = "INSERT INTO dbo.T_CLSSF_PLANO_CONTA ("
                             strSQL = strSQL + "ID_CLSSF_PLANO_CONTA, "
                             strSQL = strSQL + "CD_CLSSF_PLANO_CONTA, "
                             strSQL = strSQL + "NU_CNPJ,IC_TIPO_TRANS_FLUXO_CAIXA, "
@@ -284,7 +284,7 @@ On Error GoTo Erro
                             
                         Else
                     
-                            strSQL = "UPDATE T_CLSSF_PLANO_CONTA SET NU_CNPJ = '" & cnpjClie & "' "
+                            strSQL = "UPDATE dbo.T_CLSSF_PLANO_CONTA SET NU_CNPJ = '" & cnpjClie & "' "
                             strSQL = strSQL + ", IC_TIPO_TRANS_FLUXO_CAIXA = '" & planoClassificacaoPlanoConta(indice, 3) & "' "
                             strSQL = strSQL + ", DS_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 2) & "' "
                             strSQL = strSQL + ", CD_CLSSF_PLANO_CONTA = '" & planoClassificacaoPlanoConta(indice, 1) & "' "
@@ -359,7 +359,7 @@ On Error GoTo Erro
     CD_COL_INSTT_FNCR = Range("R" + CStr(linha)).Value
     CD_COL_VL_FLUXO_CAIXA = Range("S" + CStr(linha)).Value
     
-    strSQL = "DELETE FROM T_CNRIO_IMPRT_ARQV "
+    strSQL = "DELETE FROM dbo.T_CNRIO_IMPRT_ARQV "
     strSQL = strSQL + "WHERE NU_ANO_PLAN_ORIG_PROC = " & ano & " "
     strSQL = strSQL + "and NU_CNPJ = '" & cnpjClie & "';"
     
@@ -393,7 +393,7 @@ On Error GoTo Erro
     
     linha = 5
     
-    strSQL = "DELETE FROM T_LISTA_PLVR_EXCD "
+    strSQL = "DELETE FROM dbo.T_LISTA_PLVR_EXCD "
     strSQL = strSQL + "WHERE NU_ANO_PLAN_ORIG_PROC = " & ano & " "
     strSQL = strSQL + "and NU_CNPJ = '" & cnpjClie & "';"
     
@@ -401,7 +401,7 @@ On Error GoTo Erro
     
     Do While Range("O" + CStr(linha)).Value <> ""
         
-        strSQL = "INSERT INTO T_LISTA_PLVR_EXCD"
+        strSQL = "INSERT INTO dbo.T_LISTA_PLVR_EXCD"
         strSQL = strSQL + "("
         strSQL = strSQL + "ID_LISTA_PLVR_EXCD"
         strSQL = strSQL + ",NU_CNPJ"
@@ -468,7 +468,7 @@ On Error GoTo Erro
     
     Do While Range("O" + CStr(linha)).Value <> ""
         
-        strSQL = "INSERT INTO T_LISTA_PLVR_EXCD"
+        strSQL = "INSERT INTO dbo.T_LISTA_PLVR_EXCD"
         strSQL = strSQL + "("
         strSQL = strSQL + "ID_LISTA_PLVR_EXCD"
         strSQL = strSQL + ",NU_CNPJ"
@@ -535,7 +535,7 @@ On Error GoTo Erro
     
     Do While Range("O" + CStr(linha)).Value <> ""
         
-        strSQL = "INSERT INTO T_LISTA_PLVR_EXCD"
+        strSQL = "INSERT INTO dbo.T_LISTA_PLVR_EXCD"
         strSQL = strSQL + "("
         strSQL = strSQL + "ID_LISTA_PLVR_EXCD"
         strSQL = strSQL + ",NU_CNPJ"
@@ -566,7 +566,7 @@ On Error GoTo Erro
     
     linha = 5
     
-    strSQL = "DELETE FROM T_CNRO_EXPRT_ARQV "
+    strSQL = "DELETE FROM dbo.T_CNRO_EXPRT_ARQV "
     strSQL = strSQL + "WHERE NU_ANO_PLAN_ORIG_PROC = " & ano & " "
     strSQL = strSQL + "and NU_CNPJ = '" & cnpjClie & "';"
     
@@ -574,7 +574,7 @@ On Error GoTo Erro
     
     Do While Range("G" + CStr(linha)).Value <> ""
         
-        strSQL = "INSERT INTO T_CNRO_EXPRT_ARQV"
+        strSQL = "INSERT INTO dbo.T_CNRO_EXPRT_ARQV"
         strSQL = strSQL + " (ID_CNRO_EXPRT"
         strSQL = strSQL + ",CD_INSTT_FNCR"
         strSQL = strSQL + ",DS_INSTT_FNCR"
@@ -604,7 +604,7 @@ On Error GoTo Erro
     
     Do While Range("I" + CStr(linha)).Value <> ""
         
-        strSQL = "INSERT INTO T_CNRO_EXPRT_ARQV"
+        strSQL = "INSERT INTO dbo.T_CNRO_EXPRT_ARQV"
         strSQL = strSQL + " (ID_CNRO_EXPRT"
         strSQL = strSQL + ",CD_INSTT_FNCR"
         strSQL = strSQL + ",DS_INSTT_FNCR"
@@ -650,7 +650,7 @@ On Error GoTo Erro
     linha = 5
     qtRegistroCommit = 0
     
-    strSQL = "DELETE FROM T_FLUXO_CAIXA "
+    strSQL = "DELETE FROM dbo.T_FLUXO_CAIXA "
     strSQL = strSQL + "WHERE NU_ANO_PLAN_ORIG_PROC = " & ano & " "
     strSQL = strSQL + "and DS_PLAN_ORIG_PROC = '" & UCase(mes_processamento) & "' "
     strSQL = strSQL + "and NU_CNPJ = '" & cnpjClie & "';"
@@ -660,10 +660,10 @@ On Error GoTo Erro
     Do While Range("C" + CStr(linha)).Value <> ""
     
         If Not IsDate("" & numeroMes & "/" & Range("C" + CStr(linha)).Value & "/" & ano & "") Then
-            StrQuery = "SELECT ID_DMSAO_TEMPO FROM T_DMSAO_TEMPO WHERE DT_DMSAO_TEMPO = CONVERT(VARCHAR(10), '" & UltimoDiaMes(CDate("1/" & numeroMes & "/" & ano)) & "', 103)"
+            StrQuery = "SELECT ID_DMSAO_TEMPO FROM dbo.T_DMSAO_TEMPO WHERE DT_DMSAO_TEMPO = CONVERT(VARCHAR(10), '" & UltimoDiaMes(CDate("1/" & numeroMes & "/" & ano)) & "', 103)"
             dataTransformada = UltimoDiaMes(CDate("1/" & numeroMes & "/" & ano))
         Else
-            StrQuery = "SELECT ID_DMSAO_TEMPO FROM T_DMSAO_TEMPO WHERE DT_DMSAO_TEMPO = CONVERT(VARCHAR(10), '" & numeroMes & "/" & Range("C" + CStr(linha)).Value & "/" & ano & "', 103)"
+            StrQuery = "SELECT ID_DMSAO_TEMPO FROM dbo.T_DMSAO_TEMPO WHERE DT_DMSAO_TEMPO = CONVERT(VARCHAR(10), '" & numeroMes & "/" & Range("C" + CStr(linha)).Value & "/" & ano & "', 103)"
             dataTransformada = "" & numeroMes & "/" & Range("C" + CStr(linha)).Value & "/" & ano & ""
         End If
         
@@ -689,7 +689,7 @@ On Error GoTo Erro
             
         Loop
         
-        strSQL = "INSERT INTO T_FLUXO_CAIXA ("
+        strSQL = "INSERT INTO dbo.T_FLUXO_CAIXA ("
         strSQL = strSQL + "  ID_FLUXO_CAIXA"
         strSQL = strSQL + ", NU_CNPJ"
         strSQL = strSQL + ", SK_DMSAO_TEMPO"
@@ -731,7 +731,7 @@ On Error GoTo Erro
         strSQL = strSQL + "'" & indicadorClassificacaoPlanoContas & "',"
         strSQL = strSQL + "'" & UCase(mes_processamento) & "',"
         strSQL = strSQL + "'" & codigoClassificacaoPlano & "',"
-        strSQL = strSQL + "(SELECT ID_CLSSF_PLANO_CONTA FROM T_CLSSF_PLANO_CONTA WHERE CD_CLSSF_PLANO_CONTA = '" & codigoClassificacaoPlano & "' AND CD_PLANO_CONTA = '" & codigoPlano & "'),"
+        strSQL = strSQL + "(SELECT ID_CLSSF_PLANO_CONTA FROM dbo.T_CLSSF_PLANO_CONTA WHERE CD_CLSSF_PLANO_CONTA = '" & codigoClassificacaoPlano & "' AND CD_PLANO_CONTA = '" & codigoPlano & "'),"
         strSQL = strSQL + "" & ano & ","
         strSQL = strSQL + "'" & Range("I" + CStr(linha)).Value & "'"
         strSQL = strSQL + ");"
@@ -793,7 +793,7 @@ Sub insturcaoSQLCenario(pNU_CNPJ As String, _
                         pIC_TIPO_TRANS_FLUXO_CAIXA As String, _
                         pNU_ANO_PLAN_ORIG_PROC As String)
 
-    strSQLCenario = "INSERT INTO T_CNRIO_IMPRT_ARQV"
+    strSQLCenario = "INSERT INTO dbo.T_CNRIO_IMPRT_ARQV"
     strSQLCenario = strSQLCenario + "("
     strSQLCenario = strSQLCenario + "ID_CNRIO_IMPRT_ARQV"
     strSQLCenario = strSQLCenario + ",NU_CNPJ"

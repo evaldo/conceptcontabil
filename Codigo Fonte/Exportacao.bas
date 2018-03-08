@@ -251,7 +251,7 @@ On Error GoTo Erro
                     + "   " _
                     + "                                                " _
                     + "1" + Replace(rngToSave(i, 2).Value, "/", "") _
-                    + Replace(Format(localizaContaDevedora(rngToSave(i, 5).Value, rngToSave(i, 3).Value), "00000"), ".", "") _
+                    + Replace(Format(localizaContaDevedora(rngToSave(i, 5).Value), "00000"), ".", "") _
                     + "                   " _
                     + Format(localizaContaCredora(rngToSave(i, 6).Value), "00000") _
                     + "                   " _
