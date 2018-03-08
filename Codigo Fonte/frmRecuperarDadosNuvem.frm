@@ -42,9 +42,19 @@ Dim strSQLQtdePlanoConta As String
 
 Dim bolExisteQtdePlanoConta As Boolean
 
+    frmLoginManterDadosNuvem.Show
+
+    If manterDadosAposLogin = False Then
+        MsgBox "Login inválido não foi possível manter dados.", vbOKOnly + vbInformation, "Salvar Dados"
+        Exit Sub
+    End If
+    
+    manterDadosAposLogin = False
+
     frmProgresso.Visible = True
 
-    cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcondb.cmxd2lqddzlw.sa-east-1.rds.amazonaws.com,1433;Database=fluxocaixa;Uid=evaldo;Pwd={Gcas1302};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=300;"
+    'cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcondb.cmxd2lqddzlw.sa-east-1.rds.amazonaws.com,1433;Database=fluxocaixa;Uid=" & usuario & ";Pwd={" & senha & "};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=300;"
+    cnn.ConnectionString = "Provider=SQLOLEDB.1;Password=" & senha & ";Persist Security Info=True;User ID=" & usuario & ";Initial Catalog=fluxocaixa;Data Source=contarcondb.cmxd2lqddzlw.sa-east-1.rds.amazonaws.com,1433"
     cnn.Open
     
     nomePlanilha = ActiveSheet.Name
@@ -208,9 +218,11 @@ Dim bolExisteQtdePlanoConta As Boolean
     
     For lista = 0 To Me.lstMeses.ListCount - 1
         
-        Worksheets(Me.lstMeses.List(lista)).Activate
-        Call carregarDadosDoMes(Me.lstMeses.List(lista))
-        Me.lstMeses.Selected(lista) = False
+        If Me.lstMeses.Selected(lista) = True Then
+            Worksheets(Me.lstMeses.List(lista)).Activate
+            Call carregarDadosDoMes(Me.lstMeses.List(lista))
+            Me.lstMeses.Selected(lista) = False
+        End If
         
     Next lista
     
@@ -226,7 +238,8 @@ Erro:
     
     MsgBox "Erro ao recuperar os dados selecionados. Refaça a operação.", vbOKOnly, "Recuperar dados da nuvem"
     
-    cnn.Close
+    Set cnn = Nothing
+    
     frmProgresso.Visible = False
     Application.ScreenUpdating = True
     Worksheets(nomePlanilha).Activate

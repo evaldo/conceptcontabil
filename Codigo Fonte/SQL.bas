@@ -81,9 +81,19 @@ On Error GoTo Erro
     statusBarOriginal = Application.StatusBar
     Application.DisplayStatusBar = True
     Application.StatusBar = "Conectando no banco de dados..."
+        
+    frmLoginManterDadosNuvem.Show
+    
+    If manterDadosAposLogin = False Then
+        MsgBox "Login inválido não foi possível manter dados.", vbOKOnly + vbInformation, "Salvar Dados"
+        Exit Sub
+    End If
+    
+    manterDadosAposLogin = False
     
     'cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcon.database.windows.net,1433;Database=fluxocaixa;Uid=evaldo@contarcon;Pwd={Gcas1302};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
-    cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcondb.cmxd2lqddzlw.sa-east-1.rds.amazonaws.com,1433;Database=fluxocaixa;Uid=evaldo;Pwd={Gcas1302};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+    'cnn.ConnectionString = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:contarcondb.cmxd2lqddzlw.sa-east-1.rds.amazonaws.com,1433;Database=fluxocaixa;Uid=" & usuario & ";Pwd={" & senha & "};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+    cnn.ConnectionString = "Provider=SQLOLEDB.1;Password=" & senha & ";Persist Security Info=True;User ID=" & usuario & ";Initial Catalog=fluxocaixa;Data Source=contarcondb.cmxd2lqddzlw.sa-east-1.rds.amazonaws.com,1433"
     cnn.Open
     
     Worksheets("Configurações Básicas").Activate
