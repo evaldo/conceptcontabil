@@ -35,7 +35,7 @@ Dim arrClassificacaoPlanoContas(1 To 1000, 1 To 2) As String
     
     linhaListaClassificacao = linhaListaClassificacao + 1
     
-    If frmEscolhaDesRec.bolClassificacaoReceita = True Then
+    If frmImportarPlanilhaComParametro.optClassificacaoReceita = True Then
                 
         Worksheets("PC Receitas").Activate
     
@@ -93,7 +93,7 @@ End Sub
 
 Private Sub UserForm_Activate()
 
-    If frmEscolhaDesRec.bolClassificacaoDespesa = True Then
+    If frmImportarPlanilhaComParametro.optClassificacaoDespesa.Value = True Then
         Call classificacaoDespesa
     Else
         Call classificacaoReceita
@@ -104,6 +104,13 @@ End Sub
 
 Public Sub classificacaoDespesa()
 
+Dim i As Integer
+Dim linha As Integer
+Dim contador_classifcacao As Integer
+
+Dim planoContas(1 To 100, 1 To 5) As String
+Dim mes_processamento As String
+
     For linha = 1 To 20
                     
         descricaoClassificacao(linha, 2) = ""
@@ -111,39 +118,45 @@ Public Sub classificacaoDespesa()
         descricaoClassificacao(linha, 3) = ""
         
     Next linha
-
-    descricaoClassificacao(1, 2) = "D"
-    descricaoClassificacao(1, 1) = "DESPESAS COM PRODUTOS"
-    descricaoClassificacao(1, 3) = "C"
+ 
+    mes_processamento = ActiveSheet.Name
+    Worksheets("Configurações Básicas").Activate
     
-    descricaoClassificacao(2, 2) = "G"
-    descricaoClassificacao(2, 1) = "DESPESAS COM SERVIÇOS"
-    descricaoClassificacao(2, 3) = "F"
+    linha = 12
+    i = 1
     
-    descricaoClassificacao(3, 2) = "J"
-    descricaoClassificacao(3, 1) = "DESPESAS NÃO OPERACIONAIS"
-    descricaoClassificacao(3, 3) = "I"
+    Do While Range("D" + CStr(linha)).Value <> ""
+        
+        planoContas(i, 1) = Range("D" + CStr(linha)).Value 'codigo plano de contas
+        planoContas(i, 2) = Range("E" + CStr(linha)).Value 'descrição do plano de contas
+        planoContas(i, 3) = Range("F" + CStr(linha)).Value 'tipo de operação do plano de contas (R/D)
+        planoContas(i, 4) = Range("G" + CStr(linha)).Value 'coluna do código do plano de contas
+        planoContas(i, 5) = Range("H" + CStr(linha)).Value 'coluna da descrição do plano de contas
+        
+        linha = linha + 1
+        i = i + 1
+        
+    Loop
     
-    descricaoClassificacao(4, 2) = "M"
-    descricaoClassificacao(4, 1) = "DESPESAS COM RH"
-    descricaoClassificacao(4, 3) = "L"
+    Worksheets(mes_processamento).Activate
     
-    descricaoClassificacao(5, 2) = "P"
-    descricaoClassificacao(5, 1) = "DESPESAS OPERACIONAIS"
-    descricaoClassificacao(5, 3) = "O"
+    i = 1
+    contador_classifcacao = 1
     
-    descricaoClassificacao(6, 2) = "S"
-    descricaoClassificacao(6, 1) = "DESPESAS DE MARKETING"
-    descricaoClassificacao(6, 3) = "R"
-    
-    descricaoClassificacao(7, 2) = "V"
-    descricaoClassificacao(7, 1) = "IMPOSTOS"
-    descricaoClassificacao(7, 3) = "U"
-    
-    descricaoClassificacao(8, 2) = "Y"
-    descricaoClassificacao(8, 1) = "INVESTIMENTOS"
-    descricaoClassificacao(8, 3) = "X"
-    
+    For i = 1 To 100
+        
+        If planoContas(i, 3) = "D" Then
+            
+            descricaoClassificacao(contador_classifcacao, 2) = planoContas(i, 5)
+            descricaoClassificacao(contador_classifcacao, 1) = planoContas(i, 2)
+            descricaoClassificacao(contador_classifcacao, 3) = planoContas(i, 4)
+            
+            contador_classifcacao = contador_classifcacao + 1
+            
+        End If
+        
+    Next i
+   
     cmbListaDescricaoClassificacao.Clear
     cmbListaDescricaoClassificacao.List = descricaoClassificacao
 
@@ -151,6 +164,13 @@ End Sub
 
 Public Sub classificacaoReceita()
  
+Dim i As Integer
+Dim linha As Integer
+Dim contador_classifcacao As Integer
+
+Dim planoContas(1 To 100, 1 To 5) As String
+Dim mes_processamento As String
+
     For linha = 1 To 20
                     
         descricaoClassificacao(linha, 2) = ""
@@ -158,23 +178,45 @@ Public Sub classificacaoReceita()
         descricaoClassificacao(linha, 3) = ""
         
     Next linha
+ 
+    mes_processamento = ActiveSheet.Name
+    Worksheets("Configurações Básicas").Activate
     
-    descricaoClassificacao(1, 2) = "D"
-    descricaoClassificacao(1, 1) = "RECEITAS COM PRODUTO"
-    descricaoClassificacao(1, 3) = "C"
+    linha = 12
+    i = 1
     
-    descricaoClassificacao(2, 2) = "E"
-    descricaoClassificacao(2, 1) = "RECEBIMENTOS REALIZADOS"
-    descricaoClassificacao(2, 3) = "C"
+    Do While Range("D" + CStr(linha)).Value <> ""
+        
+        planoContas(i, 1) = Range("D" + CStr(linha)).Value 'codigo plano de contas
+        planoContas(i, 2) = Range("E" + CStr(linha)).Value 'descrição do plano de contas
+        planoContas(i, 3) = Range("F" + CStr(linha)).Value 'tipo de operação do plano de contas (R/D)
+        planoContas(i, 4) = Range("G" + CStr(linha)).Value 'coluna do código do plano de contas
+        planoContas(i, 5) = Range("H" + CStr(linha)).Value 'coluna da descrição do plano de contas
+        
+        linha = linha + 1
+        i = i + 1
+        
+    Loop
     
-    descricaoClassificacao(3, 2) = "H"
-    descricaoClassificacao(3, 1) = "RECEITAS COM SERVIÇOS"
-    descricaoClassificacao(3, 3) = "G"
+    Worksheets(mes_processamento).Activate
     
-    descricaoClassificacao(4, 2) = "K"
-    descricaoClassificacao(4, 1) = "RECEITAS NÃO OPERACIONAIS"
-    descricaoClassificacao(4, 3) = "J"
+    i = 1
+    contador_classifcacao = 1
     
+    For i = 1 To 100
+        
+        If planoContas(i, 3) = "R" Then
+            
+            descricaoClassificacao(contador_classifcacao, 2) = planoContas(i, 5)
+            descricaoClassificacao(contador_classifcacao, 1) = planoContas(i, 2)
+            descricaoClassificacao(contador_classifcacao, 3) = planoContas(i, 4)
+            
+            contador_classifcacao = contador_classifcacao + 1
+            
+        End If
+        
+    Next i
+   
     cmbListaDescricaoClassificacao.Clear
     cmbListaDescricaoClassificacao.List = descricaoClassificacao
    

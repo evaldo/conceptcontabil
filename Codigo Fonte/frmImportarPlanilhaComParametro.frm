@@ -116,20 +116,42 @@ On Error GoTo Erro
     Dim encontrou_classificacao As Boolean
     
     Dim classificacao_importada(1 To 10000) As String
+    Dim planoContas(1 To 100, 1 To 5) As String
     Dim mes_processamento As String
+    
+    mes_processamento = ActiveSheet.Name
+    Worksheets("Configurações Básicas").Activate
+    
+    linha = 12
+    i = 1
+    
+    Do While Range("D" + CStr(linha)).Value <> ""
+        
+        planoContas(i, 1) = Range("D" + CStr(linha)).Value 'codigo plano de contas
+        planoContas(i, 2) = Range("E" + CStr(linha)).Value 'descrição do plano de contas
+        planoContas(i, 3) = Range("F" + CStr(linha)).Value 'tipo de operação do plano de contas (R/D)
+        planoContas(i, 4) = Range("G" + CStr(linha)).Value 'coluna do código do plano de contas
+        planoContas(i, 5) = Range("H" + CStr(linha)).Value 'coluna da descrição do plano de contas
+        
+        linha = linha + 1
+        i = i + 1
+        
+    Loop
+    
+    Worksheets(mes_processamento).Activate
     
     If MsgBox("Deseja refazer os parâmetros de dados para importação?", vbYesNo, "Carga de Dados para Importação") = vbNo Then
     
         mes_processamento = ActiveSheet.Name
         Worksheets("Configurações Básicas").Activate
-        
+                
         If Range("E6").Value = "Sim" Then
         
             Worksheets(mes_processamento).Activate
             Call fazLeituraDadosImportacao
             Worksheets(mes_processamento).Activate
             
-            txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
+            txtColunaContemPalavra.Text = Me.txtColunaclassificacao.Text
                     
             Exit Sub
             
@@ -163,9 +185,9 @@ On Error GoTo Erro
                 
         If txtLinhaInicial.Text <> "" Then
         
-            If txtColunaClassificacao.Text <> "" Then
+            If txtColunaclassificacao.Text <> "" Then
         
-                Range(txtColunaClassificacao.Text + Trim(txtLinhaInicial.Text)).Select
+                Range(txtColunaclassificacao.Text + Trim(txtLinhaInicial.Text)).Select
                 
                 linha = CInt(txtLinhaInicial.Text)
                 i = 1
@@ -196,7 +218,7 @@ On Error GoTo Erro
                         
                         For i_armazenada = 1 To CInt(txtLinhaFinal.Text)
                             
-                            If classificacao(i_armazenada, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
+                            If classificacao(i_armazenada, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Text Then
                                 bol_ja_existe_classificacao = True
                             End If
                             
@@ -204,7 +226,7 @@ On Error GoTo Erro
                         
                         If bol_ja_existe_classificacao = False Then
                         
-                            classificacao(i, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text
+                            classificacao(i, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Text
                             classificacao(i, 2) = ""
                             classificacao(i, 3) = ""
                             classificacao(i, 4) = ""
@@ -240,57 +262,43 @@ On Error GoTo Erro
                 
                 If Me.optClassificacaoReceita.Value = True Then
                 
-                    descricaoClassificacao(1, 2) = "D"
-                    descricaoClassificacao(1, 1) = "RECEITAS COM PRODUTO"
-                    descricaoClassificacao(1, 3) = "C"
+                    i = 1
+                    contador_classifcacao = 1
                     
-                    descricaoClassificacao(2, 2) = "E"
-                    descricaoClassificacao(2, 1) = "RECEBIMENTOS REALIZADOS"
-                    descricaoClassificacao(2, 3) = "C"
-                    
-                    descricaoClassificacao(3, 2) = "H"
-                    descricaoClassificacao(3, 1) = "RECEITAS COM SERVIÇOS"
-                    descricaoClassificacao(3, 3) = "G"
-                    
-                    descricaoClassificacao(4, 2) = "K"
-                    descricaoClassificacao(4, 1) = "RECEITAS NÃO OPERACIONAIS"
-                    descricaoClassificacao(4, 3) = "J"
+                    For i = 1 To 100
+                        
+                        If planoContas(i, 3) = "R" Then
+                            
+                            descricaoClassificacao(contador_classifcacao, 2) = planoContas(i, 5)
+                            descricaoClassificacao(contador_classifcacao, 1) = planoContas(i, 2)
+                            descricaoClassificacao(contador_classifcacao, 3) = planoContas(i, 4)
+                            
+                            contador_classifcacao = contador_classifcacao + 1
+                            
+                        End If
+                        
+                    Next i
                 
                 End If
                 
                 If Me.optClassificacaoDespesa.Value = True Then
                 
-                    descricaoClassificacao(1, 2) = "D"
-                    descricaoClassificacao(1, 1) = "DESPESAS COM PRODUTOS"
-                    descricaoClassificacao(1, 3) = "C"
+                    i = 1
+                    contador_classifcacao = 1
                     
-                    descricaoClassificacao(2, 2) = "G"
-                    descricaoClassificacao(2, 1) = "DESPESAS COM SERVIÇOS"
-                    descricaoClassificacao(2, 3) = "F"
-                    
-                    descricaoClassificacao(3, 2) = "J"
-                    descricaoClassificacao(3, 1) = "DESPESAS NÃO OPERACIONAIS"
-                    descricaoClassificacao(3, 3) = "I"
-                    
-                    descricaoClassificacao(4, 2) = "M"
-                    descricaoClassificacao(4, 1) = "DESPESAS COM RH"
-                    descricaoClassificacao(4, 3) = "L"
-                    
-                    descricaoClassificacao(5, 2) = "P"
-                    descricaoClassificacao(5, 1) = "DESPESAS OPERACIONAIS"
-                    descricaoClassificacao(5, 3) = "O"
-                    
-                    descricaoClassificacao(6, 2) = "S"
-                    descricaoClassificacao(6, 1) = "DESPESAS DE MARKETING"
-                    descricaoClassificacao(6, 3) = "R"
-                    
-                    descricaoClassificacao(7, 2) = "V"
-                    descricaoClassificacao(7, 1) = "IMPOSTOS"
-                    descricaoClassificacao(7, 3) = "U"
-                    
-                    descricaoClassificacao(8, 2) = "Y"
-                    descricaoClassificacao(8, 1) = "INVESTIMENTOS"
-                    descricaoClassificacao(8, 3) = "X"
+                    For i = 1 To 100
+                        
+                        If planoContas(i, 3) = "D" Then
+                            
+                            descricaoClassificacao(contador_classifcacao, 2) = planoContas(i, 5)
+                            descricaoClassificacao(contador_classifcacao, 1) = planoContas(i, 3)
+                            descricaoClassificacao(contador_classifcacao, 3) = planoContas(i, 4)
+                            
+                            contador_classifcacao = contador_classifcacao + 1
+                            
+                        End If
+                        
+                    Next i
                 
                 End If
                 
@@ -316,7 +324,7 @@ On Error GoTo Erro
             
     End If
     
-    txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
+    txtColunaContemPalavra.Text = Me.txtColunaclassificacao.Text
     
     Exit Sub
     
@@ -349,7 +357,7 @@ Private Sub btnImportarDados_Click()
     bolExistemDados = False
     bolLimparDados = False
     
-    txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
+    txtColunaContemPalavra.Text = Me.txtColunaclassificacao.Text
     
     If ValidaPlanilhaProcessamento() = False Then
         MsgBox "Escolha um planilha para lançamento do Fluxo de Caixa entre Jan e Dez.", vbOKOnly + vbInformation, "Importação de Dados"
@@ -532,11 +540,9 @@ Private Sub cmdSalvarCenario_Click()
     frmBarraProgressaoImportacao.Show
     bolSalvarImportacao = False
     
-    txtColunaContemPalavra.Text = Me.txtColunaClassificacao.Text
+    txtColunaContemPalavra.Text = Me.txtColunaclassificacao.Text
 
 End Sub
-
-
 
 Function ConverteParaLetra(iCol As Integer) As String
    Dim iAlpha As Integer
@@ -575,6 +581,13 @@ End Sub
 
 Private Sub optClassificacaoDespesa_Click()
 
+Dim i As Integer
+Dim linha As Integer
+Dim contador_classifcacao As Integer
+
+Dim planoContas(1 To 100, 1 To 5) As String
+Dim mes_processamento As String
+
     For linha = 1 To 20
                     
         descricaoClassificacao(linha, 2) = ""
@@ -582,38 +595,44 @@ Private Sub optClassificacaoDespesa_Click()
         descricaoClassificacao(linha, 3) = ""
         
     Next linha
-
-    descricaoClassificacao(1, 2) = "D"
-    descricaoClassificacao(1, 1) = "DESPESAS COM PRODUTOS"
-    descricaoClassificacao(1, 3) = "C"
+ 
+    mes_processamento = ActiveSheet.Name
+    Worksheets("Configurações Básicas").Activate
     
-    descricaoClassificacao(2, 2) = "G"
-    descricaoClassificacao(2, 1) = "DESPESAS COM SERVIÇOS"
-    descricaoClassificacao(2, 3) = "F"
+    linha = 12
+    i = 1
     
-    descricaoClassificacao(3, 2) = "J"
-    descricaoClassificacao(3, 1) = "DESPESAS NÃO OPERACIONAIS"
-    descricaoClassificacao(3, 3) = "I"
+    Do While Range("D" + CStr(linha)).Value <> ""
+        
+        planoContas(i, 1) = Range("D" + CStr(linha)).Value 'codigo plano de contas
+        planoContas(i, 2) = Range("E" + CStr(linha)).Value 'descrição do plano de contas
+        planoContas(i, 3) = Range("F" + CStr(linha)).Value 'tipo de operação do plano de contas (R/D)
+        planoContas(i, 4) = Range("G" + CStr(linha)).Value 'coluna do código do plano de contas
+        planoContas(i, 5) = Range("H" + CStr(linha)).Value 'coluna da descrição do plano de contas
+        
+        linha = linha + 1
+        i = i + 1
+        
+    Loop
     
-    descricaoClassificacao(4, 2) = "M"
-    descricaoClassificacao(4, 1) = "DESPESAS COM RH"
-    descricaoClassificacao(4, 3) = "L"
+    Worksheets(mes_processamento).Activate
     
-    descricaoClassificacao(5, 2) = "P"
-    descricaoClassificacao(5, 1) = "DESPESAS OPERACIONAIS"
-    descricaoClassificacao(5, 3) = "O"
+    i = 1
+    contador_classifcacao = 1
     
-    descricaoClassificacao(6, 2) = "S"
-    descricaoClassificacao(6, 1) = "DESPESAS DE MARKETING"
-    descricaoClassificacao(6, 3) = "R"
-    
-    descricaoClassificacao(7, 2) = "V"
-    descricaoClassificacao(7, 1) = "IMPOSTOS"
-    descricaoClassificacao(7, 3) = "U"
-    
-    descricaoClassificacao(8, 2) = "Y"
-    descricaoClassificacao(8, 1) = "INVESTIMENTOS"
-    descricaoClassificacao(8, 3) = "X"
+    For i = 1 To 100
+        
+        If planoContas(i, 3) = "D" Then
+            
+            descricaoClassificacao(contador_classifcacao, 2) = planoContas(i, 5)
+            descricaoClassificacao(contador_classifcacao, 1) = planoContas(i, 2)
+            descricaoClassificacao(contador_classifcacao, 3) = planoContas(i, 4)
+            
+            contador_classifcacao = contador_classifcacao + 1
+            
+        End If
+        
+    Next i
     
     cmbListaDescricaoClassificacao.Clear
     cmbListaDescricaoClassificacao.List = descricaoClassificacao
@@ -622,6 +641,13 @@ End Sub
 
 Private Sub optClassificacaoReceita_Click()
  
+Dim i As Integer
+Dim linha As Integer
+Dim contador_classifcacao As Integer
+
+Dim planoContas(1 To 100, 1 To 5) As String
+Dim mes_processamento As String
+
     For linha = 1 To 20
                     
         descricaoClassificacao(linha, 2) = ""
@@ -629,22 +655,44 @@ Private Sub optClassificacaoReceita_Click()
         descricaoClassificacao(linha, 3) = ""
         
     Next linha
+ 
+    mes_processamento = ActiveSheet.Name
+    Worksheets("Configurações Básicas").Activate
     
-    descricaoClassificacao(1, 2) = "D"
-    descricaoClassificacao(1, 1) = "RECEITAS COM PRODUTO"
-    descricaoClassificacao(1, 3) = "C"
+    linha = 12
+    i = 1
     
-    descricaoClassificacao(2, 2) = "E"
-    descricaoClassificacao(2, 1) = "RECEBIMENTOS REALIZADOS"
-    descricaoClassificacao(2, 3) = "C"
+    Do While Range("D" + CStr(linha)).Value <> ""
+        
+        planoContas(i, 1) = Range("D" + CStr(linha)).Value 'codigo plano de contas
+        planoContas(i, 2) = Range("E" + CStr(linha)).Value 'descrição do plano de contas
+        planoContas(i, 3) = Range("F" + CStr(linha)).Value 'tipo de operação do plano de contas (R/D)
+        planoContas(i, 4) = Range("G" + CStr(linha)).Value 'coluna do código do plano de contas
+        planoContas(i, 5) = Range("H" + CStr(linha)).Value 'coluna da descrição do plano de contas
+        
+        linha = linha + 1
+        i = i + 1
+        
+    Loop
     
-    descricaoClassificacao(3, 2) = "H"
-    descricaoClassificacao(3, 1) = "RECEITAS COM SERVIÇOS"
-    descricaoClassificacao(3, 3) = "G"
+    Worksheets(mes_processamento).Activate
     
-    descricaoClassificacao(4, 2) = "K"
-    descricaoClassificacao(4, 1) = "RECEITAS NÃO OPERACIONAIS"
-    descricaoClassificacao(4, 3) = "J"
+    i = 1
+    contador_classifcacao = 1
+    
+    For i = 1 To 100
+        
+        If planoContas(i, 3) = "R" Then
+            
+            descricaoClassificacao(contador_classifcacao, 2) = planoContas(i, 5)
+            descricaoClassificacao(contador_classifcacao, 1) = planoContas(i, 2)
+            descricaoClassificacao(contador_classifcacao, 3) = planoContas(i, 4)
+            
+            contador_classifcacao = contador_classifcacao + 1
+            
+        End If
+        
+    Next i
     
     cmbListaDescricaoClassificacao.Clear
     cmbListaDescricaoClassificacao.List = descricaoClassificacao
@@ -706,7 +754,7 @@ Sub fazLeituraDadosImportacao()
     
     txtLinhaInicial.Text = Range("L5").Value
     txtLinhaFinal.Text = Range("M5").Value
-    txtColunaClassificacao.Text = Range("N5").Value
+    txtColunaclassificacao.Text = Range("N5").Value
     txtDiaOrigem.Text = Range("P5").Value
     txtDocRefOrigem.Text = Range("Q5").Value
     txtInstFinOrigem.Text = Range("R5").Value
@@ -757,7 +805,7 @@ Sub fazLeituraDadosImportacao()
         
         Do While contador_comparacao <= linhaFinal
             
-            If classificacao(contador_comparacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text Then
+            If classificacao(contador_comparacao, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Text Then
                 encontrou_classificacao = True
                 Exit Do
             End If
@@ -775,7 +823,7 @@ Sub fazLeituraDadosImportacao()
                 
             Do While contadorPalavra <= lstPalavraExistente.ListCount - 1
     
-                If Range(txtColunaClassificacao.Text + CStr(linha)).Text = lstPalavraExistente.List(contadorPalavra) Then
+                If Range(txtColunaclassificacao.Text + CStr(linha)).Text = lstPalavraExistente.List(contadorPalavra) Then
                 
                     bol_encontrou_palavra = True
                     Exit Do
@@ -790,7 +838,7 @@ Sub fazLeituraDadosImportacao()
             
             If bol_encontrou_palavra = False Then
             
-                classificacao(contador_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Text
+                classificacao(contador_classificacao, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Text
                 classificacao(contador_classificacao, 2) = ""
                 classificacao(contador_classificacao, 3) = ""
                 classificacao(contador_classificacao, 4) = ""
@@ -906,7 +954,7 @@ On Error GoTo Erro
             
             Do While linha_classificacao <= CInt(Me.txtLinhaFinal.Text)
                 
-                If classificacao(linha_classificacao, 1) = Range(txtColunaClassificacao.Text + CStr(linha)).Value Then
+                If classificacao(linha_classificacao, 1) = Range(txtColunaclassificacao.Text + CStr(linha)).Value Then
                 
                     If Range(txtDiaOrigem.Text + CStr(linha)).Value = "" Then
                         processamentoImportacao(contador, 1) = "1"
@@ -1049,7 +1097,7 @@ On Error GoTo Erro
     '    salvarImportacao = False
     'End If
     
-    If txtCaminhoPlanilha.Text = "" Or txtLinhaInicial.Text = "" Or txtLinhaFinal.Text = "" Or txtColunaClassificacao.Text = "" _
+    If txtCaminhoPlanilha.Text = "" Or txtLinhaInicial.Text = "" Or txtLinhaFinal.Text = "" Or txtColunaclassificacao.Text = "" _
         Or txtDiaOrigem.Text = "" Or txtDocRefOrigem.Text = "" Or txtInstFinOrigem.Text = "" Or _
         txtValorOrigem.Text = "" Then
         
@@ -1174,7 +1222,7 @@ On Error GoTo Erro
         Range("K5").Value = txtCaminhoPlanilha.Text
         Range("L5").Value = txtLinhaInicial.Text
         Range("M5").Value = txtLinhaFinal.Text
-        Range("N5").Value = txtColunaClassificacao.Text
+        Range("N5").Value = txtColunaclassificacao.Text
         Range("P5").Value = txtDiaOrigem.Text
         Range("Q5").Value = txtDocRefOrigem.Text
         Range("R5").Value = txtInstFinOrigem.Text
@@ -1231,15 +1279,21 @@ Private Sub UserForm_Activate()
         Call optClassificacaoDespesa_Click
         optClassificacaoReceita.Enabled = False
         optClassificacaoDespesa.Enabled = True
+        optClassificacaoDespesa.Value = True
+        optClassificacaoReceita.Value = False
     Else
         If frmEscolhaDesRec.bolClassificacaoReceita = True Then
             Call optClassificacaoReceita_Click
             optClassificacaoDespesa.Enabled = False
             optClassificacaoReceita.Enabled = True
+            optClassificacaoDespesa.Value = False
+            optClassificacaoReceita.Value = True
         Else
             Call optClassificacaoReceita_Click
             optClassificacaoDespesa.Enabled = True
             optClassificacaoReceita.Enabled = True
+            optClassificacaoDespesa.Value = False
+            optClassificacaoReceita.Value = True
         End If
     End If
         
