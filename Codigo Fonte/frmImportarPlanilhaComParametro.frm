@@ -1030,11 +1030,11 @@ On Error GoTo Erro
             Range(txtInstFinDestino.Text + CStr(linha)).Value = processamentoImportacao(contador, 5)
             
             If processamentoImportacao(contador, 7) = "D" Then
-                Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
+                Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = Abs(CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6)))))
                 Range(txtValorDestinoReceita.Text + CStr(linha)).Value = 0
                 Range("L" + CStr(linha)).Value = "Pago"
             Else
-                Range(txtValorDestinoReceita.Text + CStr(linha)).Value = CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6))))
+                Range(txtValorDestinoReceita.Text + CStr(linha)).Value = Abs(CDbl(Trim(IIf(processamentoImportacao(contador, 6) = "", 0, processamentoImportacao(contador, 6)))))
                 Range(txtValorDestinoDespesa.Text + CStr(linha)).Value = 0
                 Range("L" + CStr(linha)).Value = "Realizado"
             End If

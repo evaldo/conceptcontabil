@@ -1,0 +1,39 @@
+1-) Alterar o DRE com as possível contas do plano de contas.
+2-) Documentar a base de dados e planilhas.
+3-) Evitar valores negativos na importação.
+4-) Criar dados na nuvem para as instituições financeiras.
+5-) (em estudo...) abrir .PDF na importação.
+6-) processamento de recebimentos por dia dentro do mês ante do dia ou até o do dia.
+7-) (em análise) colocar no manual como virar o ano. Criar funcionalidade de salvar como para tirar uma foto do estado atual da planilha contendo funções básicas da QLuz.
+
+
+(Feito.) fazer o conjunto de atividades para implantação da planilha.
+	Por versão (sem nuvem e nuvem [incluindo indicadores]).
+
+	- dizer valor de instalação
+	- manutenção dos dados no Azure.
+	
+	1  - 30 = 350,00 /mes
+	30 - 60 = 700,00 /mes
+	60 - 90 = 850,00 /mes
+	90 - .. = salario minimo
+
+(Feito) para facilitar busca, modificar a tela de importação para a busca por plano de contas: nome e código.
+
+(Feito) criar a facilitação de importação do plano de contas do sistema origem para ser lido na exportação.
+
+(Feito) assim que der o Ok da importação fechar a tela menor de escolha de contas (despesas e receitas).
+
+(Feito) Verificar como os dados podem ser atualizados em planilha na nuvem. 
+Verificar se os dados em nuvem podem ser colocados no Office em nuvem.
+
+(Feito) Criar rotina de atualização de dados para nuvem (o usuário selecionar o que deve ser levado para nuvem, e recuperado da nuvem).
+
+(Feito) Na exportação, quando o plano de contas é parametrizado permitir a busca do 
+a busca da conta contábil pela descrição. O mesmo ser feito para o
+de-para do Doc/Ref.
+
+(Feito) Importar ambos (Receita/Despesas).
+
+
+
