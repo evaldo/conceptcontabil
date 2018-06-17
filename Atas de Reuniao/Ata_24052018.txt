@@ -1,0 +1,7 @@
+- modificar leiaute de acordo com o Fluxo Caixa 4.0
+- Eliminar a coluna de dia, manter somente de data completa
+- Verificar cálculo de recebimento dentro do mês
+- Verificar impressão de lançamentos e gráficos
+- Proposta de Cláudia do balanço
+- Criar cenários de uso
+- Alterar manual

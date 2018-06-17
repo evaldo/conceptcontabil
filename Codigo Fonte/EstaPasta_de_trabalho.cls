@@ -11,7 +11,7 @@ Option Explicit
 
 Private Sub Workbook_Open()
     
-    frmLogin.Show 1
+    'frmLogin.Show 1
     
     'Application.DisplayFullScreen = True
     'Application.WindowState = xlMaximized
@@ -27,25 +27,11 @@ Private Sub Workbook_Open()
     
 End Sub
 
-Private Sub Workbook_WindowActivate(ByVal Wn As Window)
-    
-    'Call Ocultar
-    
-End Sub
-
-Private Sub Workbook_WindowDeactivate(ByVal Wn As Window)
-
-    'ActiveWorkbook.Save
-    'Call Reexibir
-    
-End Sub
-
 Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
 
 Dim numeroMes As Integer
 Dim planilhaMes As String
-
-    'Application.EnableEvents = False
+Dim numeroDia As String
     
     If anoAtual = "" Then
     
@@ -61,7 +47,7 @@ Dim planilhaMes As String
         
     End If
     
-    If Target.Column = 3 And _
+    If Target.Column = 4 And _
         Target.Row >= 5 And _
         (Sh.Name = "Jan" Or _
          Sh.Name = "Fev" Or _
@@ -104,32 +90,49 @@ Dim planilhaMes As String
                 numeroMes = 12
         End Select
 
-        If Range("C" + CStr(Target.Row)).Value <> "" Then
-
-            Range("D" + CStr(Target.Row)).Value = Format(Range("C" + CStr(Target.Row)).Value, "00") + "/" + Format(CStr(numeroMes), "00") + "/" + CStr(anoAtual)
-
-            If Not IsDate(Range("D" + CStr(Target.Row)).Value) And Range("C" + CStr(Target.Row)).Value <> "" Then
-               MsgBox "Data inválida. Favor repetir a digitação do dia de lançamento.", vbInformation, "Processamento de Recebimentos"
-
-               Range("C" + CStr(Target.Row)).Activate
-
-               Range("D" + CStr(Target.Row)).Value = ""
-
+        Range("D" + CStr(Target.Row)).NumberFormat = "General"
+                
+        If Range("D" + CStr(Target.Row)).Text <> "" Then
+            
+            numeroDia = CStr(Range("D" + CStr(Target.Row)).Value)
+            
+            If Not IsDate(numeroDia + "/" + Format(CStr(numeroMes), "00") + "/" + CStr(anoAtual)) Then
+                                
+                MsgBox "Data inválida. Favor repetir a digitação do dia de lançamento.", vbInformation, "Processamento de Recebimentos"
+                Range("D" + CStr(Target.Row)).Select
+                numeroDia = ""
+                
+                Exit Sub
+                
             Else
-                Range("D" + CStr(Target.Row)).Value = CDate(Format(Range("C" + CStr(Target.Row)).Value, "00") + "/" + Format(CStr(numeroMes), "00") + "/" + CStr(anoAtual))
+                Application.EnableEvents = False
+                Range("D" + CStr(Target.Row)).NumberFormat = "mm/dd/yyyy"
+                Range("D" + CStr(Target.Row)).Value = Format(numeroDia, "00") + "/" + Format(CStr(numeroMes), "00") + "/" + CStr(anoAtual)
+                numeroDia = ""
+                Application.EnableEvents = True
+                Exit Sub
+                
             End If
-
-        Else
-
-            Range("D" + CStr(Target.Row)).Value = ""
-
-        End If
     
-    End If
-
-    'Application.EnableEvents = True
- 
+        End If
+     End If
+    
 End Sub
+
+Private Sub Workbook_WindowActivate(ByVal Wn As Window)
+    
+    'Call Ocultar
+    
+End Sub
+
+Private Sub Workbook_WindowDeactivate(ByVal Wn As Window)
+
+    'ActiveWorkbook.Save
+    'Call Reexibir
+    
+End Sub
+
+
 
 Private Sub Workbook_WindowResize(ByVal Wn As Window)
     'Wn.WindowState = xlMaximized
