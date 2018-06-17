@@ -118,8 +118,7 @@ On Error GoTo Erro
     Next conta_mes
     
     '-----------------------------------------------------------------------------------------------------
-    'Processar recebimento dos meses anteriores
-    'O código é o mesmo
+    'Processar recebimento dos meses anteriores, exceto atual
     '-----------------------------------------------------------------------------------------------------
     
     Do While Range("E" + CStr(linha_planilha_mes_processmento)).Value <> ""
@@ -156,12 +155,14 @@ On Error GoTo Erro
                         percentual = linha_planilha / 1000
                         
                         'And Range("F" + CStr(linha_planilha)).Value = doc_ref
-                        
+                        'And Range("M" + CStr(linha_planilha_mes_processmento)).Value = ""
+
                         If Range("E" + CStr(linha_planilha)).Value = classificacao _
                            And Range("H" + CStr(linha_planilha)).Value = instituicao_finaceira _
                            And Range("G" + CStr(linha_planilha)).Value = plano_contas _
-                           And Range("L" + CStr(linha_planilha)).Value <> "Realizado" _
-                           Then
+                           And Range("L" + CStr(linha_planilha)).Value = "Não Pago" _
+                           And Range("I" + CStr(linha_planilha)).Value = "" _
+                        Then
                                 
                                 Range("J" + CStr(linha_planilha)).Value = Range("J" + CStr(linha_planilha)).Value - valor_recebimento
                                 If Range("J" + CStr(linha_planilha)).Value <= 0 Then
@@ -284,6 +285,7 @@ On Error GoTo Erro
                 Do While Range("E" + CStr(linha_planilha_mes_processmento)).Value <> ""
                 
                     'And Range("F" + CStr(linha_planilha)).Value = doc_ref
+                    
                     If Range("E" + CStr(linha_planilha_mes_processmento)).Value = classificacao _
                        And Range("H" + CStr(linha_planilha_mes_processmento)).Value = instituicao_finaceira _
                        And Range("G" + CStr(linha_planilha_mes_processmento)).Value = plano_contas _
@@ -295,12 +297,12 @@ On Error GoTo Erro
                         linha_planilha_Receita = linha_planilha_mes_processmento
                     End If
                     
+                    'And Range("M" + CStr(linha_planilha_mes_processmento)).Value = ""
                     If Range("E" + CStr(linha_planilha_mes_processmento)).Value = classificacao _
                        And Range("H" + CStr(linha_planilha_mes_processmento)).Value = instituicao_finaceira _
                        And Range("G" + CStr(linha_planilha_mes_processmento)).Value = plano_contas _
                        And Range("I" + CStr(linha_planilha_mes_processmento)).Value = mes(flag_mes_processamento) _
                        And Range("L" + CStr(linha_planilha_mes_processmento)).Value = "Não Pago" _
-                       And Range("M" + CStr(linha_planilha_mes_processmento)).Value = "" _
                        And bol_processar_classificacao = True _
                        Then
                             
