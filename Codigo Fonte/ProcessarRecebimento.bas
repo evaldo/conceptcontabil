@@ -164,12 +164,12 @@ On Error GoTo Erro
                            And Range("I" + CStr(linha_planilha)).Value = "" _
                         Then
                                 
-                                Range("J" + CStr(linha_planilha)).Value = Range("J" + CStr(linha_planilha)).Value - valor_recebimento
-                                If Range("J" + CStr(linha_planilha)).Value <= 0 Then
-                                    Range("L" + CStr(linha_planilha)).Value = "Realizado"
-                                Else
-                                    Range("L" + CStr(linha_planilha)).Value = "Não Pago"
-                                End If
+                                'Range("J" + CStr(linha_planilha)).Value = Range("J" + CStr(linha_planilha)).Value - valor_recebimento
+                                'If Range("J" + CStr(linha_planilha)).Value <= 0 Then
+                                '    Range("L" + CStr(linha_planilha)).Value = "Realizado"
+                                'Else
+                                '    Range("L" + CStr(linha_planilha)).Value = "Não Pago"
+                                'End If
                                 Range("M" + CStr(linha_planilha)).Value = "Sim"
                                 
                                 Worksheets(mes_processamento).Activate
